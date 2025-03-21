@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-light text-dark overflow-x-hidden font-sans;
+  }
+}
+
+@layer components {
+  .container {
+    @apply max-w-7xl mx-auto px-5;
+  }
+  
+  .gradient-text {
+    @apply bg-gradient-text bg-[length:200%_auto] bg-clip-text text-transparent inline-block animate-gradient-shift;
+  }
+  
+  .header-link {
+    @apply text-dark font-medium relative pb-1.5 transition-all duration-300 ease-in-out;
+  }
+  
+  .header-link::after {
+    content: '';
+    @apply absolute w-0 h-0.5 bottom-0 left-1/2 -translate-x-1/2 bg-gradient-text transition-all duration-300 ease-in-out;
+  }
+  
+  .header-link:hover::after {
+    @apply w-full;
+  }
+  
+/* Ajouter ceci à globals.css */
+
+/* Styles pour les points d'animation */
+.dots-container {
+  @apply inline-flex items-center ml-2 h-4;
+}
+
+.dot {
+  @apply w-1 h-1 bg-current rounded-full mx-0.5 opacity-0;
+}
+
+/* Animations pour les points */
+@keyframes dot-pulse-1 {
+  0% { opacity: 0; }
+  40% { opacity: 1; }
+  80% { opacity: 0; }
+  100% { opacity: 0; }
+}
+
+@keyframes dot-pulse-2 {
+  0% { opacity: 0; }
+  40% { opacity: 0; }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes dot-pulse-3 {
+  0% { opacity: 0; }
+  40% { opacity: 0; }
+  80% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-dot-pulse-1 {
+  animation: dot-pulse-1 1.4s infinite;
+}
+
+.animate-dot-pulse-2 {
+  animation: dot-pulse-2 1.4s infinite;
+}
+
+.animate-dot-pulse-3 {
+  animation: dot-pulse-3 1.4s infinite;
+}
+}	
