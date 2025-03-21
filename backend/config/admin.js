@@ -14,4 +14,6 @@ module.exports = ({ env }) => ({
     nps: env.bool('FLAG_NPS', true),
     promoteEE: env.bool('FLAG_PROMOTE_EE', true),
   },
+  // Ajout de cette ligne pour forcer le mode développement dans l'admin
+  environment: env('NODE_ENV', 'development'),
 });
