@@ -1,0 +1,52 @@
+# Types de contenu Strapi pour SALLTECH
+
+Voici les principaux types de contenu à créer dans l'interface d'administration de Strapi :
+
+## 1. Services (Collection Type)
+- **Titre** (Text)
+- **Description** (Rich Text)
+- **Emoji** (Text)
+- **Couleur** (Text - pour stocker les classes Tailwind, ex: "from-blue/20 to-blue/5")
+- **Ordre d'affichage** (Number)
+- **Image** (Media)
+- **URL** (Text - optionnel)
+
+## 2. Projets (Collection Type)
+- **Titre** (Text)
+- **Catégorie** (Text)
+- **Description** (Rich Text)
+- **Image principale** (Media)
+- **Images additionnelles** (Media - plusieurs)
+- **Technologies** (JSON - tableau des technologies utilisées)
+- **URL du projet** (Text - optionnel)
+- **Client** (Text)
+- **Date de réalisation** (Date)
+
+## 3. Page d'accueil (Single Type)
+- **Hero**
+  - Titre principal (Text)
+  - Sous-titre (Text)
+  - Phrases alternatives (JSON - tableau pour l'animation de typing)
+  - Image d'arrière-plan (Media)
+  - Texte du bouton CTA (Text)
+- **Section À propos**
+  - Titre (Text)
+  - Description (Rich Text)
+  - Image (Media)
+- **Section Services** (Relation avec Services - plusieurs)
+- **Section Portfolio** (Relation avec Projets - plusieurs, pour les projets mis en avant)
+
+## 4. Informations de contact (Single Type)
+- **Adresse** (Text)
+- **Email** (Email)
+- **Téléphone** (Text)
+- **Horaires d'ouverture** (Rich Text)
+- **Réseaux sociaux** (JSON - tableau avec nom, URL et icône)
+- **Coordonnées GPS** (JSON - pour la carte)
+
+## 5. Configuration globale (Single Type)
+- **Logo** (Media)
+- **Favicon** (Media)
+- **Couleurs personnalisées** (JSON - si besoin de modifier les couleurs de thème)
+- **Liens de navigation** (JSON - structure des liens du menu)
+- **Pied de page** (Rich Text - informations légales, copyright, etc.)
