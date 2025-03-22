@@ -25,7 +25,11 @@ const Services = () => {
         
         // Vérifier si nous avons des données valides
         if (Array.isArray(servicesData) && servicesData.length > 0) {
-          setServices(servicesData)
+          // Trier les services par ordre d'affichage si disponible
+          const sortedServices = [...servicesData].sort((a, b) => 
+            (a.Ordreaffichage || 999) - (b.Ordreaffichage || 999)
+          )
+          setServices(sortedServices)
         } else {
           // Si l'API ne renvoie pas de données, utiliser les données de secours
           setServices(fallbackServices)
@@ -43,61 +47,137 @@ const Services = () => {
     fetchServices()
   }, [])
   
+  // Fonction pour extraire le texte simple d'un contenu au format Strapi Rich Text
+  const extractTextFromRichText = (richTextContent) => {
+    if (!richTextContent || !Array.isArray(richTextContent)) {
+      return '';
+    }
+    
+    // Parcourir les blocs de contenu (paragraphes, listes, etc.)
+    return richTextContent.map(block => {
+      // Si c'est un paragraphe ou un autre type de bloc avec des enfants
+      if (block.children && Array.isArray(block.children)) {
+        return block.children.map(child => {
+          // Si c'est un nœud de texte simple
+          if (child.type === 'text') {
+            return child.text || '';
+          }
+          return '';
+        }).join('');
+      }
+      return '';
+    }).join('\n');
+  }
+  
   // Données de secours au cas où l'API échoue
   const fallbackServices = [
     {
       id: 1,
-      attributes: {
-        emoji: "⚡",
-        title: "Sites Internet",
-        description: "Nous créons des sites web responsifs et conviviaux qui engagent les visiteurs et génèrent des conversions.",
-        color: "from-blue/20 to-blue/5"
-      }
+      Titre: "Sites Internet",
+      Description: [
+        { 
+          type: "paragraph", 
+          children: [
+            { 
+              type: "text", 
+              text: "Nous créons des sites web responsifs et conviviaux qui engagent les visiteurs et génèrent des conversions."
+            }
+          ]
+        }
+      ],
+      Emoji: "⚡",
+      Couleur: "from-blue/20 to-blue/5",
+      Ordreaffichage: 1
     },
     {
       id: 2,
-      attributes: {
-        emoji: "📱",
-        title: "Applications Mobiles",
-        description: "Applications natives et multi-plateformes pour iOS et Android offrant une expérience utilisateur exceptionnelle.",
-        color: "from-purple/20 to-purple/5"
-      }
+      Titre: "Applications Mobiles",
+      Description: [
+        { 
+          type: "paragraph", 
+          children: [
+            { 
+              type: "text", 
+              text: "Applications natives et multi-plateformes pour iOS et Android offrant une expérience utilisateur exceptionnelle."
+            }
+          ]
+        }
+      ],
+      Emoji: "📱",
+      Couleur: "from-purple/20 to-purple/5",
+      Ordreaffichage: 2
     },
     {
       id: 3,
-      attributes: {
-        emoji: "🔍",
-        title: "Solutions Odoo",
-        description: "Implémentation, personnalisation et support pour Odoo ERP, adaptés à vos processus métier spécifiques.",
-        color: "from-red/20 to-red/5"
-      }
+      Titre: "Solutions Odoo",
+      Description: [
+        { 
+          type: "paragraph", 
+          children: [
+            { 
+              type: "text", 
+              text: "Implémentation, personnalisation et support pour Odoo ERP, adaptés à vos processus métier spécifiques."
+            }
+          ]
+        }
+      ],
+      Emoji: "🔍",
+      Couleur: "from-red/20 to-red/5",
+      Ordreaffichage: 3
     },
     {
       id: 4,
-      attributes: {
-        emoji: "🚀",
-        title: "Consulting DevOps",
-        description: "Optimisation de vos processus de développement, déploiement continu et gestion d'infrastructure cloud.",
-        color: "from-blue/20 to-blue/5"
-      }
+      Titre: "Consulting DevOps",
+      Description: [
+        { 
+          type: "paragraph", 
+          children: [
+            { 
+              type: "text", 
+              text: "Optimisation de vos processus de développement, déploiement continu et gestion d'infrastructure cloud."
+            }
+          ]
+        }
+      ],
+      Emoji: "🚀",
+      Couleur: "from-blue/20 to-blue/5",
+      Ordreaffichage: 4
     },
     {
       id: 5,
-      attributes: {
-        emoji: "🌐",
-        title: "Hébergement Web",
-        description: "Services d'hébergement haute performance, sécurisés et évolutifs pour tous types de projets web et applications.",
-        color: "from-purple/20 to-purple/5"
-      }
+      Titre: "Hébergement Web",
+      Description: [
+        { 
+          type: "paragraph", 
+          children: [
+            { 
+              type: "text", 
+              text: "Services d'hébergement haute performance, sécurisés et évolutifs pour tous types de projets web et applications."
+            }
+          ]
+        }
+      ],
+      Emoji: "🌐",
+      Couleur: "from-purple/20 to-purple/5",
+      Ordreaffichage: 5
     },
     {
       id: 6,
-      attributes: {
-        emoji: "📈",
-        title: "SEO & Référencement",
-        description: "Stratégies d'optimisation pour les moteurs de recherche qui améliorent votre visibilité en ligne et génèrent du trafic qualifié.",
-        color: "from-red/20 to-red/5"
-      }
+      Titre: "SEO & Référencement",
+      Description: [
+        { 
+          type: "paragraph", 
+          children: [
+            { 
+              type: "text", 
+              text: "Stratégies d'optimisation pour les moteurs de recherche qui améliorent votre visibilité en ligne et génèrent du trafic qualifié."
+            }
+          ]
+        }
+      ],
+      Emoji: "📈",
+      Couleur: "from-red/20 to-red/5",
+      Ordreaffichage: 6
     }
   ]
   
@@ -187,22 +267,36 @@ const Services = () => {
               <motion.div
                 key={service.id}
                 variants={itemVariants}
-                className={`bg-gradient-to-br ${service.attributes?.color || getColorByIndex(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
+                className={`bg-gradient-to-br ${service.Couleur || getColorByIndex(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
               >
                 <div className="relative">
-                  <div className="text-4xl mb-4">{service.attributes.emoji}</div>
+                  <div className="text-4xl mb-4">{service.Emoji || "⚡"}</div>
                   <h3 className="text-2xl font-bold mb-4 group-hover:text-blue transition-colors duration-300">
-                    {service.attributes.title}
+                    {service.Titre || "Service"}
                   </h3>
                   <div className="h-0.5 w-16 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-24 transition-all duration-300"></div>
-                  <p className="text-gray-600 mb-4">{service.attributes.description}</p>
+                  <p className="text-gray-600 mb-4">
+                    {service.Description ? extractTextFromRichText(service.Description) : "Description du service"}
+                  </p>
                   
-                  <div className="flex items-center text-blue hover:underline group-hover:text-opacity-80 transition-all duration-300">
-                    <span>En savoir plus</span>
-                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                    </svg>
-                  </div>
+                  {service.URL ? (
+                    <a 
+                      href={service.URL} 
+                      className="flex items-center text-blue hover:underline group-hover:text-opacity-80 transition-all duration-300"
+                    >
+                      <span>En savoir plus</span>
+                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                      </svg>
+                    </a>
+                  ) : (
+                    <div className="flex items-center text-blue hover:underline group-hover:text-opacity-80 transition-all duration-300">
+                      <span>En savoir plus</span>
+                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                      </svg>
+                    </div>
+                  )}
                 </div>
               </motion.div>
             ))}
