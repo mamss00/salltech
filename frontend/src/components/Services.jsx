@@ -278,48 +278,47 @@ const Services = () => {
             animate={servicesInView ? "visible" : "hidden"}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {services.map((service, index) => (
-              <motion.div
-                key={service.id}
-                variants={itemVariants}
-                className={`bg-gradient-to-br ${service.Couleur || getColorByIndex(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
-              >
-                <div className="relative">
-                  <div className="text-4xl mb-4">
-                    <DynamicIcon 
-                      icon={service.Emoji || getDefaultIcon(service.Titre)} 
-                      className="w-10 h-10 text-current"
-                    />
-                  </div>
-                  <h3 className="text-2xl font-bold mb-4 group-hover:text-blue transition-colors duration-300">
-                    {service.Titre || "Service"}
-                  </h3>
-                  <div className="h-0.5 w-16 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-24 transition-all duration-300"></div>
-                  <p className="text-gray-600 mb-4">
-                    {service.Description ? extractTextFromRichText(service.Description) : "Description du service"}
-                  </p>
-                  
-                  {service.URL ? (
-                    <a 
-                      href={service.URL} 
-                      className="flex items-center text-blue hover:underline group-hover:text-opacity-80 transition-all duration-300"
-                    >
-                      <span>En savoir plus</span>
-                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                      </svg>
-                    </a>
-                  ) : (
+            {services.map((service, index) => {
+              // Détermine la couleur en fonction de la propriété Couleur ou de l'index
+              const color = service.Couleur || getColorByIndex(index);
+              
+              // Obtient la couleur principale pour l'icône
+              const iconColor = color.includes('blue') ? 'text-blue' : 
+                               color.includes('purple') ? 'text-purple' : 
+                               color.includes('red') ? 'text-red' : 
+                               'text-blue';
+              
+              return (
+                <motion.div
+                  key={service.id}
+                  variants={itemVariants}
+                  className={`bg-gradient-to-br ${color} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
+                >
+                  <div className="relative">
+                    <div className="text-4xl mb-4">
+                      <DynamicIcon 
+                        icon={service.Emoji || getDefaultIcon(service.Titre)} 
+                        className={`w-12 h-12 ${iconColor} group-hover:text-blue transition-colors duration-300`}
+                      />
+                    </div>
+                    <h3 className="text-2xl font-bold mb-4 group-hover:text-blue transition-colors duration-300">
+                      {service.Titre || "Service"}
+                    </h3>
+                    <div className="h-0.5 w-16 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-24 transition-all duration-300"></div>
+                    <p className="text-gray-600 mb-4">
+                      {service.Description ? extractTextFromRichText(service.Description) : "Description du service"}
+                    </p>
+                    
                     <div className="flex items-center text-blue hover:underline group-hover:text-opacity-80 transition-all duration-300">
                       <span>En savoir plus</span>
                       <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
                       </svg>
                     </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+                  </div>
+                </motion.div>
+              );
+            })}
           </motion.div>
         )}
       </div>
