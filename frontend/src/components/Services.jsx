@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { getServices } from '@/utils/api'
+import DynamicIcon from '@/utils/DynamicIcon'
 
 const Services = () => {
   // États pour les animations et les données
@@ -69,6 +70,20 @@ const Services = () => {
     }).join('\n');
   }
   
+  // Fonction pour obtenir l'icône par défaut en fonction du titre
+  const getDefaultIcon = (title) => {
+    const defaultIcons = {
+      'Sites Internet': 'Fa/FaGlobe',
+      'Applications Mobiles': 'Md/MdPhoneIphone',
+      'Solutions Odoo': 'Fa/FaSearch',
+      'Consulting DevOps': 'Fa/FaRocket',
+      'Hébergement Web': 'Fa/FaServer',
+      'SEO & Référencement': 'Fa/FaChartLine',
+    };
+    
+    return defaultIcons[title] || 'Fa/FaLightbulb';
+  };
+  
   // Données de secours au cas où l'API échoue
   const fallbackServices = [
     {
@@ -85,7 +100,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "⚡",
+      Emoji: "Fa/FaGlobe",
       Couleur: "from-blue/20 to-blue/5",
       Ordreaffichage: 1
     },
@@ -103,7 +118,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "📱",
+      Emoji: "Md/MdPhoneIphone",
       Couleur: "from-purple/20 to-purple/5",
       Ordreaffichage: 2
     },
@@ -121,7 +136,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "🔍",
+      Emoji: "Fa/FaSearch",
       Couleur: "from-red/20 to-red/5",
       Ordreaffichage: 3
     },
@@ -139,7 +154,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "🚀",
+      Emoji: "Fa/FaRocket",
       Couleur: "from-blue/20 to-blue/5",
       Ordreaffichage: 4
     },
@@ -157,7 +172,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "🌐",
+      Emoji: "Fa/FaServer",
       Couleur: "from-purple/20 to-purple/5",
       Ordreaffichage: 5
     },
@@ -175,7 +190,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "📈",
+      Emoji: "Fa/FaChartLine",
       Couleur: "from-red/20 to-red/5",
       Ordreaffichage: 6
     }
@@ -270,7 +285,12 @@ const Services = () => {
                 className={`bg-gradient-to-br ${service.Couleur || getColorByIndex(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
               >
                 <div className="relative">
-                  <div className="text-4xl mb-4">{service.Emoji || "⚡"}</div>
+                  <div className="text-4xl mb-4">
+                    <DynamicIcon 
+                      icon={service.Emoji || getDefaultIcon(service.Titre)} 
+                      className="w-10 h-10 text-current"
+                    />
+                  </div>
                   <h3 className="text-2xl font-bold mb-4 group-hover:text-blue transition-colors duration-300">
                     {service.Titre || "Service"}
                   </h3>
