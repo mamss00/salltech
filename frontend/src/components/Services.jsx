@@ -187,7 +187,7 @@ const Services = () => {
               <motion.div
                 key={service.id}
                 variants={itemVariants}
-                className={`bg-gradient-to-br ${service.attributes.color || getColorByIndex(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
+                className={`bg-gradient-to-br ${service.attributes?.color || getColorByIndex(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
               >
                 <div className="relative">
                   <div className="text-4xl mb-4">{service.attributes.emoji}</div>
