@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { getServices } from '@/utils/api'
-import DynamicIcon from '@/utils/DynamicIcon'
 
 const Services = () => {
   // États pour les animations et les données
@@ -70,19 +69,26 @@ const Services = () => {
     }).join('\n');
   }
   
-  // Fonction pour obtenir l'icône par défaut en fonction du titre
-  const getDefaultIcon = (title) => {
-    const defaultIcons = {
-      'Sites Internet': 'Fa/FaGlobe',
-      'Applications Mobiles': 'Md/MdPhoneIphone',
-      'Solutions Odoo': 'Fa/FaSearch',
-      'Consulting DevOps': 'Fa/FaRocket',
-      'Hébergement Web': 'Fa/FaServer',
-      'SEO & Référencement': 'Fa/FaChartLine',
-    };
+  // Fonction pour convertir le code unicode en emoji
+  const unicodeToEmoji = (value) => {
+    if (!value) return '💡'; // Emoji par défaut si rien n'est fourni
     
-    return defaultIcons[title] || 'Fa/FaLightbulb';
-  };
+    // Si c'est déjà un emoji ou texte normal (pas un code Unicode), le retourner tel quel
+    if (!value.startsWith('U+')) {
+      return value;
+    }
+    
+    // Convertir le code Unicode en emoji
+    try {
+      // Enlever le préfixe "U+" et convertir en nombre hexadécimal
+      const codePoint = parseInt(value.replace('U+', ''), 16);
+      // Convertir en caractère
+      return String.fromCodePoint(codePoint);
+    } catch (e) {
+      console.error("Erreur lors de la conversion unicode:", e);
+      return '💡'; // Emoji par défaut en cas d'erreur
+    }
+  }
   
   // Données de secours au cas où l'API échoue
   const fallbackServices = [
@@ -100,7 +106,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "Fa/FaGlobe",
+      Emoji: "🌐",
       Couleur: "from-blue/20 to-blue/5",
       Ordreaffichage: 1
     },
@@ -118,7 +124,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "Md/MdPhoneIphone",
+      Emoji: "📱",
       Couleur: "from-purple/20 to-purple/5",
       Ordreaffichage: 2
     },
@@ -136,7 +142,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "Fa/FaSearch",
+      Emoji: "🔍",
       Couleur: "from-red/20 to-red/5",
       Ordreaffichage: 3
     },
@@ -154,7 +160,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "Fa/FaRocket",
+      Emoji: "🚀",
       Couleur: "from-blue/20 to-blue/5",
       Ordreaffichage: 4
     },
@@ -172,7 +178,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "Fa/FaServer",
+      Emoji: "🖥️",
       Couleur: "from-purple/20 to-purple/5",
       Ordreaffichage: 5
     },
@@ -190,7 +196,7 @@ const Services = () => {
           ]
         }
       ],
-      Emoji: "Fa/FaChartLine",
+      Emoji: "📈",
       Couleur: "from-red/20 to-red/5",
       Ordreaffichage: 6
     }
@@ -282,11 +288,14 @@ const Services = () => {
               // Détermine la couleur en fonction de la propriété Couleur ou de l'index
               const color = service.Couleur || getColorByIndex(index);
               
-              // Obtient la couleur principale pour l'icône
-              const iconColor = color.includes('blue') ? 'text-blue' : 
-                               color.includes('purple') ? 'text-purple' : 
-                               color.includes('red') ? 'text-red' : 
-                               'text-blue';
+              // Convertit le code Unicode en emoji si nécessaire
+              const emoji = unicodeToEmoji(service.Emoji);
+              
+              // Obtient la classe de couleur principale pour le texte
+              const textColorClass = color.includes('blue') ? 'text-blue' : 
+                                    color.includes('purple') ? 'text-purple' : 
+                                    color.includes('red') ? 'text-red' : 
+                                    'text-blue';
               
               return (
                 <motion.div
@@ -296,17 +305,8 @@ const Services = () => {
                 >
                   <div className="relative">
                     <div className="text-4xl mb-4">
-                        <DynamicIcon 
-                          icon={service.Emoji || getDefaultIcon(service.Titre)} 
-                          className="w-12 h-12"
-                          colorClass={
-                            color.includes('blue') ? 'text-blue' : 
-                            color.includes('purple') ? 'text-purple' : 
-                            color.includes('red') ? 'text-red' : 
-                            'text-blue'
-                          }
-                        />
-                      </div>
+                      <span className={`text-5xl ${textColorClass}`}>{emoji}</span>
+                    </div>
                     <h3 className="text-2xl font-bold mb-4 group-hover:text-blue transition-colors duration-300">
                       {service.Titre || "Service"}
                     </h3>
