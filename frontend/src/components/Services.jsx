@@ -296,11 +296,17 @@ const Services = () => {
                 >
                   <div className="relative">
                     <div className="text-4xl mb-4">
-                      <DynamicIcon 
-                        icon={service.Emoji || getDefaultIcon(service.Titre)} 
-                        className={`w-12 h-12 ${iconColor} group-hover:text-blue transition-colors duration-300`}
-                      />
-                    </div>
+                        <DynamicIcon 
+                          icon={service.Emoji || getDefaultIcon(service.Titre)} 
+                          className="w-12 h-12"
+                          colorClass={
+                            color.includes('blue') ? 'text-blue' : 
+                            color.includes('purple') ? 'text-purple' : 
+                            color.includes('red') ? 'text-red' : 
+                            'text-blue'
+                          }
+                        />
+                      </div>
                     <h3 className="text-2xl font-bold mb-4 group-hover:text-blue transition-colors duration-300">
                       {service.Titre || "Service"}
                     </h3>

@@ -14,16 +14,23 @@ import * as RiIcons from 'react-icons/ri'
 import * as GoIcons from 'react-icons/go'
 
 /**
- * Composant d'icône dynamique qui peut afficher des icônes de différentes bibliothèques
+ * Composant d'icône dynamique compatible avec Tailwind
  * @param {string} icon - Nom de l'icône au format "Préfixe/NomIcone" (ex: "Fa/FaGlobe")
- * @param {string} className - Classes CSS optionnelles pour styliser l'icône
+ * @param {string} className - Classes CSS optionnelles
+ * @param {string} colorClass - Classe Tailwind de couleur (ex: "text-blue")
  * @param {string} fallback - Texte/emoji de secours si l'icône n'est pas trouvée
  * @param {object} rest - Autres props à passer au composant d'icône
  */
-const DynamicIcon = ({ icon, className = "w-6 h-6", fallback = "✦", ...rest }) => {
+const DynamicIcon = ({ 
+  icon, 
+  className = "", 
+  colorClass = "", 
+  fallback = "✦", 
+  ...rest 
+}) => {
   // Si aucune icône n'est spécifiée, retourner le fallback
   if (!icon) {
-    return <span className={className} {...rest}>{fallback}</span>
+    return <span className={`${className} ${colorClass}`} {...rest}>{fallback}</span>
   }
   
   // Bibliothèques d'icônes disponibles
@@ -48,13 +55,28 @@ const DynamicIcon = ({ icon, className = "w-6 h-6", fallback = "✦", ...rest })
     
     if (iconLibrary && iconLibrary[iconComponentName]) {
       const IconComponent = iconLibrary[iconComponentName]
-      return <IconComponent className={className} {...rest} />
+      
+      // Traduction des classes Tailwind vers des styles CSS pour les couleurs
+      let style = {};
+      
+      if (colorClass.includes('text-blue')) {
+        style.color = '#3498db';
+      } else if (colorClass.includes('text-purple')) {
+        style.color = '#9b59b6';
+      } else if (colorClass.includes('text-red')) {
+        style.color = '#e74c3c';
+      } else if (colorClass.includes('text-white')) {
+        style.color = '#ffffff';
+      } else if (colorClass.includes('text-gray')) {
+        style.color = '#718096';
+      }
+      
+      return <IconComponent className={className} style={style} {...rest} />
     }
   }
   
-  // Si le format n'est pas correct ou l'icône n'existe pas,
-  // vérifier si l'entrée est un emoji ou du texte simple
-  return <span className={className} {...rest}>{icon}</span>
+  // Si le format n'est pas correct ou l'icône n'existe pas
+  return <span className={`${className} ${colorClass}`} {...rest}>{icon}</span>
 }
 
 export default DynamicIcon
