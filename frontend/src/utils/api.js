@@ -108,3 +108,60 @@ export async function submitContactForm(formData) {
     throw error;
   }
 }
+
+/**
+ * Récupère un service par son slug
+ * @param {string} slug - Slug du service
+ * @returns {Promise<Object>} - Données du service
+ */
+export async function getServiceBySlug(slug) {
+  try {
+    // Construire la requête avec toutes les relations et composants nécessaires
+    const populateQuery = [
+      'image_principale',
+      'caracteristiques',
+      'types_services',
+      'types_services.fonctionnalites',
+      'types_services.image',
+      'methodologie',
+      'methodologie.tags',
+      'technologies',
+      'technologies.logo',
+      'projets_lies',
+      'projets_lies.image_principale',
+      'faq',
+      'seo',
+      'seo.metaImage'
+    ].join(',');
+    
+    const data = await fetchAPI(`/services?filters[slug][$eq]=${slug}&populate=${populateQuery}`);
+    
+    if (data.data && data.data.length > 0) {
+      return data.data[0].attributes;
+    }
+    
+    return null;
+  } catch (error) {
+    console.error(`Error in getServiceBySlug for slug "${slug}":`, error);
+    throw error;
+  }
+}
+
+/**
+ * Récupère tous les slugs des services pour la génération de pages statiques
+ * @returns {Promise<Array<string>>} - Liste des slugs
+ */
+export async function getAllServiceSlugs() {
+  try {
+    const data = await fetchAPI('/services?fields=slug');
+    
+    if (data.data && data.data.length > 0) {
+      return data.data.map(service => service.attributes.slug);
+    }
+    
+    return [];
+  } catch (error) {
+    console.error("Error in getAllServiceSlugs:", error);
+    throw error;
+  }
+}
