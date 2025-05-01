@@ -3,216 +3,56 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { getServices } from '@/utils/api'
+import { getServices, titreToSlug } from '@/utils/api'
+import Link from 'next/link'
 
 const Services = () => {
-  // États pour les animations et les données
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [descRef, descInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [servicesRef, servicesInView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  
-  // État pour les données de services
+
   const [services, setServices] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-  
-  // Récupérer les services depuis l'API Strapi
+
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        setIsLoading(true)
         const servicesData = await getServices()
-        
-        // Vérifier si nous avons des données valides
-        if (Array.isArray(servicesData) && servicesData.length > 0) {
-          // Trier les services par ordre d'affichage si disponible
-          const sortedServices = [...servicesData].sort((a, b) => 
-            (a.Ordreaffichage || 999) - (b.Ordreaffichage || 999)
-          )
-          setServices(sortedServices)
-        } else {
-          // Si l'API ne renvoie pas de données, utiliser les données de secours
-          setServices(fallbackServices)
-        }
-        setIsLoading(false)
+        const sorted = [...servicesData].sort((a, b) => (a.Ordreaffichage || 999) - (b.Ordreaffichage || 999))
+        setServices(sorted)
       } catch (err) {
         console.error('Erreur lors du chargement des services:', err)
-        setError('Impossible de charger les services')
-        // En cas d'erreur, utiliser les données de secours
-        setServices(fallbackServices)
+        setError('Erreur lors du chargement des services. Veuillez réessayer plus tard.')
+      } finally {
         setIsLoading(false)
       }
     }
-    
     fetchServices()
   }, [])
-  
-  // Fonction pour extraire le texte simple d'un contenu au format Strapi Rich Text
-  const extractTextFromRichText = (richTextContent) => {
-    if (!richTextContent || !Array.isArray(richTextContent)) {
-      return '';
-    }
-    
-    // Parcourir les blocs de contenu (paragraphes, listes, etc.)
-    return richTextContent.map(block => {
-      // Si c'est un paragraphe ou un autre type de bloc avec des enfants
-      if (block.children && Array.isArray(block.children)) {
-        return block.children.map(child => {
-          // Si c'est un nœud de texte simple
-          if (child.type === 'text') {
-            return child.text || '';
-          }
-          return '';
-        }).join('');
-      }
-      return '';
-    }).join('\n');
+
+  const extractTextFromRichText = (content) => {
+    if (!Array.isArray(content)) return ''
+    return content.map(block => block.children?.map(child => child.text || '').join('')).join('\n')
   }
-  
-  // Fonction pour convertir le code unicode en emoji
+
   const unicodeToEmoji = (value) => {
-    if (!value) return '💡'; // Emoji par défaut si rien n'est fourni
-    
-    // Si c'est déjà un emoji ou texte normal (pas un code Unicode), le retourner tel quel
-    if (!value.startsWith('U+')) {
-      return value;
-    }
-    
-    // Convertir le code Unicode en emoji
+    if (!value?.startsWith('U+')) return value || '💡'
     try {
-      // Enlever le préfixe "U+" et convertir en nombre hexadécimal
-      const codePoint = parseInt(value.replace('U+', ''), 16);
-      // Convertir en caractère
-      return String.fromCodePoint(codePoint);
-    } catch (e) {
-      console.error("Erreur lors de la conversion unicode:", e);
-      return '💡'; // Emoji par défaut en cas d'erreur
+      return String.fromCodePoint(parseInt(value.replace('U+', ''), 16))
+    } catch {
+      return '💡'
     }
   }
-  
-  // Données de secours au cas où l'API échoue
-  const fallbackServices = [
-    {
-      id: 1,
-      Titre: "Sites Internet",
-      Description: [
-        { 
-          type: "paragraph", 
-          children: [
-            { 
-              type: "text", 
-              text: "Nous créons des sites web responsifs et conviviaux qui engagent les visiteurs et génèrent des conversions."
-            }
-          ]
-        }
-      ],
-      Emoji: "🌐",
-      Couleur: "from-blue/20 to-blue/5",
-      Ordreaffichage: 1
-    },
-    {
-      id: 2,
-      Titre: "Applications Mobiles",
-      Description: [
-        { 
-          type: "paragraph", 
-          children: [
-            { 
-              type: "text", 
-              text: "Applications natives et multi-plateformes pour iOS et Android offrant une expérience utilisateur exceptionnelle."
-            }
-          ]
-        }
-      ],
-      Emoji: "📱",
-      Couleur: "from-purple/20 to-purple/5",
-      Ordreaffichage: 2
-    },
-    {
-      id: 3,
-      Titre: "Solutions Odoo",
-      Description: [
-        { 
-          type: "paragraph", 
-          children: [
-            { 
-              type: "text", 
-              text: "Implémentation, personnalisation et support pour Odoo ERP, adaptés à vos processus métier spécifiques."
-            }
-          ]
-        }
-      ],
-      Emoji: "🔍",
-      Couleur: "from-red/20 to-red/5",
-      Ordreaffichage: 3
-    },
-    {
-      id: 4,
-      Titre: "Consulting DevOps",
-      Description: [
-        { 
-          type: "paragraph", 
-          children: [
-            { 
-              type: "text", 
-              text: "Optimisation de vos processus de développement, déploiement continu et gestion d'infrastructure cloud."
-            }
-          ]
-        }
-      ],
-      Emoji: "🚀",
-      Couleur: "from-blue/20 to-blue/5",
-      Ordreaffichage: 4
-    },
-    {
-      id: 5,
-      Titre: "Hébergement Web",
-      Description: [
-        { 
-          type: "paragraph", 
-          children: [
-            { 
-              type: "text", 
-              text: "Services d'hébergement haute performance, sécurisés et évolutifs pour tous types de projets web et applications."
-            }
-          ]
-        }
-      ],
-      Emoji: "🖥️",
-      Couleur: "from-purple/20 to-purple/5",
-      Ordreaffichage: 5
-    },
-    {
-      id: 6,
-      Titre: "SEO & Référencement",
-      Description: [
-        { 
-          type: "paragraph", 
-          children: [
-            { 
-              type: "text", 
-              text: "Stratégies d'optimisation pour les moteurs de recherche qui améliorent votre visibilité en ligne et génèrent du trafic qualifié."
-            }
-          ]
-        }
-      ],
-      Emoji: "📈",
-      Couleur: "from-red/20 to-red/5",
-      Ordreaffichage: 6
-    }
-  ]
-  
-  // Animation variants
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
+      transition: { staggerChildren: 0.1 }
     }
   }
-  
+
   const itemVariants = {
     hidden: { y: 30, opacity: 0 },
     visible: {
@@ -221,23 +61,20 @@ const Services = () => {
       transition: { duration: 0.5 }
     }
   }
-  
-  // Fonction pour obtenir la couleur en fonction de l'index
+
   const getColorByIndex = (index) => {
     const colorClasses = [
-      "from-blue/20 to-blue/5",
-      "from-purple/20 to-purple/5",
-      "from-red/20 to-red/5"
+      'from-blue/20 to-blue/5',
+      'from-purple/20 to-purple/5',
+      'from-red/20 to-red/5'
     ]
     return colorClasses[index % colorClasses.length]
   }
-  
+
   return (
     <section id="services" className="py-32 relative overflow-hidden">
-      {/* Background elements */}
       <div className="absolute -top-20 -right-20 w-96 h-96 bg-blue/5 rounded-full blur-3xl"></div>
       <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-purple/5 rounded-full blur-3xl"></div>
-      
       <div className="container relative z-10">
         <motion.h2
           ref={titleRef}
@@ -248,7 +85,7 @@ const Services = () => {
         >
           Nos <span className="gradient-text">Services</span>
         </motion.h2>
-        
+
         <motion.p
           ref={descRef}
           initial={{ opacity: 0, y: 20 }}
@@ -256,74 +93,47 @@ const Services = () => {
           transition={{ duration: 0.6, delay: 0.2 }}
           className="text-lg text-gray-600 max-w-3xl mx-auto text-center mb-20"
         >
-          Nous proposons des services digitaux sur mesure pour répondre aux besoins 
-          spécifiques des entreprises mauritaniennes.
+          Nous proposons des services digitaux sur mesure pour les entreprises mauritaniennes.
         </motion.p>
-        
+
         {isLoading ? (
-          // Afficher un loader pendant le chargement
           <div className="flex justify-center items-center h-64">
-            <div className="flex space-x-2">
-              <div className="w-4 h-4 bg-blue rounded-full animate-dot-pulse-1"></div>
-              <div className="w-4 h-4 bg-purple rounded-full animate-dot-pulse-2"></div>
-              <div className="w-4 h-4 bg-red rounded-full animate-dot-pulse-3"></div>
-            </div>
+            <p className="text-gray-500">Chargement en cours...</p>
           </div>
         ) : error ? (
-          // Afficher un message d'erreur si nécessaire
           <div className="text-center text-red py-10">
-            <p className="text-xl">{error}</p>
-            <p className="mt-4">Veuillez réessayer ultérieurement.</p>
+            <p className="text-xl font-semibold">{error}</p>
           </div>
         ) : (
-          // Afficher les services
           <motion.div
             ref={servicesRef}
             variants={containerVariants}
             initial="hidden"
-            animate={servicesInView ? "visible" : "hidden"}
+            animate={servicesInView ? 'visible' : 'hidden'}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {services.map((service, index) => {
-              // Détermine la couleur en fonction de la propriété Couleur ou de l'index
-              const color = service.Couleur || getColorByIndex(index);
-              
-              // Convertit le code Unicode en emoji si nécessaire
-              const emoji = unicodeToEmoji(service.Emoji);
-              
-              // Obtient la classe de couleur principale pour le texte
-              const textColorClass = color.includes('blue') ? 'text-blue' : 
-                                    color.includes('purple') ? 'text-purple' : 
-                                    color.includes('red') ? 'text-red' : 
-                                    'text-blue';
-              
+              const color = service.Couleur || getColorByIndex(index)
+              const emoji = unicodeToEmoji(service.Emoji)
+              const textColor = color.includes('blue') ? 'text-blue' : color.includes('purple') ? 'text-purple' : color.includes('red') ? 'text-red' : 'text-blue'
+              const slug = service.slug || titreToSlug(service.Titre)
+
               return (
                 <motion.div
                   key={service.id}
                   variants={itemVariants}
-                  className={`bg-gradient-to-br ${color} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg p-8 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:bg-white group`}
+                  className={`bg-gradient-to-br ${color} backdrop-blur-sm rounded-2xl shadow-lg p-8 hover:-translate-y-2 transition-all`}
                 >
-                  <div className="relative">
-                    <div className="text-4xl mb-4">
-                      <span className={`text-5xl ${textColorClass}`}>{emoji}</span>
-                    </div>
-                    <h3 className="text-2xl font-bold mb-4 group-hover:text-blue transition-colors duration-300">
-                      {service.Titre || "Service"}
-                    </h3>
-                    <div className="h-0.5 w-16 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-24 transition-all duration-300"></div>
-                    <p className="text-gray-600 mb-4">
-                      {service.Description ? extractTextFromRichText(service.Description) : "Description du service"}
-                    </p>
-                    
-                    <div className="flex items-center text-blue hover:underline group-hover:text-opacity-80 transition-all duration-300">
-                      <span>En savoir plus</span>
-                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                      </svg>
-                    </div>
+                  <div className="text-4xl mb-4">
+                    <span className={`text-5xl ${textColor}`}>{emoji}</span>
                   </div>
+                  <h3 className="text-2xl font-bold mb-4">{service.Titre}</h3>
+                  <p className="text-gray-600 mb-6">{extractTextFromRichText(service.Description)}</p>
+                  <Link href={`/services/${slug}`} className="text-blue hover:underline">
+                    En savoir plus →
+                  </Link>
                 </motion.div>
-              );
+              )
             })}
           </motion.div>
         )}
