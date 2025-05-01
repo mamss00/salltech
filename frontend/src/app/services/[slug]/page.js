@@ -40,11 +40,11 @@ export async function generateMetadata({ params }) {
     const { seo } = serviceData
     
     return {
-      title: seo?.metaTitle || `${serviceData.titre} | SALLTECH`,
-      description: seo?.metaDescription || serviceData.description_courte,
+      title: seo?.metaTitle || `${serviceData.Titre || serviceData.titre || 'Service'} | SALLTECH`,
+      description: seo?.metaDescription || serviceData.description_courte || serviceData.Description,
       openGraph: {
-        title: seo?.metaTitle || `${serviceData.titre} | SALLTECH`,
-        description: seo?.metaDescription || serviceData.description_courte,
+        title: seo?.metaTitle || `${serviceData.Titre || serviceData.titre || 'Service'} | SALLTECH`,
+        description: seo?.metaDescription || serviceData.description_courte || serviceData.Description,
         images: seo?.metaImage?.url ? [{ url: seo.metaImage.url }] : []
       }
     }
@@ -61,29 +61,68 @@ export async function generateMetadata({ params }) {
 export default async function ServicePage({ params }) {
   // Récupérer les données du service depuis Strapi en utilisant le slug
   const { slug } = params
-  const serviceData = await getServiceBySlug(slug)
+  console.log('Slug demandé:', slug) // Ajout d'un log
   
-  // Si le service n'existe pas, afficher une page 404
-  if (!serviceData) {
-    notFound()
+  let serviceData;
+  try {
+    serviceData = await getServiceBySlug(slug)
+    console.log('Données reçues:', serviceData ? 'Oui' : 'Non') // Ajout d'un log
+    
+    if (!serviceData) {
+      console.log('Service non trouvé - affichage page personnalisée 404') // Ajout d'un log
+      // Affichage d'une page 404 personnalisée au lieu d'utiliser notFound()
+      return (
+        <>
+          <Header />
+          <main className="pt-32 min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <h1 className="text-4xl font-bold mb-4">Service non trouvé</h1>
+              <p className="text-xl mb-6">Le service avec le slug '{slug}' n'existe pas ou n'est pas accessible.</p>
+              <p className="mb-6">Veuillez vérifier que ce service existe dans votre CMS Strapi.</p>
+              <a href="/services" className="text-blue hover:underline">Voir tous nos services</a>
+            </div>
+          </main>
+          <Footer />
+        </>
+      )
+    }
+  } catch (error) {
+    console.error('Erreur lors de la récupération du service:', error) // Ajout d'un log
+    // Affichage d'une page d'erreur
+    return (
+      <>
+        <Header />
+        <main className="pt-32 min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <h1 className="text-4xl font-bold mb-4">Erreur lors du chargement</h1>
+            <p className="text-xl mb-6">Une erreur s'est produite lors du chargement du service '{slug}'</p>
+            <pre className="bg-gray-100 p-4 rounded-md text-left overflow-auto mb-6 max-w-2xl mx-auto">
+              {error.toString()}
+            </pre>
+            <a href="/services" className="text-blue hover:underline">Voir tous nos services</a>
+          </div>
+        </main>
+        <Footer />
+      </>
+    )
   }
   
-  // Extraire les données du service
-  const {
-    titre,
-    titre_page,
-    description_courte,
-    introduction,
-    image_principale,
-    icone,
-    couleur,
-    caracteristiques,
-    types_services,
-    methodologie,
-    technologies,
-    projets_lies,
-    faq
-  } = serviceData
+  console.log('Structure des données:', Object.keys(serviceData)) // Ajout d'un log
+  
+  // Extraire les données du service (adaptation pour gérer différentes structures de données)
+  // Remarque: les champs peuvent avoir différentes casses (Titre vs titre)
+  const titre = serviceData.titre_page || serviceData.Titre || serviceData.titre || 'Service'
+  const description = serviceData.description_courte || serviceData.Description || ''
+  const introduction = serviceData.introduction || null
+  const image = serviceData.image_principale || serviceData.Image || null
+  const icone = serviceData.icone || null
+  const couleur = serviceData.couleur || serviceData.Couleur || ''
+  const caracteristiques = serviceData.caracteristiques || []
+  const types_services = serviceData.types_services || []
+  const methodologie = serviceData.methodologie || []
+  const technologies = serviceData.technologies || []
+  const projets_lies = serviceData.projets_lies?.data || []
+  const faq = serviceData.faq || []
   
   // Déterminer la couleur principale pour les accents visuels
   const mainColor = couleur?.includes('blue') ? 'blue' : 
@@ -97,9 +136,9 @@ export default async function ServicePage({ params }) {
       <main className="pt-32">
         {/* Section Hero avec les informations de base du service */}
         <ServiceHero 
-          title={titre_page || titre}
-          description={description_courte}
-          image={image_principale}
+          title={titre}
+          description={description}
+          image={image}
           icon={icone}
           color={mainColor}
         />
