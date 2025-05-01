@@ -5,23 +5,17 @@ import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import DynamicIcon from '@/utils/DynamicIcon'
 import CTAButton from '@/components/CTAButton'
+import { getStrapiMediaUrl } from '@/utils/helpers'
 
 export default function ServiceHero({ title, description, image, icon, color = 'blue' }) {
-  // État pour l'animation
+  // Animation
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
   // Gérer l'image par défaut si nécessaire
-  const imageUrl = image?.url || '/images/services/default-service.jpg'
+  const imageUrl = image && image.attributes ? 
+    getStrapiMediaUrl(image.attributes.url) : 
+    '/images/services/default-service.jpg'
   
-  // Gérer l'icône par défaut
-  const defaultIcons = {
-    'blue': 'Fa/FaGlobe',
-    'purple': 'Md/MdPhoneIphone',
-    'red': 'Fa/FaSearch'
-  }
-  
-  const iconName = icon || defaultIcons[color] || 'Fa/FaGlobe'
-
   return (
     <section className="py-20 relative overflow-hidden">
       {/* Éléments d'arrière-plan animés */}
@@ -40,14 +34,7 @@ export default function ServiceHero({ title, description, image, icon, color = '
           <div className="md:w-7/12">
             <span className="inline-block text-gray-600 font-semibold tracking-wider uppercase text-sm mb-4">NOS SERVICES</span>
             <h1 className="text-4xl md:text-6xl font-extrabold mb-6">
-              {/* Diviser le titre pour appliquer la coloration */}
-              {title.split(' ').map((word, index) => (
-                index === 1 ? (
-                  <span key={index} className={`text-${color}`}> {word} </span>
-                ) : (
-                  <span key={index}> {word} </span>
-                )
-              ))}
+              {title}
             </h1>
             
             <div className={`h-1 w-24 bg-${color} mb-8`}></div>
@@ -76,21 +63,25 @@ export default function ServiceHero({ title, description, image, icon, color = '
           
           <div className="md:w-5/12 relative">
             <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-xl">
-              <Image
-                src={imageUrl}
-                alt={title}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
+              {image ? (
+                <Image
+                  src={imageUrl}
+                  alt={title}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
+              ) : (
+                <div className={`absolute inset-0 bg-gradient-to-br from-${color}/80 to-purple/80`}></div>
+              )}
               {/* Overlay de couleur */}
-              <div className={`absolute inset-0 bg-gradient-to-br from-${color}/80 to-purple/80 mix-blend-multiply`}></div>
+              <div className={`absolute inset-0 bg-gradient-to-br from-${color}/80 to-purple/80 mix-blend-multiply opacity-60`}></div>
             </div>
             
             {/* Icône flottante */}
             <div className={`absolute -bottom-10 -left-10 w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center text-${color}`}>
               <DynamicIcon 
-                icon={iconName} 
+                icon={icon} 
                 className="w-10 h-10"
                 colorClass={`text-${color}`}
               />
