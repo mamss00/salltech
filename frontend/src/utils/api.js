@@ -36,16 +36,36 @@ async function fetchAPI(path, options = {}) {
 }
 
 /**
+ * Convertit un titre en slug
+ * @param {string} titre - Titre à convertir
+ * @returns {string} - Slug généré
+ */
+export function titreToSlug(titre) {
+  if (!titre) return '';
+  
+  return titre
+    .toLowerCase()
+    .replace(/[àáâãäå]/g, 'a')
+    .replace(/[èéêë]/g, 'e')
+    .replace(/[ìíîï]/g, 'i')
+    .replace(/[òóôõö]/g, 'o')
+    .replace(/[ùúûü]/g, 'u')
+    .replace(/[ç]/g, 'c')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
  * Récupère la liste des services depuis Strapi
  * @returns {Promise<Array>} - Liste des services
  */
 export async function getServices() {
   try {
-    const data = await fetchAPI('/services?populate=*');
+    const data = await fetchAPI('/services');
     return data.data || [];
   } catch (error) {
     console.error("Error in getServices:", error);
-    throw error;
+    return [];
   }
 }
 
@@ -59,7 +79,7 @@ export async function getProjects() {
     return data.data || [];
   } catch (error) {
     console.error("Error in getProjects:", error);
-    throw error;
+    return [];
   }
 }
 
@@ -110,38 +130,33 @@ export async function submitContactForm(formData) {
 }
 
 /**
- * Récupère tous les services pour pouvoir filtrer côté client
- * @returns {Promise<Array>} - Liste des services
- */
-export async function getAllServices() {
-  try {
-    const data = await fetchAPI('/services?populate=deep');
-    return data.data || [];
-  } catch (error) {
-    console.error("Error in getAllServices:", error);
-    return [];
-  }
-}
-
-/**
- * Récupère un service par son slug
+ * Récupère un service par son slug généré
  * @param {string} slug - Slug du service
  * @returns {Promise<Object>} - Données du service
  */
 export async function getServiceBySlug(slug) {
   try {
-    // Récupérer tous les services et filtrer côté client
-    const allServices = await getAllServices();
-    const service = allServices.find(s => s.attributes.slug === slug);
+    // Récupérer tous les services
+    const services = await getServices();
+    console.log('Services récupérés:', services.length);
+    
+    // Trouver le service dont le titre convertit en slug correspond au slug demandé
+    const service = services.find(s => {
+      const titleSlug = titreToSlug(s.Titre);
+      console.log(`Comparaison: ${titleSlug} vs ${slug}`);
+      return titleSlug === slug;
+    });
     
     if (service) {
-      return service.attributes;
+      console.log('Service trouvé:', service.Titre);
+      return service;
     }
-
+    
+    console.log('Service non trouvé pour le slug:', slug);
     return null;
   } catch (error) {
     console.error(`Error in getServiceBySlug for slug "${slug}":`, error);
-    return null; // Retourner null au lieu de lancer une erreur
+    return null;
   }
 }
 
@@ -151,8 +166,10 @@ export async function getServiceBySlug(slug) {
  */
 export async function getAllServiceSlugs() {
   try {
-    const allServices = await getAllServices();
-    return allServices.map(service => service.attributes.slug).filter(Boolean);
+    const services = await getServices();
+    return services.map(service => ({
+      slug: titreToSlug(service.Titre)
+    }));
   } catch (error) {
     console.error("Error in getAllServiceSlugs:", error);
     return [];

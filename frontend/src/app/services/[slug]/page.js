@@ -11,13 +11,13 @@ import ServiceTechnologies from '@/components/services/ServiceTechnologies'
 import ServicePortfolio from '@/components/services/ServicePortfolio'
 import ServiceFAQ from '@/components/services/ServiceFAQ'
 import ServiceCTA from '@/components/services/ServiceCTA'
-import { getServiceBySlug, getAllServiceSlugs, getAllServices } from '@/utils/api'
+import { getServiceBySlug, getAllServiceSlugs, titreToSlug } from '@/utils/api'
 
 // Générer les routes statiques pour tous les services
 export async function generateStaticParams() {
   try {
     const slugs = await getAllServiceSlugs()
-    return slugs.map(slug => ({ slug }))
+    return slugs
   } catch (error) {
     console.error('Erreur lors de la génération des chemins statiques :', error)
     return []
@@ -37,15 +37,20 @@ export async function generateMetadata({ params }) {
       }
     }
 
-    const { seo } = serviceData
+    let description = '';
+    if (Array.isArray(serviceData.Description) && serviceData.Description.length > 0) {
+      const firstParagraph = serviceData.Description[0];
+      if (firstParagraph.children && firstParagraph.children.length > 0) {
+        description = firstParagraph.children[0].text || '';
+      }
+    }
     
     return {
-      title: seo?.metaTitle || `${serviceData.Titre || serviceData.titre || 'Service'} | SALLTECH`,
-      description: seo?.metaDescription || serviceData.description_courte || serviceData.Description,
+      title: `${serviceData.Titre} | SALLTECH`,
+      description: description,
       openGraph: {
-        title: seo?.metaTitle || `${serviceData.Titre || serviceData.titre || 'Service'} | SALLTECH`,
-        description: seo?.metaDescription || serviceData.description_courte || serviceData.Description,
-        images: seo?.metaImage?.url ? [{ url: seo.metaImage.url }] : []
+        title: `${serviceData.Titre} | SALLTECH`,
+        description: description,
       }
     }
   } catch (error) {
@@ -59,89 +64,62 @@ export async function generateMetadata({ params }) {
 
 // Page principale du service
 export default async function ServicePage({ params }) {
-  // Récupérer les données du service depuis Strapi en utilisant le slug
+  // Récupérer les données du service depuis le slug
   const { slug } = params
-  console.log('Slug demandé:', slug) // Ajout d'un log
+  console.log('Slug demandé:', slug);
   
-  // Récupérer tous les services et trouver celui correspondant au slug
-  let serviceData;
-  let allServices;
+  // Récupérer le service correspondant au slug
+  const serviceData = await getServiceBySlug(slug);
   
-  try {
-    // Récupérer tous les services
-    allServices = await getAllServices();
-    console.log('Nombre de services trouvés:', allServices.length);
-    
-    // Lister tous les slugs disponibles pour le débogage
-    const availableSlugs = allServices.map(s => s.attributes.slug);
-    console.log('Slugs disponibles:', availableSlugs);
-    
-    // Chercher le service correspondant au slug
-    const service = allServices.find(s => s.attributes.slug === slug);
-    
-    if (service) {
-      serviceData = service.attributes;
-      console.log('Service trouvé:', serviceData.Titre || serviceData.titre);
-    } else {
-      console.log('Aucun service trouvé avec le slug:', slug);
-      
-      // Affichage d'une page 404 personnalisée
-      return (
-        <>
-          <Header />
-          <main className="pt-32 min-h-screen flex items-center justify-center">
-            <div className="text-center">
-              <h1 className="text-4xl font-bold mb-4">Service non trouvé</h1>
-              <p className="text-xl mb-6">Le service avec le slug '{slug}' n'existe pas ou n'est pas accessible.</p>
-              <p className="mb-6">Veuillez vérifier que ce service existe dans votre CMS Strapi.</p>
-              <a href="/services" className="text-blue hover:underline">Voir tous nos services</a>
-            </div>
-          </main>
-          <Footer />
-        </>
-      )
-    }
-  } catch (error) {
-    console.error('Erreur lors de la récupération des services:', error);
-    
-    // Affichage d'une page d'erreur
+  // Debug
+  console.log('Service trouvé:', serviceData ? 'Oui' : 'Non');
+  
+  // Si le service n'existe pas, afficher une page 404
+  if (!serviceData) {
     return (
       <>
         <Header />
         <main className="pt-32 min-h-screen flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-4xl font-bold mb-4">Erreur lors du chargement</h1>
-            <p className="text-xl mb-6">Une erreur s'est produite lors du chargement du service '{slug}'</p>
-            <pre className="bg-gray-100 p-4 rounded-md text-left overflow-auto mb-6 max-w-2xl mx-auto">
-              {error.toString()}
-            </pre>
+            <h1 className="text-4xl font-bold mb-4">Service non trouvé</h1>
+            <p className="text-xl mb-6">Le service avec le slug '{slug}' n'existe pas ou n'est pas accessible.</p>
+            <p className="mb-6">Veuillez vérifier que ce service existe dans votre CMS Strapi.</p>
             <a href="/services" className="text-blue hover:underline">Voir tous nos services</a>
           </div>
         </main>
         <Footer />
       </>
-    )
+    );
   }
   
-  // Si nous sommes ici, c'est que nous avons trouvé le service
-  // Extraire les données du service (adaptation pour gérer différentes structures de données)
-  const titre = serviceData.titre_page || serviceData.Titre || serviceData.titre || 'Service'
-  const description = serviceData.description_courte || serviceData.Description || ''
-  const introduction = serviceData.introduction || null
-  const image = serviceData.image_principale || serviceData.Image || null
-  const icone = serviceData.icone || null
-  const couleur = serviceData.couleur || serviceData.Couleur || ''
-  const caracteristiques = serviceData.caracteristiques || []
-  const types_services = serviceData.types_services || []
-  const methodologie = serviceData.methodologie || []
-  const technologies = serviceData.technologies || []
-  const projets_lies = serviceData.projets_lies?.data || []
-  const faq = serviceData.faq || []
+  // Extraire les données du service
+  const titre = serviceData.titre_page || serviceData.Titre || 'Service';
+  
+  // Extraire la description des données
+  let description = '';
+  if (Array.isArray(serviceData.Description) && serviceData.Description.length > 0) {
+    const firstParagraph = serviceData.Description[0];
+    if (firstParagraph.children && firstParagraph.children.length > 0) {
+      description = firstParagraph.children[0].text || '';
+    }
+  }
+  
+  // Extraire les autres données (si disponibles)
+  const introduction = serviceData.introduction || null;
+  const image = serviceData.Image && serviceData.Image.data ? serviceData.Image.data[0] : null;
+  const icone = serviceData.icone || serviceData.Emoji || null;
+  const couleur = serviceData.couleur || serviceData.Couleur || '';
+  const caracteristiques = serviceData.caracteristiques || [];
+  const types_services = serviceData.types_services || [];
+  const methodologie = serviceData.methodologie || [];
+  const technologies = serviceData.technologies || [];
+  const projets_lies = serviceData.projets_lies?.data || [];
+  const faq = serviceData.faq || [];
   
   // Déterminer la couleur principale pour les accents visuels
   const mainColor = couleur?.includes('blue') ? 'blue' : 
-                   couleur?.includes('purple') ? 'purple' : 
-                   couleur?.includes('red') ? 'red' : 'blue'
+                    couleur?.includes('purple') ? 'purple' : 
+                    couleur?.includes('red') ? 'red' : 'blue';
 
   return (
     <>
@@ -157,7 +135,7 @@ export default async function ServicePage({ params }) {
           color={mainColor}
         />
         
-        {/* Section Introduction détaillée */}
+        {/* Section Introduction détaillée si disponible */}
         {introduction && (
           <ServiceIntroduction 
             content={introduction}
@@ -166,7 +144,7 @@ export default async function ServicePage({ params }) {
           />
         )}
         
-        {/* Section des caractéristiques ou types de services */}
+        {/* Autres sections seulement si les données existent */}
         {types_services && types_services.length > 0 && (
           <ServiceFeatures 
             features={types_services}
@@ -174,7 +152,6 @@ export default async function ServicePage({ params }) {
           />
         )}
         
-        {/* Méthodologie - processus de réalisation */}
         {methodologie && methodologie.length > 0 && (
           <ServiceProcess 
             steps={methodologie}
@@ -182,7 +159,6 @@ export default async function ServicePage({ params }) {
           />
         )}
         
-        {/* Technologies utilisées */}
         {technologies && technologies.length > 0 && (
           <ServiceTechnologies 
             technologies={technologies}
@@ -190,7 +166,6 @@ export default async function ServicePage({ params }) {
           />
         )}
         
-        {/* Projets liés à ce service */}
         {projets_lies && projets_lies.length > 0 && (
           <ServicePortfolio 
             projects={projets_lies}
@@ -198,7 +173,6 @@ export default async function ServicePage({ params }) {
           />
         )}
         
-        {/* Questions fréquentes */}
         {faq && faq.length > 0 && (
           <ServiceFAQ 
             questions={faq}
@@ -206,7 +180,7 @@ export default async function ServicePage({ params }) {
           />
         )}
         
-        {/* Appel à l'action */}
+        {/* Section CTA */}
         <ServiceCTA 
           serviceName={titre}
           color={mainColor}
@@ -215,5 +189,5 @@ export default async function ServicePage({ params }) {
       
       <Footer />
     </>
-  )
+  );
 }
