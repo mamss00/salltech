@@ -23,15 +23,13 @@ export async function generateMetadata({ params }) {
   if (!service) return { title: 'Service introuvable | SALLTECH' }
 
   const titre = service.Titre || 'Service'
-  const description =
-    service.Description?.[0]?.children?.[0]?.text ||
-    `Découvrez notre service ${titre}`
+  const description = service.seo?.metaDescription || service.Description?.[0]?.children?.[0]?.text || `Découvrez notre service ${titre}`
 
   return {
-    title: `${titre} | SALLTECH`,
+    title: service.seo?.metaTitle || `${titre} | SALLTECH`,
     description,
     openGraph: {
-      title: `${titre} | SALLTECH`,
+      title: service.seo?.metaTitle || `${titre} | SALLTECH`,
       description
     }
   }
@@ -47,14 +45,14 @@ export default async function Page({ params }) {
   const titre = service.titre_page || service.Titre
   const description = service.Description?.[0]?.children?.[0]?.text || ''
   const introduction = service.introduction || []
-  const image = service.Image?.data?.[0] || null
+  const image = Array.isArray(service.Image) ? service.Image[0] : null
   const icone = service.Emoji
   const couleur = service.Couleur || ''
   const caracteristiques = service.caracteristiques || []
   const types_services = service.types_services || []
   const methodologie = service.methodologie || []
   const technologies = service.technologies || []
-  const projets_lies = service.projets_lies?.data || []
+  const projets_lies = Array.isArray(service.projets_lies) ? service.projets_lies : []
   const faq = service.faq || []
 
   const mainColor = couleur.includes('blue')

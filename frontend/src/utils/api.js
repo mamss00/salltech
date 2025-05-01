@@ -13,11 +13,11 @@ export function titreToSlug(titre) {
 
 export async function getServices() {
   try {
-    const url = `${API_URL}/api/services?populate=*`;
+    const url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies]=true`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
-    return (data.data || []).map(s => ({ id: s.id, ...s.attributes }));
+    return (data.data || []).map(entry => ({ id: entry.id, ...entry.attributes }));
   } catch (e) {
     console.error("getServices error:", e);
     throw e;
@@ -51,10 +51,9 @@ export async function getServiceBySlug(slug) {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
-    if (data.data && data.data.length > 0) {
-      return { id: data.data[0].id, ...data.data[0].attributes };
-    }
-    return null;
+    if (!data.data?.[0]) return null;
+    const entry = data.data[0];
+    return { id: entry.id, ...entry.attributes };
   } catch (e) {
     console.error(`getServiceBySlug error for slug "${slug}":`, e);
     return null;
@@ -67,7 +66,7 @@ export async function getProjects() {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
-    return data.data || [];
+    return (data.data || []).map(entry => ({ id: entry.id, ...entry.attributes }));
   } catch (e) {
     console.error("getProjects error:", e);
     return [];
