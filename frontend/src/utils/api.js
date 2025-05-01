@@ -1,4 +1,3 @@
-// utils/api.js
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.sall.technology';
 
 export function titreToSlug(titre) {
@@ -11,18 +10,12 @@ export function titreToSlug(titre) {
     .replace(/^-|-$/g, '');
 }
 
-// Fonction utilitaire pour dénormaliser certaines relations Strapi
+// 🔧 Normalisation des données (surtout pour SEO)
 function normalizeAttributes(entry) {
   const attrs = entry.attributes || {};
-
-  // Dénormaliser les champs qui sont parfois encapsulés dans .data.attributes
   if (attrs.seo?.data?.attributes) {
     attrs.seo = attrs.seo.data.attributes;
   }
-  if (attrs.Image?.data?.attributes) {
-    attrs.Image = attrs.Image.data.attributes;
-  }
-
   return { id: entry.id, ...attrs };
 }
 
@@ -62,7 +55,6 @@ export async function getServiceBySlug(slug) {
                 `&populate[faq]=true` +
                 `&populate[seo]=true` +
                 `&populate[projets_lies]=true`;
-
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
