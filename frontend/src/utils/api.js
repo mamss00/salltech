@@ -46,25 +46,25 @@ export async function getAllServiceSlugs() {
 
 export async function getServiceBySlug(slug) {
   try {
-    const url = `${API_URL}/api/services?filters[slug][$eq]=${slug}&populate=*`;
+    const url = `${API_URL}/api/services?filters[slug][$eq]=${slug}` +
+                `&populate[Image]=true` +
+                `&populate[caracteristiques]=true` +
+                `&populate[types_services]=true` +
+                `&populate[methodologie]=true` +
+                `&populate[technologies]=true` +
+                `&populate[faq]=true` +
+                `&populate[seo]=true` +
+                `&populate[projets_lies]=true`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
-
     const data = await res.json();
-    console.log("🛰️ Réponse brute de l’API :", data);
-
     if (!data.data?.[0]) return null;
-
-    const service = normalizeAttributes(data.data[0]);
-    console.log("✅ Service normalisé :", service);
-
-    return service;
+    return normalizeAttributes(data.data[0]);
   } catch (e) {
     console.error(`getServiceBySlug error for slug "${slug}":`, e);
     return null;
   }
 }
-
 
 export async function getProjects() {
   try {
