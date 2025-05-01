@@ -13,25 +13,32 @@ export function titreToSlug(titre) {
 
 export async function getServices() {
   try {
-    const url = `${API_URL}/api/services?populate=deep`;
+    const url = `${API_URL}/api/services?populate=*`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
     return (data.data || []).map(s => ({ id: s.id, ...s.attributes }));
   } catch (e) {
     console.error("getServices error:", e);
-    return [];
+    throw e;
   }
 }
 
 export async function getAllServiceSlugs() {
-  const services = await getServices();
-  return services.map(service => ({ slug: service.slug || titreToSlug(service.Titre) }));
+  try {
+    const services = await getServices();
+    return services
+      .filter(service => service.slug)
+      .map(service => ({ slug: service.slug || titreToSlug(service.Titre) }));
+  } catch (error) {
+    console.error("getAllServiceSlugs error:", error);
+    return [];
+  }
 }
 
 export async function getServiceBySlug(slug) {
   try {
-    const url = `${API_URL}/api/services?filters[slug][$eq]=${slug}&populate=deep`;
+    const url = `${API_URL}/api/services?filters[slug][$eq]=${slug}&populate=*`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
@@ -60,7 +67,7 @@ export async function getProjects() {
 
 export async function getHomePageContent() {
   try {
-    const url = `${API_URL}/api/home-page?populate=deep`;
+    const url = `${API_URL}/api/home-page?populate=*`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
