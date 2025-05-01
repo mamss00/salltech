@@ -116,24 +116,8 @@ export async function submitContactForm(formData) {
  */
 export async function getServiceBySlug(slug) {
   try {
-    const populateQuery = [
-      'image_principale',
-      'caracteristiques',
-      'types_services',
-      'types_services.fonctionnalites',
-      'types_services.image',
-      'methodologie',
-      'methodologie.tags',
-      'technologies',
-      'technologies.logo',
-      'projets_lies',
-      'projets_lies.image_principale',
-      'faq',
-      'seo',
-      'seo.metaImage'
-    ].join(',');
-
-    const data = await fetchAPI(`/services?filters[slug][$eq]=${slug}&populate=${populateQuery}`);
+    // Utiliser populate=deep pour récupérer toutes les relations
+    const data = await fetchAPI(`/services?filters[slug][$eq]=${slug}&populate=deep`);
 
     if (data.data && data.data.length > 0) {
       return data.data[0].attributes;
@@ -142,7 +126,7 @@ export async function getServiceBySlug(slug) {
     return null;
   } catch (error) {
     console.error(`Error in getServiceBySlug for slug "${slug}":`, error);
-    throw error;
+    return null; // Retourner null au lieu de lancer une erreur
   }
 }
 
