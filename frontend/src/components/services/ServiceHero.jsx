@@ -11,10 +11,16 @@ export default function ServiceHero({ title, description, image, icon, color = '
   // Animation
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
-  // Gérer l'image par défaut si nécessaire
-  const imageUrl = image && image.attributes ? 
-    getStrapiMediaUrl(image.attributes.url) : 
+  // Gérer l'image
+  // Vérifiez d'abord l'URL correctement
+  const imageUrl = image ? 
+    getStrapiMediaUrl(image.url || (image.formats?.medium?.url || image.formats?.small?.url || image.formats?.thumbnail?.url)) : 
     '/images/services/default-service.jpg'
+  
+  // Convertir le code Unicode en emoji si nécessaire
+  const displayIcon = icon?.startsWith('U+') 
+    ? String.fromCodePoint(parseInt(icon.replace('U+', ''), 16)) 
+    : icon || '💡'
   
   return (
     <section className="py-20 relative overflow-hidden">
@@ -63,7 +69,7 @@ export default function ServiceHero({ title, description, image, icon, color = '
           
           <div className="md:w-5/12 relative">
             <div className="relative h-[400px] w-full rounded-2xl overflow-hidden shadow-xl">
-              {image ? (
+              {imageUrl ? (
                 <Image
                   src={imageUrl}
                   alt={title}
@@ -80,11 +86,16 @@ export default function ServiceHero({ title, description, image, icon, color = '
             
             {/* Icône flottante */}
             <div className={`absolute -bottom-10 -left-10 w-20 h-20 bg-white rounded-2xl shadow-lg flex items-center justify-center text-${color}`}>
-              <DynamicIcon 
-                icon={icon} 
-                className="w-10 h-10"
-                colorClass={`text-${color}`}
-              />
+              {typeof displayIcon === 'string' ? (
+                <span className="text-3xl">{displayIcon}</span>
+              ) : (
+                <DynamicIcon 
+                  icon={displayIcon} 
+                  className="w-10 h-10"
+                  colorClass={`text-${color}`}
+                  fallback="💡"
+                />
+              )}
             </div>
           </div>
         </motion.div>

@@ -51,6 +51,8 @@ export default function ServiceFAQ({ questions, color = 'blue' }) {
                   <button
                     className="w-full flex justify-between items-center p-6 text-left focus:outline-none"
                     onClick={() => toggleQuestion(index)}
+                    aria-expanded={openIndex === index}
+                    aria-controls={`faq-content-${index}`}
                   >
                     <h3 className="font-bold text-lg pr-10">{item.question}</h3>
                     <span className={`flex-shrink-0 ml-4 text-${color}`}>
@@ -67,6 +69,7 @@ export default function ServiceFAQ({ questions, color = 'blue' }) {
                   </button>
                   
                   <div 
+                    id={`faq-content-${index}`}
                     className={`px-6 pb-6 transition-all duration-300 overflow-hidden ${
                       openIndex === index ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                     }`}

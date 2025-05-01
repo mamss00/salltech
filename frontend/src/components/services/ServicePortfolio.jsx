@@ -60,6 +60,32 @@ export default function ServicePortfolio({ projects, color = 'blue' }) {
             // Accéder aux attributs du projet
             const projectData = project.attributes || project;
             
+            // Extraire le premier paragraphe de description
+            let descriptionText = '';
+            if (projectData.Description && Array.isArray(projectData.Description)) {
+              const firstParagraph = projectData.Description[0];
+              if (firstParagraph?.children && firstParagraph.children.length > 0) {
+                descriptionText = firstParagraph.children[0].text || '';
+              }
+            }
+            
+            // Extraire l'URL de l'image principale
+            let imageUrl = null;
+            if (projectData.Imageprincipale?.data) {
+              const imgData = projectData.Imageprincipale.data.attributes;
+              imageUrl = getStrapiMediaUrl(imgData.url);
+            } else if (projectData.Imageprincipale?.url) {
+              imageUrl = getStrapiMediaUrl(projectData.Imageprincipale.url);
+            }
+            
+            // Extraire les technologies
+            let technologies = [];
+            if (typeof projectData.Technologies === 'string') {
+              technologies = [projectData.Technologies];
+            } else if (Array.isArray(projectData.Technologies)) {
+              technologies = projectData.Technologies;
+            }
+            
             return (
               <motion.div
                 key={index}
@@ -69,9 +95,9 @@ export default function ServicePortfolio({ projects, color = 'blue' }) {
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full">
                   {/* Image avec overlay */}
                   <div className="relative h-56 overflow-hidden">
-                    {projectData.Imageprincipale && projectData.Imageprincipale.data ? (
+                    {imageUrl ? (
                       <Image
-                        src={getStrapiMediaUrl(projectData.Imageprincipale.data.attributes.url)}
+                        src={imageUrl}
                         alt={projectData.Titre || "Projet"}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
@@ -112,23 +138,17 @@ export default function ServicePortfolio({ projects, color = 'blue' }) {
                     <div className="h-0.5 w-12 bg-gradient-to-r from-blue via-purple to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
                     
                     <p className="text-gray-600 mb-6 line-clamp-3">
-                      {projectData.Description && Array.isArray(projectData.Description) && projectData.Description[0]?.children[0]?.text || "Description du projet"}
+                      {descriptionText || "Description du projet"}
                     </p>
                     
                     {/* Technologies utilisées */}
-                    {projectData.Technologies && (
+                    {technologies.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-auto">
-                        {Array.isArray(projectData.Technologies) ? (
-                          projectData.Technologies.slice(0, 4).map((tech, idx) => (
-                            <span key={idx} className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-blue/10 hover:text-blue">
-                              {tech}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
-                            {projectData.Technologies}
+                        {technologies.slice(0, 4).map((tech, idx) => (
+                          <span key={idx} className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-blue/10 hover:text-blue">
+                            {tech}
                           </span>
-                        )}
+                        ))}
                       </div>
                     )}
                   </div>

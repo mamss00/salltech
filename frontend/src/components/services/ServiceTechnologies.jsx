@@ -32,34 +32,44 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           </div>
           
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-            {technologies.map((tech, index) => (
-              <div 
-                key={index} 
-                className="bg-white rounded-xl p-6 shadow-md text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
-              >
-                {tech.logo && tech.logo.data ? (
-                  <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
-                    <Image
-                      src={getStrapiMediaUrl(tech.logo.data.attributes.url)}
-                      alt={tech.nom}
-                      width={64}
-                      height={64}
-                      className="object-contain"
-                    />
-                  </div>
-                ) : (
-                  <div className={`w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-${color}/10 text-${color}`}>
-                    <span className="text-xl font-semibold">{tech.nom?.charAt(0)}</span>
-                  </div>
-                )}
-                
-                <h3 className="text-lg font-semibold mb-2">{tech.nom}</h3>
-                
-                {tech.description && (
-                  <p className="text-sm text-gray-500">{tech.description}</p>
-                )}
-              </div>
-            ))}
+            {technologies.map((tech, index) => {
+              // Récupérer l'URL du logo s'il existe
+              let logoUrl = null;
+              if (tech.logo?.data) {
+                logoUrl = getStrapiMediaUrl(tech.logo.data.attributes.url);
+              } else if (tech.logo?.url) {
+                logoUrl = getStrapiMediaUrl(tech.logo.url);
+              }
+
+              return (
+                <div 
+                  key={index} 
+                  className="bg-white rounded-xl p-6 shadow-md text-center hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                >
+                  {logoUrl ? (
+                    <div className="w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                      <Image
+                        src={logoUrl}
+                        alt={tech.nom || `Technologie ${index + 1}`}
+                        width={64}
+                        height={64}
+                        className="object-contain"
+                      />
+                    </div>
+                  ) : (
+                    <div className={`w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-${color}/10 text-${color}`}>
+                      <span className="text-xl font-semibold">{tech.nom?.charAt(0) || '?'}</span>
+                    </div>
+                  )}
+                  
+                  <h3 className="text-lg font-semibold mb-2">{tech.nom || `Technologie ${index + 1}`}</h3>
+                  
+                  {tech.description && (
+                    <p className="text-sm text-gray-500">{tech.description}</p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </motion.div>
       </div>

@@ -1,3 +1,4 @@
+// frontend/src/utils/api.js
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.sall.technology';
 
 export function titreToSlug(titre) {
@@ -10,18 +11,52 @@ export function titreToSlug(titre) {
     .replace(/^-|-$/g, '');
 }
 
-// 🔧 Normalisation des données (surtout pour SEO)
+/**
+ * Normalise les données reçues de Strapi pour être facilement utilisables
+ * @param {Object} entry - Entrée de données Strapi
+ * @returns {Object} - Données normalisées
+ */
 function normalizeAttributes(entry) {
-  const attrs = entry.attributes || {};
-  if (attrs.seo?.data?.attributes) {
+  // Si entry n'a pas d'attributs (peut-être déjà normalisé), retourner tel quel
+  if (!entry.attributes) return entry;
+  
+  const attrs = { ...entry.attributes };
+  
+  // Traitement spécial pour SEO si disponible
+  if (attrs.seo?.data) {
     attrs.seo = attrs.seo.data.attributes;
   }
+  
+  // Traitement pour les projets liés
+  if (attrs.projets_lies?.data) {
+    attrs.projets_lies = attrs.projets_lies.data.map(p => ({
+      id: p.id,
+      attributes: p.attributes
+    }));
+  }
+  
+  // Traitement des images avec formats
+  if (attrs.Image?.data) {
+    if (Array.isArray(attrs.Image.data)) {
+      attrs.Image = attrs.Image.data.map(img => ({
+        id: img.id,
+        ...img.attributes
+      }));
+    } else {
+      attrs.Image = [{
+        id: attrs.Image.data.id,
+        ...attrs.Image.data.attributes
+      }];
+    }
+  }
+  
+  // Ajout de l'ID à l'objet normalisé
   return { id: entry.id, ...attrs };
 }
 
 export async function getServices() {
   try {
-    const url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies]=true`;
+    const url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
@@ -53,11 +88,13 @@ export async function getServiceBySlug(slug) {
                 `&populate[methodologie]=true` +
                 `&populate[technologies]=true` +
                 `&populate[faq]=true` +
-                `&populate[seo]=true` +
-                `&populate[projets_lies]=true`;
+                `&populate[seo][populate]=*` +
+                `&populate[projets_lies][populate]=*`;
+    
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
+    
     if (!data.data?.[0]) return null;
     return normalizeAttributes(data.data[0]);
   } catch (e) {
@@ -72,7 +109,7 @@ export async function getProjects() {
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
-    return (data.data || []).map(entry => ({ id: entry.id, ...entry.attributes }));
+    return (data.data || []).map(normalizeAttributes);
   } catch (e) {
     console.error("getProjects error:", e);
     return [];
@@ -119,4 +156,22 @@ export async function submitContactForm(formData) {
     console.error("submitContactForm error:", e);
     throw e;
   }
+}
+
+/**
+ * Formate une URL d'image Strapi pour qu'elle soit complète
+ * @param {string} url - URL relative de l'image
+ * @returns {string} - URL complète
+ */
+export function getStrapiMediaUrl(url) {
+  if (!url) return null;
+  
+  // Si l'URL est absolue, la retourner telle quelle
+  if (url.startsWith('http') || url.startsWith('https')) {
+    return url;
+  }
+  
+  // Sinon, préfixer avec l'URL de l'API
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.sall.technology';
+  return `${apiUrl}${url}`;
 }

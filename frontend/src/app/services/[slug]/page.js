@@ -20,9 +20,6 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   const service = await getServiceBySlug(params.slug)
 
-  console.log('[generateMetadata] Slug reçu :', params.slug)
-  console.log('[generateMetadata] Service reçu :', service)
-
   if (!service) {
     return {
       title: 'Service introuvable | SALLTECH',
@@ -31,7 +28,7 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: service.seo?.metaTitle || `${service.titre || service.titre_page || 'Service'} | SALLTECH`,
+    title: service.seo?.metaTitle || `${service.titre_page || service.Titre || 'Service'} | SALLTECH`,
     description: service.seo?.metaDescription || '',
     openGraph: {
       title: service.seo?.metaTitle || '',
@@ -44,17 +41,11 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const service = await getServiceBySlug(params.slug)
 
-  console.log('[Page] Slug reçu :', params.slug)
-  console.log('[Page] Données du service :', service)
-
   if (!service) return notFound()
 
-  // Logging pour comprendre les clés disponibles
-  console.log('[Page] Clés disponibles :', Object.keys(service))
-
+  // Extraire les données du service
   const {
     titre_page,
-    titre,
     Titre,
     Description,
     introduction,
@@ -69,56 +60,89 @@ export default async function Page({ params }) {
     faq
   } = service
 
-  const titreFinal = titre_page || titre || Titre || 'Service'
-  const description =
-    Description?.[0]?.children?.[0]?.text ||
-    Description?.[0]?.text ||
-    ''
-
-  const image = Image?.[0] || null
-  const icon = Emoji
-  const color = Couleur?.includes('blue')
-    ? 'blue'
-    : Couleur?.includes('purple')
-    ? 'purple'
-    : Couleur?.includes('red')
-    ? 'red'
-    : 'gray'
-
-  console.log('[Page] titreFinal:', titreFinal)
-  console.log('[Page] description:', description)
-  console.log('[Page] color:', color)
+  // Préparer les données formatées pour les composants
+  const titreFinal = titre_page || Titre || 'Service'
+  
+  // Extraire le texte de description depuis la structure RichText
+  const description = Description?.[0]?.children?.[0]?.text || ''
+  
+  // Déterminer la couleur principale à partir de la classe CSS
+  const color = Couleur?.includes('blue') 
+    ? 'blue' 
+    : Couleur?.includes('purple') 
+      ? 'purple' 
+      : Couleur?.includes('red') 
+        ? 'red' 
+        : 'blue'
 
   return (
     <>
       <Header />
       <main className="pt-32">
-        <ServiceHero title={titreFinal} description={description} image={image} icon={icon} color={color} />
-        {introduction?.length > 0 && (
-          <ServiceIntroduction content={introduction} features={caracteristiques || []} color={color} />
+        {/* Héro du service */}
+        <ServiceHero 
+          title={titreFinal} 
+          description={description} 
+          image={Image && Image.length > 0 ? Image[0] : null} 
+          icon={Emoji} 
+          color={color} 
+        />
+        
+        {/* Introduction et caractéristiques */}
+        {introduction && introduction.length > 0 && (
+          <ServiceIntroduction 
+            content={introduction} 
+            features={caracteristiques || []} 
+            color={color} 
+          />
         )}
-        {types_services?.length > 0 && (
-          <ServiceFeatures features={types_services} color={color} />
+        
+        {/* Types de services */}
+        {types_services && types_services.length > 0 && (
+          <ServiceFeatures 
+            features={types_services} 
+            color={color} 
+          />
         )}
-        {methodologie?.length > 0 && (
-          <ServiceProcess steps={methodologie} color={color} />
+        
+        {/* Méthodologie */}
+        {methodologie && methodologie.length > 0 && (
+          <ServiceProcess 
+            steps={methodologie} 
+            color={color} 
+          />
         )}
-        {technologies?.length > 0 && (
-          <ServiceTechnologies technologies={technologies} color={color} />
+        
+        {/* Technologies */}
+        {technologies && technologies.length > 0 && (
+          <ServiceTechnologies 
+            technologies={technologies} 
+            color={color} 
+          />
         )}
-        {projets_lies?.length > 0 && (
-          <ServicePortfolio projects={projets_lies} color={color} />
+        
+        {/* Projets en relation */}
+        {projets_lies && projets_lies.length > 0 && (
+          <ServicePortfolio 
+            projects={projets_lies} 
+            color={color} 
+          />
         )}
-        {faq?.length > 0 && <ServiceFAQ questions={faq} color={color} />}
-        <ServiceCTA serviceName={titreFinal} color={color} />
+        
+        {/* FAQ */}
+        {faq && faq.length > 0 && (
+          <ServiceFAQ 
+            questions={faq} 
+            color={color} 
+          />
+        )}
+        
+        {/* Call-To-Action */}
+        <ServiceCTA 
+          serviceName={titreFinal} 
+          color={color} 
+        />
       </main>
-
-      {/* DEBUG TEMPORAIRE */}
-      <div className="bg-black text-green-400 text-xs p-4 overflow-x-auto max-w-full">
-        <h2 className="font-bold mb-2">Données du service (debug)</h2>
-        <pre>{JSON.stringify(service, null, 2)}</pre>
-      </div>
-
       <Footer />
     </>
   )

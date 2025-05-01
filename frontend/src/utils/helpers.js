@@ -47,24 +47,27 @@ export function renderRichText(content) {
       case 'code':
         return (
           <pre key={blockIndex} className="bg-gray-100 p-4 rounded-md overflow-x-auto my-4">
-            <code>{block.children.map((child, childIndex) => child.text)}</code>
+            <code>{block.children.map((child) => child.text).join('')}</code>
           </pre>
         );
       case 'image':
-        return (
-          <figure key={blockIndex} className="my-4">
-            <img 
-              src={block.image.url} 
-              alt={block.image.alternativeText || ''} 
-              className="rounded-md"
-            />
-            {block.image.caption && (
-              <figcaption className="text-center text-sm text-gray-500 mt-2">
-                {block.image.caption}
-              </figcaption>
-            )}
-          </figure>
-        );
+        if (block.image?.url) {
+          return (
+            <figure key={blockIndex} className="my-4">
+              <img 
+                src={getStrapiMediaUrl(block.image.url)} 
+                alt={block.image.alternativeText || ''} 
+                className="rounded-md"
+              />
+              {block.image.caption && (
+                <figcaption className="text-center text-sm text-gray-500 mt-2">
+                  {block.image.caption}
+                </figcaption>
+              )}
+            </figure>
+          );
+        }
+        return null;
       default:
         return null;
     }
@@ -78,30 +81,32 @@ export function renderRichText(content) {
  * @returns {JSX.Element} - Élément JSX
  */
 function renderTextNode(node, index) {
+  if (!node) return null;
+  
   if (node.type === 'text') {
     let content = node.text;
     
     // Appliquer les styles au texte
     if (node.bold) {
-      content = <strong key={index}>{content}</strong>;
+      content = <strong key={`bold-${index}`}>{content}</strong>;
     }
     if (node.italic) {
-      content = <em key={index}>{content}</em>;
+      content = <em key={`italic-${index}`}>{content}</em>;
     }
     if (node.underline) {
-      content = <u key={index}>{content}</u>;
+      content = <u key={`underline-${index}`}>{content}</u>;
     }
     if (node.strikethrough) {
-      content = <del key={index}>{content}</del>;
+      content = <del key={`del-${index}`}>{content}</del>;
     }
     if (node.code) {
-      content = <code key={index} className="bg-gray-100 px-1 rounded">{content}</code>;
+      content = <code key={`code-${index}`} className="bg-gray-100 px-1 rounded">{content}</code>;
     }
     
     return content;
   }
   
-  if (node.type === 'link') {
+  if (node.type === 'link' && node.children) {
     return (
       <a 
         key={index}
@@ -151,9 +156,9 @@ export function extractMainTitle(content) {
     block.type === 'heading' && (block.level === 1 || block.level === 2)
   );
   
-  if (headingBlock) {
+  if (headingBlock && headingBlock.children) {
     return headingBlock.children
-      .map(child => child.text)
+      .map(child => child.text || '')
       .join('');
   }
   
@@ -173,9 +178,9 @@ export function extractFirstParagraph(content) {
   // Chercher le premier paragraphe
   const paragraphBlock = content.find(block => block.type === 'paragraph');
   
-  if (paragraphBlock) {
+  if (paragraphBlock && paragraphBlock.children) {
     return paragraphBlock.children
-      .map(child => child.text)
+      .map(child => child.text || '')
       .join('');
   }
   
