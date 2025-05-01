@@ -19,6 +19,10 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }) {
   const service = await getServiceBySlug(params.slug)
+
+  console.log('[generateMetadata] Slug reçu :', params.slug)
+  console.log('[generateMetadata] Service reçu :', service)
+
   if (!service) {
     return {
       title: 'Service introuvable | SALLTECH',
@@ -27,7 +31,7 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: service.seo?.metaTitle || `${service.Titre} | SALLTECH`,
+    title: service.seo?.metaTitle || `${service.titre || service.titre_page || 'Service'} | SALLTECH`,
     description: service.seo?.metaDescription || '',
     openGraph: {
       title: service.seo?.metaTitle || '',
@@ -40,10 +44,17 @@ export async function generateMetadata({ params }) {
 export default async function Page({ params }) {
   const service = await getServiceBySlug(params.slug)
 
+  console.log('[Page] Slug reçu :', params.slug)
+  console.log('[Page] Données du service :', service)
+
   if (!service) return notFound()
+
+  // Logging pour comprendre les clés disponibles
+  console.log('[Page] Clés disponibles :', Object.keys(service))
 
   const {
     titre_page,
+    titre,
     Titre,
     Description,
     introduction,
@@ -58,8 +69,12 @@ export default async function Page({ params }) {
     faq
   } = service
 
-  const titre = titre_page || Titre
-  const description = Description?.[0]?.children?.[0]?.text || ''
+  const titreFinal = titre_page || titre || Titre || 'Service'
+  const description =
+    Description?.[0]?.children?.[0]?.text ||
+    Description?.[0]?.text ||
+    ''
+
   const image = Image?.[0] || null
   const icon = Emoji
   const color = Couleur?.includes('blue')
@@ -70,11 +85,15 @@ export default async function Page({ params }) {
     ? 'red'
     : 'gray'
 
+  console.log('[Page] titreFinal:', titreFinal)
+  console.log('[Page] description:', description)
+  console.log('[Page] color:', color)
+
   return (
     <>
       <Header />
       <main className="pt-32">
-        <ServiceHero title={titre} description={description} image={image} icon={icon} color={color} />
+        <ServiceHero title={titreFinal} description={description} image={image} icon={icon} color={color} />
         {introduction?.length > 0 && (
           <ServiceIntroduction content={introduction} features={caracteristiques || []} color={color} />
         )}
@@ -91,7 +110,7 @@ export default async function Page({ params }) {
           <ServicePortfolio projects={projets_lies} color={color} />
         )}
         {faq?.length > 0 && <ServiceFAQ questions={faq} color={color} />}
-        <ServiceCTA serviceName={titre} color={color} />
+        <ServiceCTA serviceName={titreFinal} color={color} />
       </main>
       <Footer />
     </>
