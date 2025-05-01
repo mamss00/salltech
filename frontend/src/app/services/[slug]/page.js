@@ -47,14 +47,14 @@ export default async function Page({ params }) {
   const titre = service.titre_page || service.Titre
   const description = service.Description?.[0]?.children?.[0]?.text || ''
   const introduction = service.introduction || []
-  const image = service.Image?.[0] || null
+  const image = service.Image?.data?.[0] || null
   const icone = service.Emoji
   const couleur = service.Couleur || ''
   const caracteristiques = service.caracteristiques || []
   const types_services = service.types_services || []
   const methodologie = service.methodologie || []
   const technologies = service.technologies || []
-  const projets_lies = service.projets_lies || []
+  const projets_lies = service.projets_lies?.data || []
   const faq = service.faq || []
 
   const mainColor = couleur.includes('blue')
