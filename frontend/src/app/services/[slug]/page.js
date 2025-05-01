@@ -11,12 +11,16 @@ import ServiceTechnologies from '@/components/services/ServiceTechnologies'
 import ServicePortfolio from '@/components/services/ServicePortfolio'
 import ServiceFAQ from '@/components/services/ServiceFAQ'
 import ServiceCTA from '@/components/services/ServiceCTA'
-import { getServiceBySlug, getAllServiceSlugs, titreToSlug } from '@/utils/api'
+import { getServiceBySlug, getAllServiceSlugs, debugServices } from '@/utils/api'
 
 // Générer les routes statiques pour tous les services
 export async function generateStaticParams() {
   try {
+    // Afficher les données pour le débogage au moment de la construction
+    await debugServices();
+    
     const slugs = await getAllServiceSlugs()
+    console.log("Generated slugs:", slugs);
     return slugs
   } catch (error) {
     console.error('Erreur lors de la génération des chemins statiques :', error)
@@ -28,6 +32,8 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }) {
   try {
     const { slug } = params
+    console.log(`Génération des métadonnées pour le slug: ${slug}`);
+    
     const serviceData = await getServiceBySlug(slug)
     
     if (!serviceData) {
@@ -37,6 +43,7 @@ export async function generateMetadata({ params }) {
       }
     }
 
+    // Extraction de la description
     let description = '';
     if (Array.isArray(serviceData.Description) && serviceData.Description.length > 0) {
       const firstParagraph = serviceData.Description[0];
@@ -45,11 +52,16 @@ export async function generateMetadata({ params }) {
       }
     }
     
+    // Si pas de description trouvée, utiliser une description par défaut
+    if (!description) {
+      description = `Services professionnels pour les entreprises mauritaniennes - ${serviceData.Titre || 'SALLTECH'}`;
+    }
+    
     return {
-      title: `${serviceData.Titre} | SALLTECH`,
+      title: `${serviceData.Titre || 'Service'} | SALLTECH`,
       description: description,
       openGraph: {
-        title: `${serviceData.Titre} | SALLTECH`,
+        title: `${serviceData.Titre || 'Service'} | SALLTECH`,
         description: description,
       }
     }
@@ -68,11 +80,17 @@ export default async function ServicePage({ params }) {
   const { slug } = params
   console.log('Slug demandé:', slug);
   
+  // Debugging
+  await debugServices();
+  
   // Récupérer le service correspondant au slug
   const serviceData = await getServiceBySlug(slug);
   
   // Debug
-  console.log('Service trouvé:', serviceData ? 'Oui' : 'Non');
+  console.log('Service data récupérée:', serviceData ? 'Oui' : 'Non');
+  if (serviceData) {
+    console.log('Attributs disponibles:', Object.keys(serviceData));
+  }
   
   // Si le service n'existe pas, afficher une page 404
   if (!serviceData) {
