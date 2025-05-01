@@ -9,13 +9,13 @@ import ServiceTechnologies from '@/components/services/ServiceTechnologies'
 import ServicePortfolio from '@/components/services/ServicePortfolio'
 import ServiceFAQ from '@/components/services/ServiceFAQ'
 import ServiceCTA from '@/components/services/ServiceCTA'
-import { getServiceBySlug, getAllServiceSlugs, debugServicePage } from '@/utils/api'
+import { getServiceBySlug, getAllServiceSlugs, testStrapiConnection } from '@/utils/api'
 
 // Générer les routes statiques pour tous les services
 export async function generateStaticParams() {
   try {
     const slugs = await getAllServiceSlugs()
-    console.log("Generated static paths for slugs:", slugs);
+    console.log("Generated slugs for static paths:", slugs);
     return slugs
   } catch (error) {
     console.error('Erreur lors de la génération des chemins statiques :', error)
@@ -71,106 +71,21 @@ export async function generateMetadata({ params }) {
 
 // Page principale du service
 export default async function ServicePage({ params }) {
+  // Exécuter un test de connexion pour le débogage
+  await testStrapiConnection();
+  
   // Récupérer les données du service depuis le slug
   const { slug } = params
   console.log('Slug demandé:', slug);
   
-  // Exécuter le débogage - ne pas supprimer cette ligne
-  await debugServicePage(slug);
-  
   // Récupérer le service correspondant au slug
   const serviceData = await getServiceBySlug(slug);
   
-  // Debug
+  // Afficher les informations de débogage
   console.log('Service trouvé:', serviceData ? 'Oui' : 'Non');
   if (serviceData) {
     console.log('Titre:', serviceData.Titre);
-  }
-  
-  // Fallback pour les services manquants
-  // Si nous sommes en développement et qu'il n'y a pas de service,
-  // utiliser des données de démonstration
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  
-  if (!serviceData && isDevelopment) {
-    console.log('Utilisation des données de démonstration pour le développement');
-    
-    // Ici, vous pouvez créer des données de démonstration pour le développement
-    const mockServiceData = {
-      id: 999,
-      Titre: "Service de démonstration",
-      Description: [
-        {
-          type: "paragraph",
-          children: [
-            {
-              type: "text",
-              text: "Ceci est un service de démonstration pour faciliter le développement."
-            }
-          ]
-        }
-      ],
-      Emoji: "🚀",
-      Couleur: "from-blue/20 to-blue/5",
-      slug: slug,
-      introduction: [
-        {
-          type: "paragraph",
-          children: [
-            {
-              type: "text",
-              text: "Introduction de démonstration pour le développement."
-            }
-          ]
-        }
-      ],
-      caracteristiques: [
-        {
-          titre: "Caractéristique 1",
-          description: "Description de la caractéristique 1",
-          icone: "Fa/FaCheck"
-        }
-      ],
-      types_services: [
-        {
-          titre: "Type de service 1",
-          description: "Description du type de service 1",
-          icone: "Fa/FaStar"
-        }
-      ],
-      methodologie: [
-        {
-          numero: 1,
-          titre: "Étape 1",
-          description: "Description de l'étape 1"
-        }
-      ],
-      technologies: [
-        {
-          nom: "Technologie 1",
-          description: "Description de la technologie 1"
-        }
-      ],
-      faq: [
-        {
-          question: "Question fréquente 1?",
-          reponse: [
-            {
-              type: "paragraph",
-              children: [
-                {
-                  type: "text",
-                  text: "Réponse à la question fréquente 1."
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    };
-    
-    // Utiliser les données de démonstration
-    return renderServicePage(mockServiceData, slug);
+    console.log('Champs disponibles:', Object.keys(serviceData));
   }
   
   // Si le service n'existe pas, afficher une page 404
@@ -191,12 +106,6 @@ export default async function ServicePage({ params }) {
     );
   }
   
-  // Rendu de la page avec les données du service
-  return renderServicePage(serviceData, slug);
-}
-
-// Fonction utilitaire pour le rendu de la page de service
-function renderServicePage(serviceData, slug) {
   // Extraire les données du service
   const titre = serviceData.titre_page || serviceData.Titre || 'Service';
   
@@ -225,6 +134,16 @@ function renderServicePage(serviceData, slug) {
   const mainColor = couleur?.includes('blue') ? 'blue' : 
                    couleur?.includes('purple') ? 'purple' : 
                    couleur?.includes('red') ? 'red' : 'blue';
+
+  console.log("Données disponibles pour le rendu:");
+  console.log("Introduction:", introduction ? "✅" : "❌");
+  console.log("Image:", image ? "✅" : "❌");
+  console.log("Caractéristiques:", caracteristiques.length);
+  console.log("Types de services:", types_services.length);
+  console.log("Méthodologie:", methodologie.length);
+  console.log("Technologies:", technologies.length);
+  console.log("Projets liés:", projets_lies.length);
+  console.log("FAQ:", faq.length);
 
   return (
     <>
