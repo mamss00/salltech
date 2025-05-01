@@ -110,17 +110,32 @@ export async function submitContactForm(formData) {
 }
 
 /**
+ * Récupère tous les services pour pouvoir filtrer côté client
+ * @returns {Promise<Array>} - Liste des services
+ */
+export async function getAllServices() {
+  try {
+    const data = await fetchAPI('/services?populate=deep');
+    return data.data || [];
+  } catch (error) {
+    console.error("Error in getAllServices:", error);
+    return [];
+  }
+}
+
+/**
  * Récupère un service par son slug
  * @param {string} slug - Slug du service
  * @returns {Promise<Object>} - Données du service
  */
 export async function getServiceBySlug(slug) {
   try {
-    // Utiliser populate=deep pour récupérer toutes les relations
-    const data = await fetchAPI(`/services?filters[slug][$eq]=${slug}&populate=deep`);
-
-    if (data.data && data.data.length > 0) {
-      return data.data[0].attributes;
+    // Récupérer tous les services et filtrer côté client
+    const allServices = await getAllServices();
+    const service = allServices.find(s => s.attributes.slug === slug);
+    
+    if (service) {
+      return service.attributes;
     }
 
     return null;
@@ -136,15 +151,10 @@ export async function getServiceBySlug(slug) {
  */
 export async function getAllServiceSlugs() {
   try {
-    const data = await fetchAPI('/services?fields=slug');
-
-    if (data.data && data.data.length > 0) {
-      return data.data.map(service => service.attributes.slug);
-    }
-
-    return [];
+    const allServices = await getAllServices();
+    return allServices.map(service => service.attributes.slug).filter(Boolean);
   } catch (error) {
     console.error("Error in getAllServiceSlugs:", error);
-    throw error;
+    return [];
   }
 }

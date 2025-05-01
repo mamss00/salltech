@@ -11,7 +11,7 @@ import ServiceTechnologies from '@/components/services/ServiceTechnologies'
 import ServicePortfolio from '@/components/services/ServicePortfolio'
 import ServiceFAQ from '@/components/services/ServiceFAQ'
 import ServiceCTA from '@/components/services/ServiceCTA'
-import { getServiceBySlug, getAllServiceSlugs } from '@/utils/api'
+import { getServiceBySlug, getAllServiceSlugs, getAllServices } from '@/utils/api'
 
 // Générer les routes statiques pour tous les services
 export async function generateStaticParams() {
@@ -63,14 +63,29 @@ export default async function ServicePage({ params }) {
   const { slug } = params
   console.log('Slug demandé:', slug) // Ajout d'un log
   
+  // Récupérer tous les services et trouver celui correspondant au slug
   let serviceData;
+  let allServices;
+  
   try {
-    serviceData = await getServiceBySlug(slug)
-    console.log('Données reçues:', serviceData ? 'Oui' : 'Non') // Ajout d'un log
+    // Récupérer tous les services
+    allServices = await getAllServices();
+    console.log('Nombre de services trouvés:', allServices.length);
     
-    if (!serviceData) {
-      console.log('Service non trouvé - affichage page personnalisée 404') // Ajout d'un log
-      // Affichage d'une page 404 personnalisée au lieu d'utiliser notFound()
+    // Lister tous les slugs disponibles pour le débogage
+    const availableSlugs = allServices.map(s => s.attributes.slug);
+    console.log('Slugs disponibles:', availableSlugs);
+    
+    // Chercher le service correspondant au slug
+    const service = allServices.find(s => s.attributes.slug === slug);
+    
+    if (service) {
+      serviceData = service.attributes;
+      console.log('Service trouvé:', serviceData.Titre || serviceData.titre);
+    } else {
+      console.log('Aucun service trouvé avec le slug:', slug);
+      
+      // Affichage d'une page 404 personnalisée
       return (
         <>
           <Header />
@@ -87,7 +102,8 @@ export default async function ServicePage({ params }) {
       )
     }
   } catch (error) {
-    console.error('Erreur lors de la récupération du service:', error) // Ajout d'un log
+    console.error('Erreur lors de la récupération des services:', error);
+    
     // Affichage d'une page d'erreur
     return (
       <>
@@ -107,10 +123,8 @@ export default async function ServicePage({ params }) {
     )
   }
   
-  console.log('Structure des données:', Object.keys(serviceData)) // Ajout d'un log
-  
+  // Si nous sommes ici, c'est que nous avons trouvé le service
   // Extraire les données du service (adaptation pour gérer différentes structures de données)
-  // Remarque: les champs peuvent avoir différentes casses (Titre vs titre)
   const titre = serviceData.titre_page || serviceData.Titre || serviceData.titre || 'Service'
   const description = serviceData.description_courte || serviceData.Description || ''
   const introduction = serviceData.introduction || null
