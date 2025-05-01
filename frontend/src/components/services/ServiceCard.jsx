@@ -2,17 +2,20 @@
 
 import Link from 'next/link'
 import DynamicIcon from '@/utils/DynamicIcon'
+import { titreToSlug } from '@/utils/api'
 
 export default function ServiceCard({ service, index }) {
   if (!service) return null;
   
-  const {
-    titre,
-    slug,
-    description_courte,
-    icone,
-    couleur
-  } = service;
+  // Utiliser directement les propriétés du service (sans .attributes)
+  const titre = service.Titre;
+  const description = service.Description && service.Description[0]?.children?.[0]?.text || '';
+  const icone = service.icone;
+  const emoji = service.Emoji;
+  const couleur = service.Couleur;
+  
+  // Générer le slug à partir du titre
+  const slug = titreToSlug(titre);
   
   // Déterminer la couleur en fonction de la propriété ou de l'index
   const color = couleur || getColorByIndex(index);
@@ -25,7 +28,7 @@ export default function ServiceCard({ service, index }) {
   
   // Obtenir l'icône par défaut en fonction du titre si nécessaire
   const defaultIcons = {
-    'Sites Internet': 'Fa/FaGlobe',
+    'Sites Internet Professionnels': 'Fa/FaGlobe',
     'Applications Mobiles': 'Md/MdPhoneIphone',
     'Solutions Odoo': 'Fa/FaSearch',
     'Consulting DevOps': 'Fa/FaRocket',
@@ -52,13 +55,13 @@ export default function ServiceCard({ service, index }) {
         
         <div className="h-0.5 w-16 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-24 transition-all duration-300"></div>
         
-        <p className="text-gray-600 mb-6">{description_courte}</p>
+        <p className="text-gray-600 mb-6">{description}</p>
         
         <Link 
           href={`/services/${slug}`}
           className="inline-flex items-center text-blue font-medium hover:underline transition-all duration-300 group-hover:text-opacity-80 mt-auto"
         >
-          <span>Découvrir ce service</span>
+          <span>En savoir plus</span>
           <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
           </svg>
