@@ -1,0 +1,95 @@
+{
+  "kind": "collectionType",
+  "collectionName": "services",
+  "info": {
+    "singularName": "service",
+    "pluralName": "services",
+    "displayName": "Services",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Titre": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "blocks"
+    },
+    "Emoji": {
+      "type": "text"
+    },
+    "Couleur": {
+      "type": "string"
+    },
+    "Ordreaffichage": {
+      "type": "integer"
+    },
+    "Image": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "Titre",
+      "required": true
+    },
+    "titre_page": {
+      "type": "string",
+      "description": "Titre spécifique pour la page détaillée"
+    },
+    "introduction": {
+      "type": "blocks",
+      "description": "Texte d'introduction détaillé du service"
+    },
+    "caracteristiques": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.caracteristique",
+      "description": "Points clés du service"
+    },
+    "types_services": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.type-service",
+      "description": "Différents types de ce service"
+    },
+    "methodologie": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.etape-process",
+      "description": "Étapes de la méthodologie pour ce service"
+    },
+    "technologies": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.technologie",
+      "description": "Technologies utilisées pour ce service"
+    },
+    "faq": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.faq-item",
+      "description": "Questions fréquentes spécifiques à ce service"
+    },
+    "projets_lies": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::projet.projet",
+      "inversedBy": "services"
+    },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "description": "Informations SEO pour cette page"
+    }
+  }
+}

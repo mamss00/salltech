@@ -1,0 +1,25 @@
+{
+  "kind": "singleType",
+  "collectionName": "configurationportfolios",
+  "info": {
+    "singularName": "configurationportfolio",
+    "pluralName": "configurationportfolios",
+    "displayName": "ConfigurationPortfolios"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Titre": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "blocks"
+    },
+    "projets_mis_en_avant": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::projet.projet"
+    }
+  }
+}

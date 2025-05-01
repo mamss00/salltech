@@ -1,0 +1,28 @@
+{
+  "collectionName": "components_elements_etape_processes",
+  "info": {
+    "displayName": "Étape de processus",
+    "description": "Étape dans un processus méthodologique",
+    "icon": "steps"
+  },
+  "options": {},
+  "attributes": {
+    "numero": {
+      "type": "integer",
+      "required": true
+    },
+    "titre": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "tags": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.tag"
+    }
+  }
+}

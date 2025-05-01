@@ -1,4 +1,3 @@
-// frontend/src/utils/api.js
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.sall.technology';
 
 /**
@@ -14,19 +13,20 @@ async function fetchAPI(path, options = {}) {
         'Content-Type': 'application/json',
       },
     };
-    
+
     const mergedOptions = {
       ...defaultOptions,
       ...options,
     };
-    
+
+    console.log(`[fetchAPI] Calling: ${API_URL}/api${path}`);
     const res = await fetch(`${API_URL}/api${path}`, mergedOptions);
-    
+
     if (!res.ok) {
       console.error(`API error: ${res.status} on ${path}`);
       throw new Error(`API error: ${res.status}`);
     }
-    
+
     const data = await res.json();
     return data;
   } catch (error) {
@@ -116,7 +116,6 @@ export async function submitContactForm(formData) {
  */
 export async function getServiceBySlug(slug) {
   try {
-    // Construire la requête avec toutes les relations et composants nécessaires
     const populateQuery = [
       'image_principale',
       'caracteristiques',
@@ -133,13 +132,13 @@ export async function getServiceBySlug(slug) {
       'seo',
       'seo.metaImage'
     ].join(',');
-    
+
     const data = await fetchAPI(`/services?filters[slug][$eq]=${slug}&populate=${populateQuery}`);
-    
+
     if (data.data && data.data.length > 0) {
       return data.data[0].attributes;
     }
-    
+
     return null;
   } catch (error) {
     console.error(`Error in getServiceBySlug for slug "${slug}":`, error);
@@ -154,11 +153,11 @@ export async function getServiceBySlug(slug) {
 export async function getAllServiceSlugs() {
   try {
     const data = await fetchAPI('/services?fields=slug');
-    
+
     if (data.data && data.data.length > 0) {
       return data.data.map(service => service.attributes.slug);
     }
-    
+
     return [];
   } catch (error) {
     console.error("Error in getAllServiceSlugs:", error);

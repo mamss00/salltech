@@ -1,0 +1,23 @@
+{
+  "collectionName": "components_elements_technologies",
+  "info": {
+    "displayName": "Technologie",
+    "description": "Technologie utilisée",
+    "icon": "code"
+  },
+  "options": {},
+  "attributes": {
+    "nom": {
+      "type": "string",
+      "required": true
+    },
+    "logo": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    },
+    "description": {
+      "type": "text"
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "collectionName": "components_elements_type_services",
+  "info": {
+    "displayName": "Type de service",
+    "description": "Sous-catégorie d'un service principal",
+    "icon": "apps"
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text",
+      "required": true
+    },
+    "icone": {
+      "type": "string"
+    },
+    "fonctionnalites": {
+      "type": "component",
+      "repeatable": true,
+      "component": "elements.fonctionnalite-simple"
+    },
+    "image": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": ["images"]
+    }
+  }
+}

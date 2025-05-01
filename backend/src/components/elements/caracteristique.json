@@ -1,0 +1,22 @@
+{
+  "collectionName": "components_elements_caracteristiques",
+  "info": {
+    "displayName": "Caractéristique",
+    "description": "Caractéristiques d'un service",
+    "icon": "list"
+  },
+  "options": {},
+  "attributes": {
+    "titre": {
+      "type": "string",
+      "required": true
+    },
+    "description": {
+      "type": "text"
+    },
+    "icone": {
+      "type": "string",
+      "description": "Code de l'icône (ex: Fa/FaGlobe)"
+    }
+  }
+}

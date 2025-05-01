@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_elements_tags",
+  "info": {
+    "displayName": "Tag",
+    "description": "Mot-clé ou étiquette",
+    "icon": "tag"
+  },
+  "options": {},
+  "attributes": {
+    "texte": {
+      "type": "string",
+      "required": true
+    }
+  }
+}

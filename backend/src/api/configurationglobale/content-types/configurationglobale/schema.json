@@ -1,0 +1,43 @@
+{
+  "kind": "singleType",
+  "collectionName": "configurationglobales",
+  "info": {
+    "singularName": "configurationglobale",
+    "pluralName": "configurationglobales",
+    "displayName": "Configurationglobale"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Logo": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "Favicon": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "Couleurspersonnalisees": {
+      "type": "json"
+    },
+    "Liensdenavigation": {
+      "type": "json"
+    },
+    "Pieddepage": {
+      "type": "blocks"
+    }
+  }
+}

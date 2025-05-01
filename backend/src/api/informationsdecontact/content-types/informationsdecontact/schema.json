@@ -1,0 +1,32 @@
+{
+  "kind": "singleType",
+  "collectionName": "informationsdecontacts",
+  "info": {
+    "singularName": "informationsdecontact",
+    "pluralName": "informationsdecontacts",
+    "displayName": "Informationsdecontact"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Adresse": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "email"
+    },
+    "Telephone": {
+      "type": "string"
+    },
+    "Horairesdouverture": {
+      "type": "blocks"
+    },
+    "Reseauxsociaux": {
+      "type": "json"
+    },
+    "CoordonneesGPS": {
+      "type": "json"
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "kind": "singleType",
+  "collectionName": "configuration_services",
+  "info": {
+    "singularName": "configuration-service",
+    "pluralName": "configuration-services",
+    "displayName": "ConfigurationServices"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Titredesection": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "blocks"
+    },
+    "services_mis_en_avan": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "api::service.service"
+    }
+  }
+}

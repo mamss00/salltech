@@ -1,0 +1,19 @@
+{
+  "collectionName": "components_elements_faq_items",
+  "info": {
+    "displayName": "Question FAQ",
+    "description": "Question et réponse pour FAQ",
+    "icon": "question-mark"
+  },
+  "options": {},
+  "attributes": {
+    "question": {
+      "type": "string",
+      "required": true
+    },
+    "reponse": {
+      "type": "blocks",
+      "required": true
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "kind": "collectionType",
+  "collectionName": "projets",
+  "info": {
+    "singularName": "projet",
+    "pluralName": "projets",
+    "displayName": "Projets"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "Titre": {
+      "type": "string"
+    },
+    "Categorie": {
+      "type": "string"
+    },
+    "Description": {
+      "type": "blocks"
+    },
+    "Imageprincipale": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "Imagesadditionnelles": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": true
+    },
+    "Technologies": {
+      "type": "json"
+    },
+    "URLduprojet": {
+      "type": "string"
+    },
+    "Client": {
+      "type": "string"
+    },
+    "Datederealisation": {
+      "type": "date"
+    },
+    "services": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::service.service",
+      "mappedBy": "projets_lies"
+    },
+    "slug": {
+      "type": "uid",
+      "targetField": "Titre"
+    }
+  }
+}

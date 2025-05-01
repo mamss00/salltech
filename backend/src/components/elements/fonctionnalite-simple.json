@@ -1,0 +1,15 @@
+{
+  "collectionName": "components_elements_fonctionnalite_simples",
+  "info": {
+    "displayName": "Fonctionnalité simple",
+    "description": "Point dans une liste à puces",
+    "icon": "check"
+  },
+  "options": {},
+  "attributes": {
+    "texte": {
+      "type": "string",
+      "required": true
+    }
+  }
+}
