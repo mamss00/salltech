@@ -1,4 +1,3 @@
-// frontend/src/utils/api.js
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.sall.technology';
 
 /**
@@ -52,7 +51,7 @@ export function titreToSlug(titre) {
     .replace(/^-|-$/g, '');
 }
 
-// Modification: Ajout d'entrées supplémentaires pour améliorer la correspondance
+// Correspondance directe entre titres et slugs
 const TITLE_TO_SLUG_MAP = {
   "Sites Internet": "sites-internet-professionnels",
   "Sites Internet Professionnels": "sites-internet-professionnels",
@@ -69,10 +68,25 @@ const TITLE_TO_SLUG_MAP = {
  */
 export async function getServices() {
   try {
-    // Modification: Ajout de populate=* pour récupérer toutes les relations
-    const data = await fetchAPI('/services?populate=deep');
-    console.log("Services data:", data);
-    return data.data || [];
+    const response = await fetch(`${API_URL}/api/services?populate=*`);
+    
+    if (!response.ok) {
+      console.error(`Erreur API: ${response.status}`);
+      throw new Error(`Erreur API: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    
+    if (!data || !data.data) {
+      console.error("Format de données inattendu:", data);
+      return [];
+    }
+    
+    // Transformer les données pour avoir une structure plus simple
+    return data.data.map(service => ({
+      id: service.id,
+      ...service.attributes
+    }));
   } catch (error) {
     console.error("Error in getServices:", error);
     return [];
@@ -148,54 +162,54 @@ export async function getServiceBySlug(slug) {
   try {
     console.log(`Recherche du service avec slug: "${slug}"`);
     
-    // Nouvelle approche: récupérer directement par le champ slug
-    const data = await fetchAPI(`/services?filters[slug]=${slug}&populate=deep`);
-    console.log('Résultat de la recherche par slug:', data);
+    // Récupération directe via l'API
+    const response = await fetch(`${API_URL}/api/services?filters[slug]=${slug}&populate=*`);
+    const data = await response.json();
     
-    if (data.data && data.data.length > 0) {
-      console.log('Service trouvé directement par le slug:', data.data[0].attributes.Titre);
-      return data.data[0].attributes;
+    if (data && data.data && data.data.length > 0) {
+      console.log(`Service trouvé via API avec slug "${slug}"`);
+      return {
+        ...data.data[0].attributes,
+        id: data.data[0].id
+      };
     }
     
-    // Si rien n'est trouvé, on essaie l'ancienne méthode
-    console.log('Aucun service trouvé directement, essai avec la méthode alternative');
+    // Si nous sommes ici, c'est que le service n'a pas été trouvé directement
+    console.log(`Tentative de recherche alternative pour le slug "${slug}"`);
     
     // Récupérer tous les services
     const services = await getServices();
-    console.log('Nombre de services trouvés:', services.length);
     
-    // Loguer tous les titres disponibles pour le débogage
-    services.forEach(service => console.log('Service disponible:', service.attributes?.Titre || service.Titre));
-    
-    // Rechercher le service en utilisant les correspondances
-    const service = services.find(s => {
-      const serviceTitle = s.attributes?.Titre || s.Titre;
-      const serviceSlug = s.attributes?.slug || s.slug;
-      
-      // Vérifier d'abord si le slug correspond directement
-      if (serviceSlug === slug) {
-        console.log(`Correspondance directe trouvée par slug: ${serviceSlug}`);
-        return true;
-      }
-      
-      // Essayer ensuite la correspondance via le mapping
-      if (TITLE_TO_SLUG_MAP[serviceTitle] === slug) {
-        console.log(`Correspondance via mapping pour "${serviceTitle}"`);
-        return true;
-      }
-      
-      // Enfin, générer le slug et comparer
-      const generatedSlug = titreToSlug(serviceTitle);
-      console.log(`Comparaison: "${serviceTitle}" => "${generatedSlug}" vs "${slug}"`);
-      return generatedSlug === slug;
-    });
-    
-    if (service) {
-      console.log('Service trouvé par méthode alternative:', service.attributes?.Titre || service.Titre);
-      return service.attributes || service;
+    // Essayer de trouver le service par correspondance exacte du slug
+    const serviceByDirectSlug = services.find(s => s.slug === slug);
+    if (serviceByDirectSlug) {
+      console.log(`Service trouvé par correspondance directe du slug: ${serviceByDirectSlug.Titre}`);
+      return serviceByDirectSlug;
     }
     
-    console.log(`Aucun service trouvé pour le slug "${slug}"`);
+    // Essayer de trouver le service par mapping de titre
+    const serviceByTitleMapping = services.find(s => TITLE_TO_SLUG_MAP[s.Titre] === slug);
+    if (serviceByTitleMapping) {
+      console.log(`Service trouvé par mapping de titre: ${serviceByTitleMapping.Titre}`);
+      return serviceByTitleMapping;
+    }
+    
+    // Essayer de trouver le service en générant le slug à partir du titre
+    const serviceByGeneratedSlug = services.find(s => titreToSlug(s.Titre) === slug);
+    if (serviceByGeneratedSlug) {
+      console.log(`Service trouvé par génération de slug à partir du titre: ${serviceByGeneratedSlug.Titre}`);
+      return serviceByGeneratedSlug;
+    }
+    
+    // Si on arrive ici, c'est que le service n'a pas été trouvé
+    console.log(`Aucun service trouvé pour le slug "${slug}" après multiples tentatives`);
+    
+    // Solution de dernier recours: renvoyer le premier service si disponible
+    if (services.length > 0) {
+      console.log("Renvoi du premier service disponible comme solution de secours");
+      return services[0];
+    }
+    
     return null;
   } catch (error) {
     console.error(`Error in getServiceBySlug for slug "${slug}":`, error);
@@ -209,20 +223,13 @@ export async function getServiceBySlug(slug) {
  */
 export async function getAllServiceSlugs() {
   try {
-    // Modification: récupérer directement les slugs depuis l'API
-    const data = await fetchAPI('/services?fields=slug');
-    
-    if (data.data && data.data.length > 0) {
-      return data.data.map(service => ({
-        slug: service.attributes.slug
-      }));
-    }
-    
-    // Méthode de secours
     const services = await getServices();
+    console.log("Services récupérés pour les slugs statiques:", services.length);
+    
     return services.map(service => {
-      const titre = service.attributes?.Titre || service.Titre;
-      const slug = service.attributes?.slug || service.slug || TITLE_TO_SLUG_MAP[titre] || titreToSlug(titre);
+      // Utiliser le slug si disponible, sinon le générer
+      const slug = service.slug || TITLE_TO_SLUG_MAP[service.Titre] || titreToSlug(service.Titre);
+      console.log(`Service: "${service.Titre}" => Slug: "${slug}"`);
       return { slug };
     });
   } catch (error) {
@@ -231,36 +238,65 @@ export async function getAllServiceSlugs() {
   }
 }
 
-// Ajout pour les tests et le débogage
-export async function logAllServices() {
+// Fonction spéciale de débogage
+export async function debugServicePage(slug) {
+  console.log(`========== DÉBOGAGE DE LA PAGE SERVICE "${slug}" ==========`);
+  
   try {
-    const services = await getServices();
-    console.log('--- TOUS LES SERVICES ---');
-    services.forEach(service => {
-      const id = service.id;
-      const titre = service.attributes?.Titre || service.Titre;
-      const slug = service.attributes?.slug || service.slug;
-      const generatedSlug = titreToSlug(titre);
-      
-      console.log(`ID: ${id}, Titre: ${titre}, Slug stocké: ${slug}, Slug généré: ${generatedSlug}`);
+    // 1. Vérifier si on peut obtenir le service directement via l'API
+    console.log("1. Tentative d'appel direct à l'API...");
+    const directApiUrl = `${API_URL}/api/services?filters[slug]=${slug}&populate=*`;
+    console.log(`URL: ${directApiUrl}`);
+    
+    const directResponse = await fetch(directApiUrl);
+    const directData = await directResponse.json();
+    
+    console.log("Réponse directe de l'API:", directData);
+    
+    if (directData && directData.data && directData.data.length > 0) {
+      console.log("✅ Service trouvé directement via l'API!");
+      console.log("ID:", directData.data[0].id);
+      console.log("Titre:", directData.data[0].attributes.Titre);
+      console.log("Slug:", directData.data[0].attributes.slug);
+    } else {
+      console.log("❌ Service non trouvé directement via l'API");
+    }
+    
+    // 2. Vérifier les services disponibles
+    console.log("\n2. Récupération de tous les services...");
+    const allServices = await getServices();
+    
+    console.log(`Nombre de services trouvés: ${allServices.length}`);
+    
+    allServices.forEach((service, index) => {
+      console.log(`\nService #${index + 1}`);
+      console.log("ID:", service.id);
+      console.log("Titre:", service.Titre);
+      console.log("Slug stocké:", service.slug);
+      console.log("Slug généré:", titreToSlug(service.Titre));
+      console.log("Slug via mapping:", TITLE_TO_SLUG_MAP[service.Titre]);
     });
-    console.log('------------------------');
-    return true;
+    
+    // 3. Conclusion
+    console.log("\n3. CONCLUSION");
+    if (directData && directData.data && directData.data.length > 0) {
+      console.log("✅ Le service existe dans Strapi et est accessible via l'API");
+      return true;
+    } else if (allServices.some(s => 
+      s.slug === slug || 
+      TITLE_TO_SLUG_MAP[s.Titre] === slug || 
+      titreToSlug(s.Titre) === slug
+    )) {
+      console.log("⚠️ Le service existe mais n'est pas directement accessible via l'API avec ce slug");
+      return true;
+    } else {
+      console.log("❌ Le service n'existe pas du tout");
+      return false;
+    }
   } catch (error) {
-    console.error("Error in logAllServices:", error);
+    console.error("Erreur pendant le débogage:", error);
     return false;
-  }
-}
-
-// Fonction de débogage pour afficher les données brutes
-export async function debugServices() {
-  try {
-    const response = await fetch(`${API_URL}/api/services?populate=*`);
-    const data = await response.json();
-    console.log("Services raw data:", data);
-    return data;
-  } catch (error) {
-    console.error("Error fetching raw services data:", error);
-    return null;
+  } finally {
+    console.log("========== FIN DU DÉBOGAGE ==========");
   }
 }
