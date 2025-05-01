@@ -1,6 +1,5 @@
 'use client'
 
-import Link from 'next/link'
 import { motion } from 'framer-motion'
 
 const CTAButton = ({ 
@@ -16,13 +15,13 @@ const CTAButton = ({
 }) => {
   // Configurations des variantes
   const variants = {
-    primary: "bg-gradient-to-r from-blue via-purple to-red bg-[length:200%_auto] animate-gradient-shift text-white",
-    secondary: "bg-white text-blue border border-blue/20",
-    subtle: "bg-blue/10 text-blue"
+    primary: "bg-gradient-to-r from-blue via-purple to-red bg-[length:200%_auto] hover:shadow-lg text-white",
+    secondary: "bg-white text-blue border border-blue/20 hover:border-blue/50",
+    subtle: "bg-blue/10 text-blue hover:bg-blue/20"
   }
 
   // Style de base commun à toutes les variantes
-  const baseStyle = "rounded-xl font-medium transition-all duration-400 shadow-lg hover:shadow-xl"
+  const baseStyle = "rounded-xl font-medium transition-all duration-400 flex items-center justify-center"
   
   // Style de padding par défaut
   const sizeStyle = "px-8 py-3"
@@ -57,32 +56,29 @@ const CTAButton = ({
       whileTap={loading ? {} : tapAnimation}
       className={`${baseStyle} ${sizeStyle} ${variants[variant]} ${additionalClasses} ${className}`}
     >
-      <span className="flex items-center justify-center">
-        {loading ? (
-          <span className="flex items-center">
-            Envoi en cours
-            <span className="ml-2 flex">
-              <span className="w-2 h-2 bg-white rounded-full mx-0.5 animate-dot-pulse-1"></span>
-              <span className="w-2 h-2 bg-white rounded-full mx-0.5 animate-dot-pulse-2"></span>
-              <span className="w-2 h-2 bg-white rounded-full mx-0.5 animate-dot-pulse-3"></span>
-            </span>
+      {loading ? (
+        <span className="flex items-center">
+          <span>Envoi en cours</span>
+          <span className="ml-2 flex">
+            <span className="w-2 h-2 bg-white rounded-full mx-0.5 animate-dot-pulse-1"></span>
+            <span className="w-2 h-2 bg-white rounded-full mx-0.5 animate-dot-pulse-2"></span>
+            <span className="w-2 h-2 bg-white rounded-full mx-0.5 animate-dot-pulse-3"></span>
           </span>
-        ) : (
-          <>
-            <span>{children}</span>
-            {showDots && (
-              <span className="dots-container">
-                <span className="dot animate-dot-pulse-1"></span>
-                <span className="dot animate-dot-pulse-2"></span>
-                <span className="dot animate-dot-pulse-3"></span>
-              </span>
-            )}
-          </>
-        )}
-      </span>
+        </span>
+      ) : (
+        <>
+          <span>{children}</span>
+          {showDots && (
+            <span className="dots-container ml-2 inline-flex items-center">
+              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-1"></span>
+              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-2"></span>
+              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-3"></span>
+            </span>
+          )}
+        </>
+      )}
     </Component>
   )
 }
 
-// Assurez-vous d'ajouter cette ligne d'exportation par défaut
 export default CTAButton

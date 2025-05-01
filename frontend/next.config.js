@@ -22,6 +22,7 @@ const nextConfig = {
     config.resolve.alias['@'] = path.join(__dirname, 'src');
     return config;
   },
+  transpilePackages: ['framer-motion'],
 }
 
 module.exports = nextConfig;

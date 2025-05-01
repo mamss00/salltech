@@ -6,7 +6,8 @@
     "dev": "node server.js",
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:css": "tailwindcss -i ./src/app/globals.css -o ./src/app/output.css --watch"
   },
   "dependencies": {
     "framer-motion": "^10.16.4",

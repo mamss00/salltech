@@ -5,6 +5,16 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx}",
     "./src/app/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    'bg-blue', 'bg-purple', 'bg-red',
+    'text-blue', 'text-purple', 'text-red',
+    'from-blue', 'from-purple', 'from-red',
+    'via-blue', 'via-purple', 'via-red',
+    'to-blue', 'to-purple', 'to-red',
+    'animate-float-1', 'animate-float-2', 'animate-float-3',
+    'animate-dot-pulse-1', 'animate-dot-pulse-2', 'animate-dot-pulse-3',
+    'animate-gradient-shift'
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -23,9 +33,9 @@ module.exports = {
         'float-2': 'float-2 15s ease-in-out infinite',
         'float-3': 'float-3 15s ease-in-out infinite',
         'blink': 'blink 1s infinite',
-        'dot-pulse-1': 'dotPulse 1.5s infinite',
-        'dot-pulse-2': 'dotPulse 1.5s infinite 0.3s',
-        'dot-pulse-3': 'dotPulse 1.5s infinite 0.6s',
+        'dot-pulse-1': 'dot-pulse-1 1.5s infinite',
+        'dot-pulse-2': 'dot-pulse-2 1.5s infinite 0.3s',
+        'dot-pulse-3': 'dot-pulse-3 1.5s infinite 0.6s',
       },
       keyframes: {
         'gradient-shift': {
@@ -52,9 +62,21 @@ module.exports = {
           '0%, 100%': { opacity: '1' },
           '50%': { opacity: '0' },
         },
-        'dotPulse': {
+        'dot-pulse-1': {
           '0%, 100%': { opacity: '0' },
-          '50%': { opacity: '1' },
+          '40%': { opacity: '1' },
+          '80%': { opacity: '0' },
+        },
+        'dot-pulse-2': {
+          '0%, 100%': { opacity: '0' },
+          '40%': { opacity: '0' },
+          '80%': { opacity: '1' },
+        },
+        'dot-pulse-3': {
+          '0%, 100%': { opacity: '0' },
+          '40%': { opacity: '0' },
+          '80%': { opacity: '0' },
+          '100%': { opacity: '1' },
         },
       },
       backgroundImage: {

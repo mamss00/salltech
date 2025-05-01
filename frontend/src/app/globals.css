@@ -4,6 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-blue: #3498db;
+  --color-purple: #9b59b6;
+  --color-red: #e74c3c;
+  --color-dark: #1a1a2e;
+  --color-light: #f7f7f7;
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -20,7 +28,9 @@
   }
   
   .gradient-text {
-    @apply bg-gradient-text bg-[length:200%_auto] bg-clip-text text-transparent inline-block animate-gradient-shift;
+    @apply bg-gradient-to-r from-blue via-purple to-red bg-clip-text text-transparent inline-block;
+    background-size: 200% auto;
+    animation: gradient-shift 8s ease infinite;
   }
   
   .header-link {
@@ -29,55 +39,92 @@
   
   .header-link::after {
     content: '';
-    @apply absolute w-0 h-0.5 bottom-0 left-1/2 -translate-x-1/2 bg-gradient-text transition-all duration-300 ease-in-out;
+    @apply absolute w-0 h-0.5 bottom-0 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue via-purple to-red transition-all duration-300 ease-in-out;
   }
   
   .header-link:hover::after {
     @apply w-full;
   }
   
-/* Ajouter ceci à globals.css */
+  /* Styles pour les points d'animation */
+  .dots-container {
+    @apply inline-flex items-center ml-2 h-4;
+  }
 
-/* Styles pour les points d'animation */
-.dots-container {
-  @apply inline-flex items-center ml-2 h-4;
+  .dot {
+    @apply w-1 h-1 bg-current rounded-full mx-0.5 opacity-0;
+  }
 }
 
-.dot {
-  @apply w-1 h-1 bg-current rounded-full mx-0.5 opacity-0;
-}
+@layer utilities {
+  /* Animations pour les points */
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .animate-gradient-shift {
+    animation: gradient-shift 8s ease infinite;
+  }
+  
+  @keyframes float-1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(50px, 50px); }
+  }
+  
+  @keyframes float-2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-50px, -30px); }
+  }
+  
+  @keyframes float-3 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(30px, -50px); }
+  }
+  
+  .animate-float-1 {
+    animation: float-1 15s ease-in-out infinite;
+  }
+  
+  .animate-float-2 {
+    animation: float-2 15s ease-in-out infinite;
+  }
+  
+  .animate-float-3 {
+    animation: float-3 15s ease-in-out infinite;
+  }
+  
+  @keyframes dot-pulse-1 {
+    0% { opacity: 0; }
+    40% { opacity: 1; }
+    80% { opacity: 0; }
+    100% { opacity: 0; }
+  }
 
-/* Animations pour les points */
-@keyframes dot-pulse-1 {
-  0% { opacity: 0; }
-  40% { opacity: 1; }
-  80% { opacity: 0; }
-  100% { opacity: 0; }
-}
+  @keyframes dot-pulse-2 {
+    0% { opacity: 0; }
+    40% { opacity: 0; }
+    80% { opacity: 1; }
+    100% { opacity: 0; }
+  }
 
-@keyframes dot-pulse-2 {
-  0% { opacity: 0; }
-  40% { opacity: 0; }
-  80% { opacity: 1; }
-  100% { opacity: 0; }
-}
+  @keyframes dot-pulse-3 {
+    0% { opacity: 0; }
+    40% { opacity: 0; }
+    80% { opacity: 0; }
+    100% { opacity: 1; }
+  }
 
-@keyframes dot-pulse-3 {
-  0% { opacity: 0; }
-  40% { opacity: 0; }
-  80% { opacity: 0; }
-  100% { opacity: 1; }
-}
+  .animate-dot-pulse-1 {
+    animation: dot-pulse-1 1.4s infinite;
+  }
 
-.animate-dot-pulse-1 {
-  animation: dot-pulse-1 1.4s infinite;
-}
+  .animate-dot-pulse-2 {
+    animation: dot-pulse-2 1.4s infinite;
+  }
 
-.animate-dot-pulse-2 {
-  animation: dot-pulse-2 1.4s infinite;
+  .animate-dot-pulse-3 {
+    animation: dot-pulse-3 1.4s infinite;
+  }
 }
-
-.animate-dot-pulse-3 {
-  animation: dot-pulse-3 1.4s infinite;
-}
-}	
