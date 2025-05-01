@@ -112,6 +112,13 @@ export default async function Page({ params }) {
         {faq?.length > 0 && <ServiceFAQ questions={faq} color={color} />}
         <ServiceCTA serviceName={titreFinal} color={color} />
       </main>
+
+      {/* DEBUG TEMPORAIRE */}
+      <div className="bg-black text-green-400 text-xs p-4 overflow-x-auto max-w-full">
+        <h2 className="font-bold mb-2">Données du service (debug)</h2>
+        <pre>{JSON.stringify(service, null, 2)}</pre>
+      </div>
+
       <Footer />
     </>
   )
