@@ -9,7 +9,7 @@ import ServiceTechnologies from '@/components/services/ServiceTechnologies'
 import ServicePortfolio from '@/components/services/ServicePortfolio'
 import ServiceFAQ from '@/components/services/ServiceFAQ'
 import ServiceCTA from '@/components/services/ServiceCTA'
-import { getServiceBySlug, getAllServiceSlugs, testStrapiConnection } from '@/utils/api'
+import { getServiceBySlug, getAllServiceSlugs } from '@/utils/api'
 
 // Générer les routes statiques pour tous les services
 export async function generateStaticParams() {
@@ -71,9 +71,6 @@ export async function generateMetadata({ params }) {
 
 // Page principale du service
 export default async function ServicePage({ params }) {
-  // Exécuter un test de connexion pour le débogage
-  await testStrapiConnection();
-  
   // Récupérer les données du service depuis le slug
   const { slug } = params
   console.log('Slug demandé:', slug);
