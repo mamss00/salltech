@@ -45,15 +45,21 @@ export function titreToSlug(titre) {
   
   return titre
     .toLowerCase()
-    .replace(/[àáâãäå]/g, 'a')
-    .replace(/[èéêë]/g, 'e')
-    .replace(/[ìíîï]/g, 'i')
-    .replace(/[òóôõö]/g, 'o')
-    .replace(/[ùúûü]/g, 'u')
-    .replace(/[ç]/g, 'c')
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // Supprimer les accents
     .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
 }
+
+// Correspondance directe entre titres et slugs
+const TITLE_TO_SLUG_MAP = {
+  "Sites Internet Professionnels": "sites-internet-professionnels",
+  "Applications Mobiles": "applications-mobiles",
+  "Solutions Odoo": "solutions-odoo",
+  "Consulting DevOps": "consulting-devops",
+  "Hébergement Web": "hebergement-web",
+  "SEO & Référencement": "seo-referencement"
+};
 
 /**
  * Récupère la liste des services depuis Strapi
@@ -130,7 +136,7 @@ export async function submitContactForm(formData) {
 }
 
 /**
- * Récupère un service par son slug généré
+ * Récupère un service par son slug
  * @param {string} slug - Slug du service
  * @returns {Promise<Object>} - Données du service
  */
@@ -138,18 +144,37 @@ export async function getServiceBySlug(slug) {
   try {
     // Récupérer tous les services
     const services = await getServices();
-    console.log('Services récupérés:', services.length);
+    console.log('Nombre de services trouvés:', services.length);
     
-    // Trouver le service dont le titre convertit en slug correspond au slug demandé
+    // Loguer tous les titres disponibles pour le débogage
+    services.forEach(s => console.log('Service disponible:', s.Titre));
+    
+    // Rechercher le service en utilisant d'abord la correspondance directe puis la génération de slug
     const service = services.find(s => {
-      const titleSlug = titreToSlug(s.Titre);
-      console.log(`Comparaison: ${titleSlug} vs ${slug}`);
-      return titleSlug === slug;
+      // Essayer d'abord la correspondance directe
+      if (TITLE_TO_SLUG_MAP[s.Titre] === slug) {
+        return true;
+      }
+      
+      // Sinon, générer le slug et comparer
+      const generatedSlug = titreToSlug(s.Titre);
+      console.log(`Comparaison: "${s.Titre}" => "${generatedSlug}" vs "${slug}"`);
+      return generatedSlug === slug;
     });
     
     if (service) {
       console.log('Service trouvé:', service.Titre);
       return service;
+    }
+    
+    // Solution de secours: chercher par ID si le slug semble être un nombre
+    if (!isNaN(slug)) {
+      const numericId = parseInt(slug, 10);
+      const serviceById = services.find(s => s.id === numericId);
+      if (serviceById) {
+        console.log('Service trouvé par ID:', serviceById.Titre);
+        return serviceById;
+      }
     }
     
     console.log('Service non trouvé pour le slug:', slug);
@@ -168,10 +193,26 @@ export async function getAllServiceSlugs() {
   try {
     const services = await getServices();
     return services.map(service => ({
-      slug: titreToSlug(service.Titre)
+      slug: TITLE_TO_SLUG_MAP[service.Titre] || titreToSlug(service.Titre)
     }));
   } catch (error) {
     console.error("Error in getAllServiceSlugs:", error);
     return [];
+  }
+}
+
+// Ajout pour les tests et le débogage
+export async function logAllServices() {
+  try {
+    const services = await getServices();
+    console.log('--- TOUS LES SERVICES ---');
+    services.forEach(service => {
+      console.log(`ID: ${service.id}, Titre: ${service.Titre}, Slug généré: ${titreToSlug(service.Titre)}`);
+    });
+    console.log('------------------------');
+    return true;
+  } catch (error) {
+    console.error("Error in logAllServices:", error);
+    return false;
   }
 }
