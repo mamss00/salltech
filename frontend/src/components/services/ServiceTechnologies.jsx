@@ -49,7 +49,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                   </div>
                 ) : (
                   <div className={`w-16 h-16 mx-auto mb-4 flex items-center justify-center rounded-full bg-${color}/10 text-${color}`}>
-                    <span className="text-xl font-semibold">{tech.nom.charAt(0)}</span>
+                    <span className="text-xl font-semibold">{tech.nom?.charAt(0)}</span>
                   </div>
                 )}
                 

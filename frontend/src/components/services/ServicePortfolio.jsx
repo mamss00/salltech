@@ -69,10 +69,10 @@ export default function ServicePortfolio({ projects, color = 'blue' }) {
                 <div className="bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full">
                   {/* Image avec overlay */}
                   <div className="relative h-56 overflow-hidden">
-                    {projectData.image_principale && projectData.image_principale.data ? (
+                    {projectData.Imageprincipale && projectData.Imageprincipale.data ? (
                       <Image
-                        src={getStrapiMediaUrl(projectData.image_principale.data.attributes.url)}
-                        alt={projectData.titre || "Projet"}
+                        src={getStrapiMediaUrl(projectData.Imageprincipale.data.attributes.url)}
+                        alt={projectData.Titre || "Projet"}
                         fill
                         className="object-cover transition-transform duration-500 group-hover:scale-110"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -88,7 +88,7 @@ export default function ServicePortfolio({ projects, color = 'blue' }) {
                     {/* Badges */}
                     <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
                       <span className="inline-block px-3 py-1 text-sm bg-white/90 text-blue font-medium rounded-full shadow-md">
-                        {projectData.categorie || "Projet"}
+                        {projectData.Categorie || "Projet"}
                       </span>
                     </div>
                     
@@ -106,27 +106,27 @@ export default function ServicePortfolio({ projects, color = 'blue' }) {
                   {/* Contenu */}
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-3 group-hover:text-blue transition-colors duration-300">
-                      {projectData.titre || "Titre du projet"}
+                      {projectData.Titre || "Titre du projet"}
                     </h3>
                     
                     <div className="h-0.5 w-12 bg-gradient-to-r from-blue via-purple to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
                     
                     <p className="text-gray-600 mb-6 line-clamp-3">
-                      {projectData.description_courte || projectData.description || "Description du projet"}
+                      {projectData.Description && Array.isArray(projectData.Description) && projectData.Description[0]?.children[0]?.text || "Description du projet"}
                     </p>
                     
                     {/* Technologies utilisées */}
-                    {projectData.technologies && (
+                    {projectData.Technologies && (
                       <div className="flex flex-wrap gap-2 mt-auto">
-                        {Array.isArray(projectData.technologies) ? (
-                          projectData.technologies.slice(0, 4).map((tech, idx) => (
+                        {Array.isArray(projectData.Technologies) ? (
+                          projectData.Technologies.slice(0, 4).map((tech, idx) => (
                             <span key={idx} className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-blue/10 hover:text-blue">
                               {tech}
                             </span>
                           ))
                         ) : (
                           <span className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full">
-                            {projectData.technologies}
+                            {projectData.Technologies}
                           </span>
                         )}
                       </div>
