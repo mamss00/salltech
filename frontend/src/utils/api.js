@@ -5,7 +5,7 @@ export function titreToSlug(titre) {
   if (!titre) return '';
   return titre
     .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
@@ -39,16 +39,14 @@ export async function getAllServiceSlugs() {
 export async function getServiceBySlug(slug) {
   try {
     const url = `${API_URL}/api/services?filters[slug][$eq]=${slug}` +
-                `&populate[Image]=*` +
-                `&populate[caracteristiques]=*` +
-                `&populate[types_services]=*` +
-                `&populate[methodologie]=*` +
-                `&populate[technologies]=*` +
-                `&populate[faq]=*` +
-                `&populate[seo]=*` +
-                `&populate[introduction]=*` +
-                `&populate[Description]=*` +
-                `&populate[projets_lies]=*`;
+                `&populate[Image]=true` +
+                `&populate[caracteristiques]=true` +
+                `&populate[types_services]=true` +
+                `&populate[methodologie]=true` +
+                `&populate[technologies]=true` +
+                `&populate[faq]=true` +
+                `&populate[seo]=true` +
+                `&populate[projets_lies]=true`;
 
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
