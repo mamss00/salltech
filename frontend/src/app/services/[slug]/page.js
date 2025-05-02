@@ -2,14 +2,17 @@
 import { notFound } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
-import ServiceHero from '@/components/services/ServiceHero'
+
+// Importer les composants améliorés
+import EnhancedServiceHero from '@/components/services/EnhancedServiceHero'
 import ServiceIntroduction from '@/components/services/ServiceIntroduction'
-import ServiceFeatures from '@/components/services/ServiceFeatures'
-import ServiceProcess from '@/components/services/ServiceProcess'
+import EnhancedServiceFeatures from '@/components/services/EnhancedServiceFeatures'
+import EnhancedServiceProcess from '@/components/services/EnhancedServiceProcess'
 import ServiceTechnologies from '@/components/services/ServiceTechnologies'
 import ServicePortfolio from '@/components/services/ServicePortfolio'
-import ServiceFAQ from '@/components/services/ServiceFAQ'
-import ServiceCTA from '@/components/services/ServiceCTA'
+import EnhancedServiceFAQ from '@/components/services/EnhancedServiceFAQ'
+import EnhancedServiceCTA from '@/components/services/EnhancedServiceCTA'
+
 import { getServiceBySlug, getAllServiceSlugs } from '@/utils/api'
 
 export async function generateStaticParams() {
@@ -38,7 +41,7 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function Page({ params }) {
+export default async function EnhancedServicePage({ params }) {
   const service = await getServiceBySlug(params.slug)
 
   if (!service) return notFound()
@@ -78,9 +81,9 @@ export default async function Page({ params }) {
   return (
     <>
       <Header />
-      <main className="pt-32">
-        {/* Héro du service */}
-        <ServiceHero 
+      <main className="pt-24">
+        {/* Héro du service avec le composant amélioré */}
+        <EnhancedServiceHero 
           title={titreFinal} 
           description={description} 
           image={Image && Image.length > 0 ? Image[0] : null} 
@@ -97,17 +100,17 @@ export default async function Page({ params }) {
           />
         )}
         
-        {/* Types de services */}
+        {/* Types de services améliorés */}
         {types_services && types_services.length > 0 && (
-          <ServiceFeatures 
+          <EnhancedServiceFeatures 
             features={types_services} 
             color={color} 
           />
         )}
         
-        {/* Méthodologie */}
+        {/* Méthodologie améliorée */}
         {methodologie && methodologie.length > 0 && (
-          <ServiceProcess 
+          <EnhancedServiceProcess 
             steps={methodologie} 
             color={color} 
           />
@@ -129,16 +132,16 @@ export default async function Page({ params }) {
           />
         )}
         
-        {/* FAQ */}
+        {/* FAQ améliorée */}
         {faq && faq.length > 0 && (
-          <ServiceFAQ 
+          <EnhancedServiceFAQ 
             questions={faq} 
             color={color} 
           />
         )}
         
-        {/* Call-To-Action */}
-        <ServiceCTA 
+        {/* Call-To-Action amélioré */}
+        <EnhancedServiceCTA 
           serviceName={titreFinal} 
           color={color} 
         />
