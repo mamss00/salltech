@@ -1,16 +1,20 @@
-// save as scripts/inject-service-data.js
-
+// Modifiez le début du fichier scripts/inject-service-data.js
 const axios = require('axios');
-require('dotenv').config();
+const path = require('path');
+const fs = require('fs');
+require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
+
+// Vérification et affichage des informations de débogage
+console.log('Chemin du fichier .env:', path.resolve(__dirname, '..', '.env'));
+console.log('Le fichier .env existe:', fs.existsSync(path.resolve(__dirname, '..', '.env')));
+console.log('URL Strapi:', process.env.STRAPI_URL);
+console.log('Token API défini:', !!process.env.STRAPI_API_TOKEN);
 
 // Configuration
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+const STRAPI_URL = process.env.STRAPI_URL || 'https://api.sall.technology';
+const STRAPI_API_TOKEN = process.env.STRAPI_API_TOKEN;
 
-if (!STRAPI_API_TOKEN) {
-  console.error('STRAPI_API_TOKEN est requis. Créez un token dans l\'interface admin de Strapi.');
-  process.exit(1);
-}
+// Le reste du code reste inchangé
 
 // Données du service à injecter
 const siteWebServiceData = {
