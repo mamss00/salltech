@@ -5,7 +5,7 @@ import Footer from '@/components/Footer'
 
 // Importer les composants améliorés
 import EnhancedServiceHero from '@/components/services/ServiceHero'
-import ServiceIntroduction from '@/components/services/Introduction'
+import ServiceIntroduction from '@/components/services/ServiceIntroduction'
 import EnhancedServiceFeatures from '@/components/services/ServiceFeatures'
 import EnhancedServiceProcess from '@/components/services/ServiceProcess'
 import ServiceTechnologies from '@/components/services/ServiceTechnologies'
