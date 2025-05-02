@@ -2,6 +2,8 @@ const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
 const dev = process.env.NODE_ENV !== 'production';
+
+// Configuration correcte pour l'hébergement avec un nom de domaine
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
@@ -10,28 +12,19 @@ app.prepare().then(() => {
   console.log('Démarrage du serveur Next.js...');
   
   createServer((req, res) => {
-    // Analyser l'URL
+    // Analyse l'URL de la requête
     const parsedUrl = parse(req.url, true);
-    const { pathname } = parsedUrl;
     
-    // Log pour débogage (à commenter en production)
-    if (!pathname.includes('/_next/static/')) {
-      console.log(`Requête: ${req.method} ${pathname}`);
-    }
-    
-    // Tenter de gérer la requête avec Next.js
+    // Laisse Next.js gérer la requête
     try {
       handle(req, res, parsedUrl);
     } catch (error) {
-      console.error(`Erreur de traitement: ${pathname}`, error);
+      console.error('Erreur de traitement de la requête:', error);
       res.statusCode = 500;
       res.end('Erreur interne du serveur');
     }
   }).listen(3000, (err) => {
-    if (err) {
-      console.error('Erreur au démarrage du serveur:', err);
-      throw err;
-    }
+    if (err) throw err;
     console.log('> Serveur prêt sur http://localhost:3000');
   });
 }).catch(err => {
