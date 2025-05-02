@@ -1,48 +1,33 @@
 const { createServer } = require('http');
 const { parse } = require('url');
 const next = require('next');
-const { join } = require('path');
-const { existsSync } = require('fs');
 const dev = process.env.NODE_ENV !== 'production';
-
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-// Fonction pour vérifier si un fichier existe dans le dossier .next/static
-const staticFileExists = (pathname) => {
-  if (!pathname.startsWith('/_next/static/')) return false;
-  
-  // Transforme /_next/static/chunks/app/page.js en .next/static/chunks/app/page.js
-  const filePath = join(process.cwd(), pathname.replace('/_next', '.next'));
-  return existsSync(filePath);
-};
-
 app.prepare().then(() => {
-  console.log(`Environnement: ${process.env.NODE_ENV}`);
-  console.log('Démarrage du serveur Next.js...');
-  
   createServer((req, res) => {
-    const parsedUrl = parse(req.url, true);
-    const { pathname } = parsedUrl;
+    // Sortie de débogage pour chaque requête
+    console.log(`Requête reçue: ${req.method} ${req.url}`);
     
-    // Log minimal pour le débogage des assets
-    if (pathname.startsWith('/_next/static/') && !pathname.includes('/chunks/webpack')) {
-      console.log(`Requête de fichier statique: ${pathname}`);
+    // Intercepter une route spécifique pour vérifier que le serveur fonctionne
+    const parsedUrl = parse(req.url, true);
+    if (parsedUrl.pathname === '/api/hello') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ message: 'Hello from Next.js Server' }));
+      return;
     }
     
+    // Route normale Next.js
     try {
-      // Laisser Next.js gérer toutes les requêtes
       handle(req, res, parsedUrl);
     } catch (error) {
-      console.error(`Erreur de traitement de la requête ${pathname}:`, error);
+      console.error('Erreur lors du traitement de la requête:', error);
       res.statusCode = 500;
       res.end('Erreur interne du serveur');
     }
   }).listen(3000, (err) => {
     if (err) throw err;
-    console.log('> Serveur prêt sur http://localhost:3000');
+    console.log('> Prêt sur http://localhost:3000');
   });
-}).catch(err => {
-  console.error('Erreur lors de la préparation de Next.js:', err);
-  process.exit(1);
 });
