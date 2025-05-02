@@ -4,14 +4,14 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
 // Importer les composants améliorés
-import EnhancedServiceHero from '@/components/services/EnhancedServiceHero'
-import ServiceIntroduction from '@/components/services/ServiceIntroduction'
-import EnhancedServiceFeatures from '@/components/services/EnhancedServiceFeatures'
-import EnhancedServiceProcess from '@/components/services/EnhancedServiceProcess'
+import EnhancedServiceHero from '@/components/services/ServiceHero'
+import ServiceIntroduction from '@/components/services/Introduction'
+import EnhancedServiceFeatures from '@/components/services/ServiceFeatures'
+import EnhancedServiceProcess from '@/components/services/ServiceProcess'
 import ServiceTechnologies from '@/components/services/ServiceTechnologies'
 import ServicePortfolio from '@/components/services/ServicePortfolio'
-import EnhancedServiceFAQ from '@/components/services/EnhancedServiceFAQ'
-import EnhancedServiceCTA from '@/components/services/EnhancedServiceCTA'
+import EnhancedServiceFAQ from '@/components/services/ServiceFAQ'
+import EnhancedServiceCTA from '@/components/services/ServiceCTA'
 
 import { getServiceBySlug, getAllServiceSlugs } from '@/utils/api'
 
