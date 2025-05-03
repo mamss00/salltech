@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
@@ -28,79 +28,46 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
   const lineControls = useAnimation()
   const descriptionControls = useAnimation()
   
-  // Déclencher les animations quand le titre est visible
-  if (titleInView) {
-    // Animation séquentielle pour une entrée élégante
-    badgeControls.start({
-      opacity: 1,
-      y: 0,
-      scale: 1,
-      transition: { duration: 0.5, ease: "easeOut" }
-    })
-    
-    titleControls.start({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, delay: 0.2, ease: "easeOut" }
-    })
-    
-    lineControls.start({
-      width: "100%",
-      opacity: 1,
-      transition: { duration: 0.8, delay: 0.5, ease: "easeInOut" }
-    })
-    
-    descriptionControls.start({
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.7, delay: 0.7, ease: "easeOut" }
-    })
-  }
+  // Observer pour chaque carte individuellement
+  const cardRefs = features.map(() => useInView({ triggerOnce: true, threshold: 0.1 }))
   
-  // Animation variants pour les cartes
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.8 // Délai après l'animation du titre
+  // Animation séquentielle du titre lorsqu'il est visible
+  useEffect(() => {
+    if (titleInView) {
+      const sequence = async () => {
+        // Animation du badge
+        await badgeControls.start({
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: { duration: 0.5, ease: "easeOut" }
+        })
+        
+        // Animation du titre (avec un léger délai)
+        await titleControls.start({
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.6, ease: "easeOut" }
+        })
+        
+        // Animation de la ligne (avec un léger délai)
+        await lineControls.start({
+          width: "150px",
+          opacity: 1,
+          transition: { duration: 0.8, ease: "easeInOut" }
+        })
+        
+        // Animation de la description (avec un léger délai)
+        await descriptionControls.start({
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.7, ease: "easeOut" }
+        })
       }
+      
+      sequence()
     }
-  }
-  
-  const cardVariants = {
-    hidden: { 
-      y: 50, 
-      opacity: 0,
-      scale: 0.95
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      transition: { 
-        type: "spring",
-        stiffness: 80,
-        damping: 15
-      }
-    },
-    hover: {
-      y: -10,
-      boxShadow: "0 20px 30px rgba(0,0,0,0.1)",
-      transition: { 
-        type: "spring", 
-        stiffness: 300, 
-        damping: 20
-      }
-    }
-  }
-  
-  // Les observateurs pour la section des fonctionnalités
-  const [featuresRef, featuresInView] = useInView({ 
-    triggerOnce: true, 
-    threshold: 0.1
-  })
+  }, [titleInView, badgeControls, titleControls, lineControls, descriptionControls])
   
   if (!features || features.length === 0) {
     return null;
@@ -206,17 +173,12 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
           </motion.p>
         </div>
         
-        {/* Grille de services avec animation d'entrée séquentielle */}
+        {/* Grille de services avec animation d'entrée indépendante pour chaque carte */}
         <div className="max-w-6xl mx-auto">
-          <motion.div
-            ref={featuresRef}
-            variants={containerVariants}
-            initial="hidden"
-            animate={featuresInView ? "visible" : "hidden"}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8"
-          >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature, index) => {
               const displayIcon = getDisplayIcon(feature.icone);
+              const [ref, inView] = cardRefs[index];
               
               // Couleurs pour les cartes, avec variation comme dans MÉTHODOLOGIE
               const getCardStyle = () => {
@@ -245,45 +207,80 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
               
               const { gradientFrom, gradientTo, textColor, iconBg, iconColor } = getCardStyle();
               
-              // Animation spéciale pour chaque carte
-              const cardDelay = 0.2 + (index * 0.15);
+              // Décalage plus marqué entre les cartes (0.4 seconde entre chaque carte)
+              const cardDelay = 0.4 * index;
               
               return (
                 <motion.div 
                   key={index}
-                  variants={cardVariants}
-                  whileHover="hover"
-                  className={`bg-gradient-to-br ${gradientFrom} ${gradientTo} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 group p-8 h-full`}
+                  ref={ref}
+                  initial={{ opacity: 0, y: 70, scale: 0.9 }}
+                  animate={inView ? { 
+                    opacity: 1, 
+                    y: 0, 
+                    scale: 1,
+                    transition: { 
+                      type: "spring", 
+                      stiffness: 70, 
+                      damping: 15,
+                      delay: cardDelay,
+                      duration: 0.8
+                    }
+                  } : {}}
+                  whileHover={{ 
+                    y: -10, 
+                    boxShadow: "0 20px 30px rgba(0,0,0,0.1)",
+                    transition: { 
+                      type: "spring", 
+                      stiffness: 300, 
+                      damping: 20
+                    }
+                  }}
+                  className={`bg-gradient-to-br ${gradientFrom} ${gradientTo} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl group p-8 h-full`}
                 >
-                  {/* Icône avec animation d'entrée */}
+                  {/* Icône avec animation d'entrée indépendante */}
                   <motion.div 
                     className="text-4xl mb-5 relative"
                     initial={{ scale: 0, rotate: -20 }}
-                    animate={{ scale: 1, rotate: 0 }}
-                    transition={{ 
-                      delay: cardDelay + 0.2,
-                      type: "spring",
-                      stiffness: 200,
-                      damping: 15
-                    }}
+                    animate={inView ? { 
+                      scale: 1, 
+                      rotate: 0,
+                      transition: { 
+                        delay: cardDelay + 0.2,
+                        type: "spring",
+                        stiffness: 200,
+                        damping: 15
+                      }
+                    } : {}}
                   >
                     {/* Cercle décoratif derrière l'icône */}
                     <motion.div
                       className={`absolute inset-0 ${iconBg} rounded-full w-12 h-12 -left-1 -top-1 opacity-50`}
                       initial={{ scale: 0 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: cardDelay + 0.4, duration: 0.5 }}
+                      animate={inView ? { 
+                        scale: 1,
+                        transition: { 
+                          delay: cardDelay + 0.4, 
+                          duration: 0.5 
+                        }
+                      } : {}}
                     ></motion.div>
                     
                     <span className={`text-5xl ${iconColor} relative z-10`}>{displayIcon}</span>
                   </motion.div>
                   
-                  {/* Titre avec animation d'entrée */}
+                  {/* Titre avec animation d'entrée indépendante */}
                   <motion.h3 
                     className={`text-2xl font-bold mb-4 group-hover:${textColor} transition-colors duration-300`}
                     initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: cardDelay + 0.4, duration: 0.5 }}
+                    animate={inView ? { 
+                      opacity: 1, 
+                      x: 0,
+                      transition: { 
+                        delay: cardDelay + 0.4, 
+                        duration: 0.5 
+                      }
+                    } : {}}
                   >
                     {feature.titre}
                   </motion.h3>
@@ -292,25 +289,42 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                   <motion.div 
                     className="h-0.5 w-12 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-20 transition-all duration-300"
                     initial={{ width: 0 }}
-                    animate={{ width: "3rem" }}
-                    transition={{ delay: cardDelay + 0.5, duration: 0.6 }}
+                    animate={inView ? { 
+                      width: "3rem",
+                      transition: { 
+                        delay: cardDelay + 0.5, 
+                        duration: 0.6 
+                      }
+                    } : {}}
                   ></motion.div>
                   
-                  {/* Description avec animation d'entrée */}
+                  {/* Description avec animation d'entrée indépendante */}
                   <motion.p 
                     className="text-gray-600 mb-6"
                     initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: cardDelay + 0.6, duration: 0.5 }}
+                    animate={inView ? { 
+                      opacity: 1, 
+                      y: 0,
+                      transition: { 
+                        delay: cardDelay + 0.6, 
+                        duration: 0.5 
+                      }
+                    } : {}}
                   >
                     {feature.description}
                   </motion.p>
                   
-                  {/* Bouton avec animation d'entrée */}
+                  {/* Bouton avec animation d'entrée indépendante */}
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: cardDelay + 0.7, duration: 0.5 }}
+                    animate={inView ? { 
+                      opacity: 1, 
+                      y: 0,
+                      transition: { 
+                        delay: cardDelay + 0.7, 
+                        duration: 0.5 
+                      }
+                    } : {}}
                   >
                     <Link 
                       href="#contact"
@@ -327,7 +341,7 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                 </motion.div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </motion.div>
     </section>
