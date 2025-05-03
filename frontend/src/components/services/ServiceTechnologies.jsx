@@ -141,7 +141,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
               utilisées
             </motion.span>
             
-            {/* Ligne clignotante (effet d'invite de commande) */}
+            {/* Curseur clignotant (effet d'invite de commande) */}
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 1.2, repeat: Infinity }}
@@ -196,90 +196,43 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                 className="h-full"
               >
                 <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg relative group">
-                  {/* Bordure supérieure avec effet lumineux */}
-                  <motion.div 
-                    className={`h-1 w-full bg-${color}`}
-                    animate={{
-                      backgroundImage: [
-                        `linear-gradient(90deg, var(--color-${color}) 0%, transparent 100%)`,
-                        `linear-gradient(90deg, transparent 0%, var(--color-${color}) 50%, transparent 100%)`,
-                        `linear-gradient(90deg, transparent 0%, var(--color-${color}) 100%)`
-                      ]
-                    }}
-                    transition={{
-                      duration: 2,
-                      repeat: Infinity,
-                      repeatType: "mirror",
-                      delay: delay
-                    }}
-                  />
-                  
-                  <div className="p-5 flex flex-col items-center">
-                    {/* Logo ou initial */}
+                  {/* Ligne décorative adaptative - change en fonction de la présence du logo */}
+                  <div className="relative h-1">
                     {logoUrl ? (
+                      /* Pour les technologies avec logo, ligne animée avec une forme inspirée du logo */
                       <motion.div
-                        className="w-16 h-16 flex items-center justify-center mb-4"
-                        initial={{ rotateY: 90, opacity: 0 }}
-                        animate={{ rotateY: 0, opacity: 1 }}
-                        transition={{ delay: delay + 0.2, duration: 0.5 }}
-                      >
-                        <Image
-                          src={logoUrl}
-                          alt={tech.nom || `Technologie ${index + 1}`}
-                          width={64}
-                          height={64}
-                          className="object-contain w-full h-full"
-                        />
-                        
-                        {/* Effet de brillance */}
-                        <motion.div
-                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                          animate={{
-                            x: ["200%", "-200%"]
-                          }}
-                          transition={{
+                        className="absolute inset-x-0 top-0 h-1"
+                        initial={{ backgroundPosition: "0% 0%" }}
+                        animate={{
+                          background: [
+                            `linear-gradient(90deg, var(--color-${color}) 0%, transparent 0%)`,
+                            `linear-gradient(90deg, var(--color-${color}) 33%, transparent 33%)`,
+                            `linear-gradient(90deg, var(--color-${color}) 66%, transparent 66%)`,
+                            `linear-gradient(90deg, var(--color-${color}) 100%, transparent 100%)`,
+                          ],
+                          transition: {
+                            times: [0, 0.33, 0.66, 1],
                             duration: 1.5,
-                            repeat: Infinity,
-                            repeatType: "loop",
-                            repeatDelay: 4,
-                            delay: delay + 1
-                          }}
-                        />
-                      </motion.div>
-                    ) : (
-                      <motion.div
-                        className={`relative w-16 h-16 flex items-center justify-center mb-4 rounded-full border border-${color}/20 bg-gray-50`}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ 
-                          delay: delay + 0.2, 
-                          type: "spring", 
-                          stiffness: 100 
+                            delay: delay,
+                            ease: "easeInOut"
+                          }
                         }}
+                      />
+                    ) : (
+                      /* Pour les technologies sans logo, motif géométrique pulsant */
+                      <motion.div
+                        className="absolute inset-x-0 top-0 h-1 overflow-hidden"
+                        initial={{ opacity: 0.7 }}
                       >
                         <motion.div
-                          className={`text-lg font-semibold text-${color}`}
+                          className="absolute inset-0"
                           animate={{
-                            textShadow: [
-                              "0 0 0px transparent",
-                              `0 0 10px var(--color-${color})`,
-                              "0 0 0px transparent"
-                            ]
+                            backgroundImage: [
+                              `linear-gradient(90deg, var(--color-${color}) 10%, transparent 10%, transparent 20%, var(--color-${color}) 20%, var(--color-${color}) 30%, transparent 30%, transparent 40%, var(--color-${color}) 40%, var(--color-${color}) 50%, transparent 50%, transparent 60%, var(--color-${color}) 60%, var(--color-${color}) 70%, transparent 70%, transparent 80%, var(--color-${color}) 80%, var(--color-${color}) 90%, transparent 90%)`,
+                              `linear-gradient(90deg, transparent 10%, var(--color-${color}) 10%, var(--color-${color}) 20%, transparent 20%, transparent 30%, var(--color-${color}) 30%, var(--color-${color}) 40%, transparent 40%, transparent 50%, var(--color-${color}) 50%, var(--color-${color}) 60%, transparent 60%, transparent 70%, var(--color-${color}) 70%, var(--color-${color}) 80%, transparent 80%, transparent 90%, var(--color-${color}) 90%)`
+                            ],
+                            backgroundSize: ["100% 100%", "200% 100%", "100% 100%"]
                           }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            repeatType: "mirror",
-                            delay: delay
-                          }}
-                        >
-                          {tech.nom?.charAt(0) || '?'}
-                        </motion.div>
-                        
-                        {/* Cercles concentriques animés */}
-                        <motion.div
-                          className={`absolute inset-0 rounded-full border border-${color}/20`}
-                          animate={{ scale: [1, 1.2, 1] }}
                           transition={{
                             duration: 3,
                             repeat: Infinity,
@@ -289,6 +242,99 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                         />
                       </motion.div>
                     )}
+                  </div>
+                  
+                  <div className="p-5 flex flex-col items-center">
+                    {/* Logo ou initial avec container standardisé */}
+                    <div className="relative w-16 h-16 flex items-center justify-center mb-4 overflow-hidden">
+                      {logoUrl ? (
+                        <motion.div
+                          className="w-full h-full flex items-center justify-center"
+                          initial={{ scale: 0, rotateY: 90 }}
+                          animate={{ scale: 1, rotateY: 0 }}
+                          transition={{ 
+                            type: "spring",
+                            stiffness: 70,
+                            damping: 15,
+                            delay: delay + 0.2
+                          }}
+                        >
+                          <Image
+                            src={logoUrl}
+                            alt={tech.nom || `Technologie ${index + 1}`}
+                            width={64}
+                            height={64}
+                            className="object-contain max-w-full max-h-full"
+                          />
+                          
+                          {/* Effet de brillance sur le logo */}
+                          <motion.div
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                            initial={{ x: "200%" }}
+                            animate={{ x: ["-200%", "200%"] }}
+                            transition={{
+                              duration: 2,
+                              repeat: Infinity,
+                              repeatDelay: 4,
+                              delay: delay + 1,
+                              ease: "easeInOut"
+                            }}
+                          />
+                        </motion.div>
+                      ) : (
+                        <motion.div
+                          className={`flex items-center justify-center w-10 h-10 rounded-full bg-${color}/10`}
+                          initial={{ scale: 0 }}
+                          animate={{ scale: 1 }}
+                          transition={{ 
+                            type: "spring", 
+                            stiffness: 100,
+                            damping: 15,
+                            delay: delay + 0.2
+                          }}
+                        >
+                          <motion.span
+                            className={`text-lg font-semibold text-${color}`}
+                            animate={{
+                              textShadow: [
+                                "0 0 0px transparent",
+                                `0 0 10px var(--color-${color})`,
+                                "0 0 0px transparent"
+                              ]
+                            }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              repeatType: "mirror",
+                              delay: delay
+                            }}
+                          >
+                            {tech.nom?.charAt(0) || '?'}
+                          </motion.span>
+                          
+                          {/* Cercles concentriques animés */}
+                          <motion.div
+                            className={`absolute w-12 h-12 rounded-full border border-${color}/20`}
+                            animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              repeatType: "mirror"
+                            }}
+                          />
+                          <motion.div
+                            className={`absolute w-16 h-16 rounded-full border border-${color}/10`}
+                            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
+                            transition={{
+                              duration: 3,
+                              repeat: Infinity,
+                              repeatType: "mirror",
+                              delay: 0.2
+                            }}
+                          />
+                        </motion.div>
+                      )}
+                    </div>
                     
                     {/* Nom de la technologie */}
                     <motion.h3
