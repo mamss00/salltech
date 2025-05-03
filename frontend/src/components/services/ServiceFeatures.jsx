@@ -238,9 +238,9 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                   }}
                   className={`bg-gradient-to-br ${gradientFrom} ${gradientTo} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl group p-8 h-full`}
                 >
-                  {/* Icône avec animation d'entrée indépendante */}
+                  {/* Conteneur d'icône standardisé */}
                   <motion.div 
-                    className="text-4xl mb-5 relative"
+                    className="h-16 mb-5 relative flex items-center"
                     initial={{ scale: 0, rotate: -20 }}
                     animate={inView ? { 
                       scale: 1, 
@@ -253,9 +253,9 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                       }
                     } : {}}
                   >
-                    {/* Cercle décoratif derrière l'icône */}
+                    {/* Cercle décoratif derrière l'icône - taille fixe */}
                     <motion.div
-                      className={`absolute inset-0 ${iconBg} rounded-full w-12 h-12 -left-1 -top-1 opacity-50`}
+                      className={`${iconBg} rounded-full w-16 h-16 absolute opacity-20`}
                       initial={{ scale: 0 }}
                       animate={inView ? { 
                         scale: 1,
@@ -266,7 +266,10 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                       } : {}}
                     ></motion.div>
                     
-                    <span className={`text-5xl ${iconColor} relative z-10`}>{displayIcon}</span>
+                    {/* Conteneur de taille fixe pour l'icône */}
+                    <div className={`${iconColor} relative z-10 flex items-center justify-center w-16 h-16`}>
+                      <span className="text-4xl">{displayIcon}</span>
+                    </div>
                   </motion.div>
                   
                   {/* Titre avec animation d'entrée indépendante */}
