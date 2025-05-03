@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -22,6 +22,41 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
   // Animation du titre lors de l'affichage
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
+  // Contrôles d'animation pour les éléments du titre
+  const titleControls = useAnimation()
+  const badgeControls = useAnimation()
+  const lineControls = useAnimation()
+  const descriptionControls = useAnimation()
+  
+  // Déclencher les animations quand le titre est visible
+  if (titleInView) {
+    // Animation séquentielle pour une entrée élégante
+    badgeControls.start({
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: { duration: 0.5, ease: "easeOut" }
+    })
+    
+    titleControls.start({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.6, delay: 0.2, ease: "easeOut" }
+    })
+    
+    lineControls.start({
+      width: "100%",
+      opacity: 1,
+      transition: { duration: 0.8, delay: 0.5, ease: "easeInOut" }
+    })
+    
+    descriptionControls.start({
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, delay: 0.7, ease: "easeOut" }
+    })
+  }
+  
   // Animation variants pour les cartes
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -29,7 +64,7 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
       opacity: 1,
       transition: {
         staggerChildren: 0.15,
-        delayChildren: 0.3
+        delayChildren: 0.8 // Délai après l'animation du titre
       }
     }
   }
@@ -37,11 +72,13 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
   const cardVariants = {
     hidden: { 
       y: 50, 
-      opacity: 0
+      opacity: 0,
+      scale: 0.95
     },
     visible: {
       y: 0,
       opacity: 1,
+      scale: 1,
       transition: { 
         type: "spring",
         stiffness: 80,
@@ -87,52 +124,81 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
       ref={containerRef} 
       className="py-24 relative overflow-hidden bg-gradient-to-b from-white to-gray-50"
     >
-      {/* Éléments de fond subtils */}
-      <div className="absolute inset-0 overflow-hidden z-0">
-        <div className={`absolute top-0 right-0 w-96 h-96 bg-${color}/5 rounded-full blur-3xl`}></div>
-        <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple/5 rounded-full blur-3xl"></div>
+      {/* Animations d'arrière-plan */}
+      <motion.div 
+        className="absolute inset-0 overflow-hidden z-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1.5, ease: "easeOut" }}
+      >
+        {/* Formes géométriques animées */}
+        <motion.div
+          initial={{ x: -200, opacity: 0 }}
+          animate={{ x: 0, opacity: 0.6 }}
+          transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+          className={`absolute top-0 right-0 w-96 h-96 bg-${color}/5 rounded-full blur-3xl`}
+        ></motion.div>
+        
+        <motion.div
+          initial={{ x: 200, opacity: 0 }}
+          animate={{ x: 0, opacity: 0.6 }}
+          transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
+          className="absolute bottom-0 left-0 w-96 h-96 bg-purple/5 rounded-full blur-3xl"
+        ></motion.div>
         
         {/* Motif graphique comme dans MÉTHODOLOGIE */}
-        <svg className="absolute opacity-5" width="100%" height="100%" viewBox="0 0 800 800">
-          <defs>
-            <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#smallGrid)" />
-        </svg>
-      </div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.05 }}
+          transition={{ duration: 2, delay: 0.7 }}
+        >
+          <svg className="absolute w-full h-full" viewBox="0 0 800 800">
+            <defs>
+              <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.5" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#smallGrid)" />
+          </svg>
+        </motion.div>
+      </motion.div>
 
       <motion.div 
         className="container relative z-10"
         style={{ opacity: containerOpacity }}
       >
         <div className="text-center mb-20">
-          {/* Badge rond comme dans MÉTHODOLOGIE */}
+          {/* Badge animé */}
           <motion.span
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={titleInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: 0.2, duration: 0.5 }}
+            initial={{ opacity: 0, y: -20, scale: 0.8 }}
+            animate={badgeControls}
             className="inline-block px-6 py-2 rounded-full bg-gradient-to-r from-gray-50 to-white shadow-sm border border-gray-100 text-sm font-medium text-gray-600 mb-4"
           >
             FONCTIONNALITÉS
           </motion.span>
           
-          {/* Titre principal avec mise en forme similaire à MÉTHODOLOGIE */}
-          <motion.div 
+          {/* Titre avec animation séquentielle */}
+          <motion.h2
             ref={titleRef}
-            className="mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={titleControls}
+            className="text-3xl md:text-5xl font-bold mb-6"
           >
-            <h2 className="text-3xl md:text-5xl font-bold">
-              Ce que nous <span className={`text-${color}`}>proposons</span>
-            </h2>
-          </motion.div>
+            Ce que nous <span className={`text-${color}`}>proposons</span>
+          </motion.h2>
           
-          {/* Description avec animation subtile */}
+          {/* Ligne décorative avec animation */}
+          <motion.div
+            initial={{ width: 0, opacity: 0 }}
+            animate={lineControls}
+            className={`h-1 bg-gradient-to-r from-${color} via-purple to-red rounded-full mx-auto mb-6`}
+            style={{ maxWidth: "150px" }}
+          ></motion.div>
+          
+          {/* Description avec animation d'entrée */}
           <motion.p 
-            initial={{ opacity: 0 }}
-            animate={titleInView ? { opacity: 1 } : {}}
-            transition={{ delay: 0.4, duration: 0.6 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={descriptionControls}
             className="text-lg text-gray-600 max-w-3xl mx-auto"
           >
             Nos solutions sont complètes et adaptées à vos besoins spécifiques, 
@@ -140,8 +206,8 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
           </motion.p>
         </div>
         
-        {/* Grille de services - style similaire aux cartes MÉTHODOLOGIE */}
-        <div className="max-w-5xl mx-auto">
+        {/* Grille de services avec animation d'entrée séquentielle */}
+        <div className="max-w-6xl mx-auto">
           <motion.div
             ref={featuresRef}
             variants={containerVariants}
@@ -157,21 +223,30 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                 if (index % 3 === 0) return {
                   gradientFrom: `from-${color}/20`,
                   gradientTo: `to-${color}/5`,
-                  textColor: `text-${color}`
+                  textColor: `text-${color}`,
+                  iconBg: `bg-${color}/15`,
+                  iconColor: `text-${color}`
                 };
                 if (index % 3 === 1) return {
                   gradientFrom: 'from-purple/20',
                   gradientTo: 'to-purple/5',
-                  textColor: 'text-purple'
+                  textColor: 'text-purple',
+                  iconBg: 'bg-purple/15',
+                  iconColor: 'text-purple'
                 };
                 return {
                   gradientFrom: 'from-red/20',
                   gradientTo: 'to-red/5',
-                  textColor: 'text-red'
+                  textColor: 'text-red',
+                  iconBg: 'bg-red/15',
+                  iconColor: 'text-red'
                 };
               };
               
-              const { gradientFrom, gradientTo, textColor } = getCardStyle();
+              const { gradientFrom, gradientTo, textColor, iconBg, iconColor } = getCardStyle();
+              
+              // Animation spéciale pour chaque carte
+              const cardDelay = 0.2 + (index * 0.15);
               
               return (
                 <motion.div 
@@ -180,36 +255,75 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                   whileHover="hover"
                   className={`bg-gradient-to-br ${gradientFrom} ${gradientTo} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 group p-8 h-full`}
                 >
-                  {/* Icône stylisée comme dans MÉTHODOLOGIE */}
-                  <div className="text-4xl mb-5">
-                    <span className={`text-5xl ${textColor}`}>{displayIcon}</span>
-                  </div>
+                  {/* Icône avec animation d'entrée */}
+                  <motion.div 
+                    className="text-4xl mb-5 relative"
+                    initial={{ scale: 0, rotate: -20 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ 
+                      delay: cardDelay + 0.2,
+                      type: "spring",
+                      stiffness: 200,
+                      damping: 15
+                    }}
+                  >
+                    {/* Cercle décoratif derrière l'icône */}
+                    <motion.div
+                      className={`absolute inset-0 ${iconBg} rounded-full w-12 h-12 -left-1 -top-1 opacity-50`}
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ delay: cardDelay + 0.4, duration: 0.5 }}
+                    ></motion.div>
+                    
+                    <span className={`text-5xl ${iconColor} relative z-10`}>{displayIcon}</span>
+                  </motion.div>
                   
-                  {/* Titre avec style similaire à MÉTHODOLOGIE */}
-                  <h3 className={`text-2xl font-bold mb-4 group-hover:${textColor} transition-colors duration-300`}>
+                  {/* Titre avec animation d'entrée */}
+                  <motion.h3 
+                    className={`text-2xl font-bold mb-4 group-hover:${textColor} transition-colors duration-300`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: cardDelay + 0.4, duration: 0.5 }}
+                  >
                     {feature.titre}
-                  </h3>
+                  </motion.h3>
                   
                   {/* Ligne décorative animée */}
-                  <div className="h-0.5 w-12 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-20 transition-all duration-300"></div>
+                  <motion.div 
+                    className="h-0.5 w-12 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 group-hover:w-20 transition-all duration-300"
+                    initial={{ width: 0 }}
+                    animate={{ width: "3rem" }}
+                    transition={{ delay: cardDelay + 0.5, duration: 0.6 }}
+                  ></motion.div>
                   
-                  {/* Description */}
-                  <p className="text-gray-600 mb-6">{feature.description}</p>
-                  
-                  {/* Bouton stylisé comme dans MÉTHODOLOGIE */}
-                  <Link 
-                    href="#contact"
-                    className={`inline-flex items-center ${textColor} font-medium hover:underline transition-all duration-300 group-hover:text-opacity-80`}
+                  {/* Description avec animation d'entrée */}
+                  <motion.p 
+                    className="text-gray-600 mb-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: cardDelay + 0.6, duration: 0.5 }}
                   >
-                    <span>Demander un devis</span>
-                    <span className="inline-flex items-center ml-2">
-                      <span className="flex items-center ml-2 h-1">
-                        <span className="w-1 h-1 bg-current rounded-full mr-1 opacity-0 animate-dot-pulse-1"></span>
-                        <span className="w-1 h-1 bg-current rounded-full mr-1 opacity-0 animate-dot-pulse-2"></span>
-                        <span className="w-1 h-1 bg-current rounded-full opacity-0 animate-dot-pulse-3"></span>
+                    {feature.description}
+                  </motion.p>
+                  
+                  {/* Bouton avec animation d'entrée */}
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: cardDelay + 0.7, duration: 0.5 }}
+                  >
+                    <Link 
+                      href="#contact"
+                      className={`inline-flex items-center ${textColor} font-medium hover:underline transition-all duration-300 group-hover:text-opacity-80`}
+                    >
+                      <span>Demander un devis</span>
+                      <span className="dots-container inline-flex items-center ml-2 h-1">
+                        <span className="dot w-1 h-1 bg-current rounded-full mr-0.5 opacity-0 animate-dot-pulse-1"></span>
+                        <span className="dot w-1 h-1 bg-current rounded-full mr-0.5 opacity-0 animate-dot-pulse-2"></span>
+                        <span className="dot w-1 h-1 bg-current rounded-full opacity-0 animate-dot-pulse-3"></span>
                       </span>
-                    </span>
-                  </Link>
+                    </Link>
+                  </motion.div>
                 </motion.div>
               );
             })}
