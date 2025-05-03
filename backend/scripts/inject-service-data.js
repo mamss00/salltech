@@ -26,34 +26,65 @@ async function injectServiceData() {
       publishedAt: new Date().toISOString(),
       Titre: "Sites Internet Professionnels en Mauritanie",
       titre_page: "Création de Sites Web Professionnels à Nouakchott",
-      Description: "Des sites web performants, sécurisés et parfaitement adaptés aux entreprises mauritaniennes pour renforcer votre présence numérique et développer votre activité à Nouakchott et dans toute la Mauritanie.",
-      Emoji: "🌐",
+      // Format corrigé pour rich text fields
+      Description: [
+        {
+          type: "paragraph",
+          children: [
+            {
+              type: "text",
+              text: "Des sites web performants, sécurisés et parfaitement adaptés aux entreprises mauritaniennes pour renforcer votre présence numérique et développer votre activité à Nouakchott et dans toute la Mauritanie."
+            }
+          ]
+        }
+      ],
+      Emoji: "U+1F310", // 🌐
       Couleur: "from-blue/20 to-blue/5",
       Ordreaffichage: 1,
       slug: slug,
-      introduction: "Un site internet professionnel est aujourd'hui indispensable pour toute entreprise mauritanienne souhaitant développer sa visibilité et son activité. Chez SALLTECH, implantés à Nouakchott, nous concevons des sites web sur mesure qui répondent parfaitement à vos objectifs commerciaux et aux attentes de vos clients mauritaniens et internationaux. Notre équipe d'experts mauritaniens utilise les technologies les plus avancées (React, Next.js, Node.js) pour développer des applications web performantes, ainsi que WordPress pour les sites qui nécessitent une gestion de contenu simplifiée. Nous créons des solutions personnalisées qui allient design moderne, performance technique et optimisation pour les moteurs de recherche.",
+      // Format corrigé pour rich text fields
+      introduction: [
+        {
+          type: "paragraph",
+          children: [
+            {
+              type: "text",
+              text: "Un site internet professionnel est aujourd'hui indispensable pour toute entreprise mauritanienne souhaitant développer sa visibilité et son activité. Chez SALLTECH, implantés à Nouakchott, nous concevons des sites web sur mesure qui répondent parfaitement à vos objectifs commerciaux et aux attentes de vos clients mauritaniens et internationaux."
+            }
+          ]
+        },
+        {
+          type: "paragraph",
+          children: [
+            {
+              type: "text",
+              text: "Notre équipe d'experts mauritaniens utilise les technologies les plus avancées (React, Next.js, Node.js) pour développer des applications web performantes, ainsi que WordPress pour les sites qui nécessitent une gestion de contenu simplifiée. Nous créons des solutions personnalisées qui allient design moderne, performance technique et optimisation pour les moteurs de recherche."
+            }
+          ]
+        }
+      ],
       caracteristiques: [
         {
           titre: "Design Moderne et Local",
           description: "Interfaces élégantes et professionnelles adaptées aux attentes des consommateurs mauritaniens",
-          icone: "🎨"
+          icone: "U+1F3A8" // 🎨
         },
         {
           titre: "Performance sur Tous Appareils",
           description: "Sites parfaitement optimisés pour les smartphones et les réseaux mobiles mauritaniens",
-          icone: "📱"
+          icone: "U+1F4F1" // 📱
         },
         {
           titre: "Visibilité Maximale",
           description: "Architecture et contenu optimisés pour les recherches locales en Mauritanie et dans la sous-région",
-          icone: "🔍"
+          icone: "U+1F50D" // 🔍
         }
       ],
       types_services: [
         {
           titre: "Site Vitrine Professionnel",
           description: "Présentez votre entreprise mauritanienne avec élégance et efficacité pour attirer de nouveaux clients locaux et internationaux",
-          icone: "🏢",
+          icone: "U+1F3E2", // 🏢
           fonctionnalites: [
             { texte: "Design moderne adapté à votre image de marque" },
             { texte: "Présentation claire de vos produits et services" },
@@ -64,7 +95,7 @@ async function injectServiceData() {
         {
           titre: "Boutique en Ligne",
           description: "Vendez vos produits en ligne en Mauritanie et à l'international avec une solution e-commerce complète et adaptée au marché local",
-          icone: "🛒",
+          icone: "U+1F6D2", // 🛒
           fonctionnalites: [
             { texte: "Catalogue produits attractif et facile à gérer" },
             { texte: "Paiements sécurisés adaptés au marché mauritanien" },
@@ -75,7 +106,7 @@ async function injectServiceData() {
         {
           titre: "Site Web Sur Mesure",
           description: "Solutions personnalisées pour les besoins spécifiques de votre entreprise mauritanienne avec des fonctionnalités avancées",
-          icone: "⚙️",
+          icone: "U+2699", // ⚙️
           fonctionnalites: [
             { texte: "Fonctionnalités spécifiques à votre secteur d'activité" },
             { texte: "Espace membres et portails clients sécurisés" },
@@ -162,22 +193,63 @@ async function injectServiceData() {
           description: "Déploiement conteneurisé et intégration continue pour une fiabilité maximale"
         }
       ],
+      // Format déjà correct pour les FAQ
       faq: [
         {
           question: "Combien coûte la création d'un site web professionnel en Mauritanie?",
-          reponse: "Les tarifs pour la création d'un site web en Mauritanie varient selon la complexité du projet et les technologies utilisées. Un site vitrine démarre à 150 000 MRU, tandis qu'une boutique en ligne ou une application web personnalisée démarre à 300 000 MRU. Nous établissons un devis détaillé après analyse de vos besoins spécifiques."
+          reponse: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  text: "Les tarifs pour la création d'un site web en Mauritanie varient selon la complexité du projet et les technologies utilisées. Un site vitrine démarre à 150 000 MRU, tandis qu'une boutique en ligne ou une application web personnalisée démarre à 300 000 MRU. Nous établissons un devis détaillé après analyse de vos besoins spécifiques."
+                }
+              ]
+            }
+          ]
         },
         {
           question: "Quelle est la différence entre un site WordPress et un développement sur mesure?",
-          reponse: "WordPress est une solution idéale pour les sites nécessitant une gestion de contenu régulière par votre équipe, avec un excellent rapport qualité-prix. Le développement sur mesure offre quant à lui des fonctionnalités totalement personnalisées, des performances supérieures et une liberté totale de conception. Nous recommandons la solution la plus adaptée à vos besoins réels et à votre budget."
+          reponse: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  text: "WordPress est une solution idéale pour les sites nécessitant une gestion de contenu régulière par votre équipe, avec un excellent rapport qualité-prix. Le développement sur mesure offre quant à lui des fonctionnalités totalement personnalisées, des performances supérieures et une liberté totale de conception. Nous recommandons la solution la plus adaptée à vos besoins réels et à votre budget."
+                }
+              ]
+            }
+          ]
         },
         {
           question: "Proposez-vous des services de maintenance et d'hébergement adaptés au marché mauritanien?",
-          reponse: "Oui, nous proposons plusieurs formules de maintenance spécialement conçues pour les entreprises mauritaniennes, avec un support technique local en français et en arabe. Nos forfaits incluent les mises à jour de sécurité, les sauvegardes régulières, les corrections de bugs et les petites modifications de contenu. Nous offrons également des solutions d'hébergement optimisées pour garantir des performances optimales sur les réseaux mauritaniens."
+          reponse: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  text: "Oui, nous proposons plusieurs formules de maintenance spécialement conçues pour les entreprises mauritaniennes, avec un support technique local en français et en arabe. Nos forfaits incluent les mises à jour de sécurité, les sauvegardes régulières, les corrections de bugs et les petites modifications de contenu. Nous offrons également des solutions d'hébergement optimisées pour garantir des performances optimales sur les réseaux mauritaniens."
+                }
+              ]
+            }
+          ]
         },
         {
           question: "Comment assurez-vous la visibilité de mon site sur les moteurs de recherche en Mauritanie?",
-          reponse: "Nous intégrons les bonnes pratiques SEO dès la conception de votre site, avec une attention particulière au référencement local en Mauritanie. Cela inclut l'optimisation pour Google.mr, l'utilisation de mots-clés pertinents pour le marché mauritanien, le référencement local (Nouakchott et autres villes), et des contenus adaptés aux recherches locales. Nous proposons également des prestations de référencement avancées et de marketing digital adaptées au contexte mauritanien."
+          reponse: [
+            {
+              type: "paragraph",
+              children: [
+                {
+                  type: "text",
+                  text: "Nous intégrons les bonnes pratiques SEO dès la conception de votre site, avec une attention particulière au référencement local en Mauritanie. Cela inclut l'optimisation pour Google.mr, l'utilisation de mots-clés pertinents pour le marché mauritanien, le référencement local (Nouakchott et autres villes), et des contenus adaptés aux recherches locales. Nous proposons également des prestations de référencement avancées et de marketing digital adaptées au contexte mauritanien."
+                }
+              ]
+            }
+          ]
         }
       ],
       seo: {
