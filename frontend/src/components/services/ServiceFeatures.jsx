@@ -1,9 +1,10 @@
 'use client'
 
 import { useRef } from 'react'
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
+import Link from 'next/link'
 import DynamicIcon from '@/utils/DynamicIcon'
 import { getStrapiMediaUrl } from '@/utils/helpers'
 
@@ -148,7 +149,7 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
   return (
     <section 
       ref={containerRef} 
-      className="py-24 relative overflow-hidden"
+      className="py-24 relative overflow-hidden bg-gray-50"
     >
       {/* Éléments de fond */}
       <div className="absolute inset-0 overflow-hidden z-0">
@@ -244,7 +245,7 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
           variants={containerVariants}
           initial="hidden"
           animate={featuresInView ? "visible" : "hidden"}
-          className="grid grid-cols-1 md:grid-cols-2 gap-10"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
           {features.map((feature, index) => {
             // Récupérer l'icône (émoji ou icône)
@@ -272,46 +273,71 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                 variants={cardVariants}
                 whileHover="hover"
                 whileTap="tap"
-                className="relative bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-lg transition-all"
+                className="flex flex-col h-full bg-white rounded-xl overflow-hidden border border-gray-100 shadow-lg transition-all group"
               >
-                <div className={`absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-${color} to-purple`}></div>
+                {/* Image en haut si disponible */}
+                {imageUrl && (
+                  <div className="relative h-48 w-full overflow-hidden">
+                    <Image
+                      src={imageUrl}
+                      alt={feature.titre}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                    {/* Overlay de couleur avec gradient */}
+                    <div className={`absolute inset-0 bg-gradient-to-t from-${color}/70 via-${color}/30 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300`}></div>
+                    
+                    {/* Titre sur l'image pour un meilleur effet visuel */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+                      <h3 className="text-xl md:text-2xl font-bold leading-tight">
+                        {feature.titre}
+                      </h3>
+                    </div>
+                  </div>
+                )}
                 
-                <div className="p-8 md:p-10 relative z-10">
-                  <motion.div 
-                    variants={iconVariants}
-                    whileHover="hover"
-                    className={`w-16 h-16 bg-gradient-to-br from-${color}/20 to-${color}/5 rounded-xl flex items-center justify-center text-${color} mb-6`}
-                  >
-                    {displayIcon ? (
-                      <span className="text-3xl">{displayIcon}</span>
-                    ) : (
-                      <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                      </svg>
-                    )}
-                  </motion.div>
-                  
-                  <motion.h3 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={cardInView ? { opacity: 1, x: 0 } : {}}
-                    transition={{ delay: 0.2, duration: 0.5 }}
-                    className={`text-2xl font-bold mb-4 text-${color}`}
-                  >
-                    {feature.titre}
-                  </motion.h3>
-                  
-                  <motion.div 
-                    initial={{ width: 0 }}
-                    animate={cardInView ? { width: "3rem" } : {}}
-                    transition={{ delay: 0.3, duration: 0.5 }}
-                    className={`h-1 bg-gradient-to-r from-${color} via-purple to-transparent mb-4`}
-                  ></motion.div>
+                <div className="p-6 flex-grow flex flex-col">
+                  {/* Si pas d'image, montrer le titre ici */}
+                  {!imageUrl && (
+                    <>
+                      <motion.div 
+                        variants={iconVariants}
+                        whileHover="hover"
+                        className={`w-14 h-14 bg-gradient-to-br from-${color}/20 to-${color}/5 rounded-xl flex items-center justify-center text-${color} mb-4`}
+                      >
+                        {displayIcon ? (
+                          <span className="text-2xl">{displayIcon}</span>
+                        ) : (
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                          </svg>
+                        )}
+                      </motion.div>
+                      
+                      <motion.h3 
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={cardInView ? { opacity: 1, x: 0 } : {}}
+                        transition={{ delay: 0.2, duration: 0.5 }}
+                        className={`text-xl font-bold mb-3 text-${color}`}
+                      >
+                        {feature.titre}
+                      </motion.h3>
+                      
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        animate={cardInView ? { width: "3rem" } : {}}
+                        transition={{ delay: 0.3, duration: 0.5 }}
+                        className={`h-0.5 bg-gradient-to-r from-${color} via-purple to-transparent mb-3`}
+                      ></motion.div>
+                    </>
+                  )}
                   
                   <motion.p 
                     initial={{ opacity: 0 }}
                     animate={cardInView ? { opacity: 1 } : {}}
                     transition={{ delay: 0.4, duration: 0.5 }}
-                    className="text-gray-600 mb-6"
+                    className="text-gray-600 mb-4 flex-grow"
                   >
                     {feature.description}
                   </motion.p>
@@ -322,7 +348,7 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                       variants={listContainerVariants}
                       initial="hidden"
                       animate={cardInView ? "visible" : "hidden"}
-                      className="space-y-3 mb-6"
+                      className="space-y-2 mb-4 text-sm"
                     >
                       {feature.fonctionnalites.map((item, i) => (
                         <motion.li 
@@ -330,59 +356,35 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                           variants={listItemVariants}
                           className="flex items-start"
                         >
-                          <span className={`flex-shrink-0 w-5 h-5 rounded-full bg-${color}/10 flex items-center justify-center mr-3 mt-0.5`}>
-                            <svg className={`w-3 h-3 text-${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <span className={`flex-shrink-0 w-4 h-4 rounded-full bg-${color}/10 flex items-center justify-center mr-2 mt-0.5`}>
+                            <svg className={`w-2.5 h-2.5 text-${color}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
                             </svg>
                           </span>
-                          <span className="text-gray-600">{item.texte}</span>
+                          <span className="text-gray-700">{item.texte}</span>
                         </motion.li>
                       ))}
                     </motion.ul>
                   )}
                   
-                  {/* Afficher des boutons d'action */}
+                  {/* Bouton avec lien vers la section contact */}
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={cardInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.6, duration: 0.5 }}
-                    className="mt-4"
+                    className="mt-auto pt-3"
                   >
-                    <button className={`text-sm font-medium text-${color} flex items-center hover:underline`}>
-                      En savoir plus
-                      <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <Link 
+                      href="#contact" 
+                      className={`inline-flex items-center text-sm font-medium text-${color} hover:underline transition-all duration-300`}
+                    >
+                      <span>Demander un devis</span>
+                      <svg className="w-4 h-4 ml-1.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                       </svg>
-                    </button>
+                    </Link>
                   </motion.div>
                 </div>
-                
-                {/* Afficher l'image si disponible */}
-                {imageUrl && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={cardInView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.7, duration: 0.6 }}
-                    className="relative h-48 w-full"
-                  >
-                    <Image
-                      src={imageUrl}
-                      alt={feature.titre}
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                    />
-                    {/* Overlay de couleur */}
-                    <div className={`absolute inset-0 bg-gradient-to-t from-${color}/60 to-transparent opacity-70`}></div>
-                    
-                    {/* Effet de vagues en bas de l'image */}
-                    <svg className="absolute bottom-0 left-0 w-full text-white" viewBox="0 0 1200 120" preserveAspectRatio="none">
-                      <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" fill="currentColor"></path>
-                      <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" fill="currentColor"></path>
-                      <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" fill="currentColor"></path>
-                    </svg>
-                  </motion.div>
-                )}
               </motion.div>
             );
           })}
