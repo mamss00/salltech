@@ -85,9 +85,11 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     const techColorMap = {
       'react': 'blue',
       'react.js': 'blue',
+      'next': 'blue',
       'node': 'green',
       'node.js': 'green',
-      'wordpress': 'purple',
+      'wordpress': 'blue',
+      'woocommerce': 'purple',
       'vue': 'green',
       'angular': 'red',
       'php': 'purple',
@@ -297,22 +299,22 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                 className="h-full"
               >
                 <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg relative group">
-                  {/* Ligne décorative animée - dégradé futuriste */}
-                  <div className="relative h-1 overflow-hidden">
+                  {/* Ligne décorative avec animation de dégradé subtile */}
+                  <div className="h-1 w-full overflow-hidden">
                     <motion.div
-                      className="absolute inset-0"
+                      className="h-full w-full"
                       style={{
-                        backgroundImage: `linear-gradient(90deg, var(--color-${techColor}) 30%, var(--color-purple) 60%, var(--color-red) 90%)`,
-                        backgroundSize: '300% 100%'
+                        background: `linear-gradient(90deg, var(--color-${techColor}) 0%, var(--color-purple) 50%, var(--color-red) 100%)`,
+                        backgroundSize: '200% 100%'
                       }}
                       animate={{
-                        backgroundPosition: ['0% center', '100% center', '0% center'],
+                        backgroundPosition: ['0% 0%', '100% 0%', '0% 0%']
                       }}
                       transition={{
-                        duration: 5,
+                        duration: 8,
+                        ease: "easeInOut",
                         repeat: Infinity,
-                        ease: "linear",
-                        delay: delay * 0.5
+                        delay: delay * 0.3
                       }}
                     />
                   </div>
@@ -354,13 +356,13 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                           
                           {/* Effet de brillance sur le logo */}
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
                             initial={{ x: "200%" }}
                             animate={{ x: ["-200%", "200%"] }}
                             transition={{
-                              duration: 2,
+                              duration: 3,
                               repeat: Infinity,
-                              repeatDelay: 4,
+                              repeatDelay: 5,
                               delay: delay + 1,
                               ease: "easeInOut"
                             }}
@@ -422,9 +424,9 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                       )}
                     </div>
                     
-                    {/* Nom de la technologie avec animation d'entrée */}
+                    {/* Nom de la technologie avec hauteur fixe pour les titres longs */}
                     <motion.h3
-                      className={`text-base font-medium mb-1 group-hover:text-${techColor} transition-colors duration-300`}
+                      className={`text-base font-medium text-center mb-1 min-h-[2.5rem] flex items-center justify-center group-hover:text-${techColor} transition-colors duration-300`}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: delay + 0.3, duration: 0.4 }}
@@ -432,7 +434,15 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                       {tech.nom || `Technologie ${index + 1}`}
                     </motion.h3>
                     
-                    {/* Description avec effet d'apparition et défilement */}
+                    {/* Séparateur animé */}
+                    <motion.div
+                      className={`h-px bg-gradient-to-r from-${techColor} via-purple to-red my-2`}
+                      initial={{ width: 0 }}
+                      animate={{ width: '40px' }}
+                      transition={{ delay: delay + 0.4, duration: 0.6 }}
+                    />
+                    
+                    {/* Description avec effet d'apparition et hauteur fixe */}
                     {tech.description && (
                       <motion.div
                         className="text-xs text-gray-500 text-center h-[2.5em] overflow-hidden relative"
@@ -501,6 +511,15 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           </motion.div>
         </motion.div>
       </motion.div>
+      
+      {/* Styles CSS globaux pour les animations */}
+      <style jsx global>{`
+        @keyframes gentleGradientAnimate {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
     </section>
   )
 }
