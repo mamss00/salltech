@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
@@ -13,6 +13,13 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     target: containerRef,
     offset: ["start end", "end start"]
   })
+  
+  // Ajout d'un effet pour le débogage initial des données
+  useEffect(() => {
+    if (technologies && technologies.length > 0) {
+      console.log('Technologies structure:', technologies[0]);
+    }
+  }, [technologies]);
   
   // Animation de la section complète lors du défilement
   const containerOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.6, 1, 1, 0.6])
@@ -169,24 +176,57 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
         >
           {technologies.map((tech, index) => {
-            // Récupérer l'URL du logo en utilisant la même technique que pour l'image principale
-            let logoUrl = tech.logo ? 
-              getStrapiMediaUrl(tech.logo.url || (tech.logo.formats?.medium?.url || tech.logo.formats?.small?.url || tech.logo.formats?.thumbnail?.url)) : 
-              null;
-
-            // Si aucune URL n'est trouvée mais qu'il y a une structure data (comme dans l'API brute)
-            if (!logoUrl && tech.logo?.data) {
-              // Si data est un tableau, prendre le premier élément
-              if (Array.isArray(tech.logo.data) && tech.logo.data.length > 0) {
-                const logoData = tech.logo.data[0].attributes;
-                logoUrl = getStrapiMediaUrl(logoData.url || (logoData.formats?.medium?.url || logoData.formats?.small?.url || logoData.formats?.thumbnail?.url));
-              } 
-              // Sinon, utiliser l'objet data directement
-              else if (tech.logo.data.attributes) {
-                const logoData = tech.logo.data.attributes;
-                logoUrl = getStrapiMediaUrl(logoData.url || (logoData.formats?.medium?.url || logoData.formats?.small?.url || logoData.formats?.thumbnail?.url));
+            // Récupérer l'URL du logo en utilisant une méthode plus robuste
+            let logoUrl = null;
+            
+            // Cas 1: Structure Strapi standard - data.attributes
+            if (tech.logo?.data?.attributes?.url) {
+              logoUrl = getStrapiMediaUrl(tech.logo.data.attributes.url);
+            } 
+            // Cas 2: Essayer avec formats thumbnails si disponible
+            else if (tech.logo?.data?.attributes?.formats?.thumbnail?.url) {
+              logoUrl = getStrapiMediaUrl(tech.logo.data.attributes.formats.thumbnail.url);
+            } 
+            // Cas 3: Structure normalisée - url direct
+            else if (tech.logo?.url) {
+              logoUrl = getStrapiMediaUrl(tech.logo.url);
+            } 
+            // Cas 4: Structure normalisée avec formats
+            else if (tech.logo?.formats?.thumbnail?.url) {
+              logoUrl = getStrapiMediaUrl(tech.logo.formats.thumbnail.url);
+            }
+            
+            // En dernier recours, essayer une recherche récursive pour trouver une URL
+            if (!logoUrl && tech.logo) {
+              const findUrlInObject = (obj) => {
+                if (!obj || typeof obj !== 'object') return null;
+                
+                if (obj.url && typeof obj.url === 'string') {
+                  return obj.url;
+                }
+                
+                for (const key in obj) {
+                  if (key === 'url' && typeof obj[key] === 'string') {
+                    return obj[key];
+                  }
+                  
+                  if (typeof obj[key] === 'object') {
+                    const result = findUrlInObject(obj[key]);
+                    if (result) return result;
+                  }
+                }
+                
+                return null;
+              };
+              
+              const foundUrl = findUrlInObject(tech.logo);
+              if (foundUrl) {
+                logoUrl = getStrapiMediaUrl(foundUrl);
               }
             }
+            
+            // Pour déboguer
+            console.log(`Logo pour ${tech.nom}:`, tech.logo, logoUrl);
             
             // Effet de délai progressif
             const delay = 0.15 * index;
