@@ -34,31 +34,27 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
   // Utiliser les technologies fournies ou les technologies par défaut
   const allTechnologies = technologies.length > 0 ? technologies : defaultTechs;
   
-  // État pour gérer l'index actuel
-  const [currentIndex, setCurrentIndex] = useState(0);
+  // État pour gérer l'affichage séquentiel
+  const [activeIndex, setActiveIndex] = useState(0);
   const totalItems = allTechnologies.length;
   
-  // Avancer automatiquement toutes les 5 secondes
+  // Avancer automatiquement à la prochaine technologie toutes les 2.5 secondes
   useEffect(() => {
-    if (totalItems <= 6) return; // Ne pas défiler s'il y a 6 ou moins de technologies
-    
     const interval = setInterval(() => {
-      setCurrentIndex(prevIndex => (prevIndex + 1) % (totalItems - 5));
-    }, 5000);
+      setActiveIndex(prevIndex => (prevIndex + 1) % totalItems);
+    }, 2500);
     
     return () => clearInterval(interval);
   }, [totalItems]);
   
-  // Technos visibles (6 à la fois)
-  const visibleTechnologies = totalItems <= 6 
-    ? allTechnologies 
-    : allTechnologies.slice(currentIndex, currentIndex + 6);
+  // Pour l'affichage séquentiel, nous préparons toujours les 6 technologies visibles
+  // mais nous les animons une par une
+  const visibleTechnologies = [];
   
-  // Toujours afficher au moins 6 technologies si disponibles
-  if (visibleTechnologies.length < 6 && totalItems > 6) {
-    const remaining = 6 - visibleTechnologies.length;
-    const additionalTechs = allTechnologies.slice(0, remaining);
-    visibleTechnologies.push(...additionalTechs);
+  // Toujours afficher 6 technologies à la fois
+  for (let i = 0; i < 6; i++) {
+    const index = (activeIndex + i) % totalItems;
+    visibleTechnologies.push(allTechnologies[index]);
   }
   
   // Définir les couleurs en fonction de la technologie
@@ -245,21 +241,23 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
 
             return (
               <motion.div 
-                key={`tech-${index}-${currentIndex}`}
-                initial={{ y: 20, opacity: 0 }}
+                key={`tech-${index}-${activeIndex}`}
+                initial={{ y: 20, opacity: 0, scale: 0.8 }}
                 animate={{ 
                   y: 0, 
-                  opacity: 1,
+                  opacity: index === 0 ? 1 : 0.5, // Mettre en avant la technologie active
+                  scale: index === 0 ? 1 : 0.95,  // Légèrement réduire les technologies inactives
                   transition: { 
                     type: "spring",
                     stiffness: 50,
                     damping: 15,
-                    delay
+                    delay: index * 0.1 // Délai séquentiel
                   }
                 }}
-                exit={{ y: -20, opacity: 0 }}
                 whileHover={{ 
                   y: -8,
+                  opacity: 1,
+                  scale: 1,
                   boxShadow: "0px 10px 25px rgba(0, 0, 0, 0.1)",
                   transition: { 
                     type: "spring", 
@@ -484,27 +482,19 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           })}
         </motion.div>
         
-        {/* Navigation (visible uniquement s'il y a plus de 6 technologies) */}
-        {totalItems > 6 && (
-          <div className="flex justify-center mt-8 space-x-4">
-            <button 
-              onClick={() => setCurrentIndex(prev => (prev - 1 + (totalItems - 5)) % (totalItems - 5))}
-              className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-50 focus:outline-none transition-all duration-300"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7"></path>
-              </svg>
-            </button>
-            <button 
-              onClick={() => setCurrentIndex(prev => (prev + 1) % (totalItems - 5))}
-              className="w-12 h-12 rounded-full bg-white shadow-md flex items-center justify-center text-gray-700 hover:bg-gray-50 focus:outline-none transition-all duration-300"
-            >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7"></path>
-              </svg>
-            </button>
-          </div>
-        )}
+        {/* Indicateurs de technologies (points) */}
+        <div className="flex justify-center mt-8 space-x-1">
+          {allTechnologies.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setActiveIndex(idx)}
+              className={`w-2 h-2 rounded-full focus:outline-none transition-all duration-300 ${
+                idx === activeIndex ? 'bg-blue' : 'bg-gray-300'
+              }`}
+              aria-label={`Technologie ${idx + 1}`}
+            />
+          ))}
+        </div>
       </motion.div>
     </section>
   )
