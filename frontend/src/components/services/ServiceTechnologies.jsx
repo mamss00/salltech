@@ -7,9 +7,6 @@ import Image from 'next/image'
 import { getStrapiMediaUrl } from '@/utils/helpers'
 
 export default function ServiceTechnologies({ technologies, color = 'blue' }) {
-  // État pour stocker les couleurs dominantes des logos
-  const [logoDominantColors, setLogoDominantColors] = useState({});
-  
   // Référence pour l'animation au défilement
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -60,32 +57,43 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     }
   }
   
+  // Mapping des couleurs
+  const colorMap = {
+    blue: '#3498db',
+    purple: '#9b59b6',
+    red: '#e74c3c',
+    green: '#2ecc71', 
+    yellow: '#f1c40f',
+    black: '#2c3e50',
+    orange: '#e67e22'
+  };
+  
   // Fonction pour déterminer la couleur dynamique en fonction de l'index ou du nom de technologie
   const getColorForTech = (index, techName = '') => {
     // Mapping de certaines technologies connues à leurs couleurs
     const techColorMap = {
       'react': 'blue',
+      'node': 'green',
+      'wordpress': 'blue',
+      'tailwind': 'blue',
+      'mongodb': 'green',
+      'mysql': 'blue',
+      'docker': 'blue',
       'vue': 'green',
       'angular': 'red',
-      'node': 'green',
       'javascript': 'yellow',
       'typescript': 'blue',
       'php': 'purple',
       'python': 'blue',
       'java': 'red',
-      'mongodb': 'green',
-      'mysql': 'blue',
       'postgresql': 'blue',
-      'firebase': 'yellow',
+      'firebase': 'orange',
       'aws': 'orange',
-      'docker': 'blue',
       'kubernetes': 'blue',
-      'html': 'red',
+      'html': 'orange',
       'css': 'blue',
       'sass': 'pink',
-      'tailwind': 'blue',
       'bootstrap': 'purple',
-      'wordpress': 'blue',
       'laravel': 'red',
       'symfony': 'black',
       'express': 'gray',
@@ -97,63 +105,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
       'next': 'black',
       'nuxt': 'green',
       'flutter': 'blue',
-      'react native': 'blue',
-      'swift': 'orange',
-      'kotlin': 'purple',
-      'stripe': 'purple',
-      'paypal': 'blue',
-      'android': 'green',
-      'ios': 'gray',
-      'figma': 'purple',
-      'sketch': 'orange',
-      'adobe': 'red',
-      'photoshop': 'blue',
-      'illustrator': 'orange',
-      'xd': 'purple',
-      'indesign': 'pink',
-      'git': 'orange',
-      'github': 'black',
-      'gitlab': 'orange',
-      'bitbucket': 'blue',
-      'netlify': 'blue',
-      'vercel': 'black',
-      'heroku': 'purple',
-      'digitalocean': 'blue',
-      'google cloud': 'blue',
-      'azure': 'blue',
-      'redis': 'red',
-      'elasticsearch': 'green',
-      'go': 'blue',
-      'rust': 'orange',
-      'c#': 'purple',
-      '.net': 'purple',
-      'ruby': 'red',
-      'rails': 'red',
-      'django': 'green',
-      'flask': 'black',
-      'spring': 'green',
-      'fastapi': 'green',
-      'webpack': 'blue',
-      'babel': 'yellow',
-      'jest': 'red',
-      'cypress': 'green',
-      'selenium': 'green',
-      'docker compose': 'blue',
-      'nginx': 'green',
-      'apache': 'red',
-      'linux': 'black',
-      'ubuntu': 'orange',
-      'debian': 'red',
-      'centos': 'purple',
-      'windows': 'blue',
-      'macos': 'gray',
-      'jira': 'blue',
-      'confluence': 'blue',
-      'slack': 'purple',
-      'discord': 'purple',
-      'trello': 'blue',
-      'asana': 'red',
-      'notion': 'black'
+      'woocommerce': 'purple'
     };
 
     // Essayer de trouver une correspondance dans le mapping des technologies
@@ -172,6 +124,31 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     return 'red';
   };
   
+  // Obtenir la valeur de couleur CSS à partir du nom de couleur
+  const getColorValue = (colorName) => {
+    return colorMap[colorName] || colorMap.blue;
+  };
+  
+  // Générer le CSS pour l'animation de ligne pointillée
+  const getDottedLineAnimation = (colorValue, delay) => {
+    return {
+      position: 'absolute',
+      inset: 0,
+      animation: `dottedLine 3s infinite alternate ${delay}s`,
+      background: `linear-gradient(90deg, 
+        ${colorValue} 10%, transparent 10%, 
+        transparent 20%, ${colorValue} 20%, 
+        ${colorValue} 30%, transparent 30%, 
+        transparent 40%, ${colorValue} 40%, 
+        ${colorValue} 50%, transparent 50%, 
+        transparent 60%, ${colorValue} 60%, 
+        ${colorValue} 70%, transparent 70%, 
+        transparent 80%, ${colorValue} 80%, 
+        ${colorValue} 90%, transparent 90%)`,
+      backgroundSize: '200% 100%',
+    };
+  };
+  
   if (!technologies || technologies.length === 0) {
     return null;
   }
@@ -186,19 +163,20 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
         {/* Motif de circuits */}
         <svg width="100%" height="100%" className="absolute opacity-5" viewBox="0 0 800 800">
           <pattern id="circuitPattern" patternUnits="userSpaceOnUse" width="100" height="100">
-            <path d="M 0 50 L 100 50 M 50 0 L 50 100" stroke={`var(--color-${color})`} strokeWidth="0.5" fill="none" />
-            <circle cx="50" cy="50" r="3" fill="none" stroke={`var(--color-${color})`} strokeWidth="0.5" />
-            <circle cx="0" cy="50" r="3" fill="none" stroke={`var(--color-${color})`} strokeWidth="0.5" />
-            <circle cx="100" cy="50" r="3" fill="none" stroke={`var(--color-${color})`} strokeWidth="0.5" />
-            <circle cx="50" cy="0" r="3" fill="none" stroke={`var(--color-${color})`} strokeWidth="0.5" />
-            <circle cx="50" cy="100" r="3" fill="none" stroke={`var(--color-${color})`} strokeWidth="0.5" />
+            <path d="M 0 50 L 100 50 M 50 0 L 50 100" stroke={getColorValue(color)} strokeWidth="0.5" fill="none" />
+            <circle cx="50" cy="50" r="3" fill="none" stroke={getColorValue(color)} strokeWidth="0.5" />
+            <circle cx="0" cy="50" r="3" fill="none" stroke={getColorValue(color)} strokeWidth="0.5" />
+            <circle cx="100" cy="50" r="3" fill="none" stroke={getColorValue(color)} strokeWidth="0.5" />
+            <circle cx="50" cy="0" r="3" fill="none" stroke={getColorValue(color)} strokeWidth="0.5" />
+            <circle cx="50" cy="100" r="3" fill="none" stroke={getColorValue(color)} strokeWidth="0.5" />
           </pattern>
           <rect width="100%" height="100%" fill="url(#circuitPattern)" />
         </svg>
         
         {/* Formes techniques */}
         <motion.div 
-          className={`absolute top-10 right-10 w-96 h-96 rounded-full bg-gradient-to-bl from-${color}/5 to-transparent opacity-60 blur-3xl`}
+          className="absolute top-10 right-10 w-96 h-96 rounded-full blur-3xl"
+          style={{ background: `linear-gradient(to bottom left, ${getColorValue(color)}0D, transparent)` }}
           animate={{
             scale: [1, 1.05, 1],
             opacity: [0.4, 0.6, 0.4]
@@ -211,7 +189,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
         />
         
         <motion.div 
-          className="absolute bottom-10 left-10 w-64 h-64 rounded-full bg-gradient-to-tr from-purple/5 to-transparent opacity-60 blur-3xl"
+          className="absolute bottom-10 left-10 w-64 h-64 rounded-full blur-3xl"
+          style={{ background: `linear-gradient(to top right, ${getColorValue('purple')}0D, transparent)` }}
           animate={{
             scale: [1, 1.1, 1],
             opacity: [0.3, 0.5, 0.3]
@@ -258,7 +237,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
               initial={{ opacity: 0, x: 20 }}
               animate={titleInView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.5, delay: 0.4 }}
-              className={`text-${color} ml-3`}
+              style={{ color: getColorValue(color) }}
+              className="ml-3"
             >
               utilisées
             </motion.span>
@@ -267,7 +247,14 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 1.2, repeat: Infinity }}
-              className={`absolute -right-4 top-2 h-8 w-1 bg-${color}`}
+              style={{ 
+                position: 'absolute', 
+                right: '-16px', 
+                top: '8px', 
+                height: '32px', 
+                width: '4px', 
+                backgroundColor: getColorValue(color) 
+              }}
             />
           </motion.h2>
           
@@ -342,6 +329,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
             
             // Couleur dynamique basée sur le nom de la technologie
             const dynamicColor = getColorForTech(index, tech.nom);
+            const colorValue = getColorValue(dynamicColor);
             
             // Effet de délai progressif
             const delay = 0.15 * index;
@@ -363,28 +351,26 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
               >
                 <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg relative group">
                   {/* Ligne décorative animée pour toutes les technologies */}
-                  <div className="relative h-1">
-                    <motion.div
-                      className="absolute inset-x-0 top-0 h-1 overflow-hidden"
-                      initial={{ opacity: 0.7 }}
-                    >
-                      <motion.div
-                        className="absolute inset-0"
-                        animate={{
-                          backgroundImage: [
-                            `linear-gradient(90deg, var(--color-${dynamicColor}) 10%, transparent 10%, transparent 20%, var(--color-${dynamicColor}) 20%, var(--color-${dynamicColor}) 30%, transparent 30%, transparent 40%, var(--color-${dynamicColor}) 40%, var(--color-${dynamicColor}) 50%, transparent 50%, transparent 60%, var(--color-${dynamicColor}) 60%, var(--color-${dynamicColor}) 70%, transparent 70%, transparent 80%, var(--color-${dynamicColor}) 80%, var(--color-${dynamicColor}) 90%, transparent 90%)`,
-                            `linear-gradient(90deg, transparent 10%, var(--color-${dynamicColor}) 10%, var(--color-${dynamicColor}) 20%, transparent 20%, transparent 30%, var(--color-${dynamicColor}) 30%, var(--color-${dynamicColor}) 40%, transparent 40%, transparent 50%, var(--color-${dynamicColor}) 50%, var(--color-${dynamicColor}) 60%, transparent 60%, transparent 70%, var(--color-${dynamicColor}) 70%, var(--color-${dynamicColor}) 80%, transparent 80%, transparent 90%, var(--color-${dynamicColor}) 90%)`
-                          ],
-                          backgroundSize: ["100% 100%", "200% 100%", "100% 100%"]
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          repeatType: "mirror",
-                          delay: delay
-                        }}
-                      />
-                    </motion.div>
+                  <div className="relative h-1 overflow-hidden">
+                    <div
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        background: `repeating-linear-gradient(to right, 
+                          ${colorValue} 0%, ${colorValue} 10%, 
+                          transparent 10%, transparent 20%, 
+                          ${colorValue} 20%, ${colorValue} 30%, 
+                          transparent 30%, transparent 40%,
+                          ${colorValue} 40%, ${colorValue} 50%,
+                          transparent 50%, transparent 60%,
+                          ${colorValue} 60%, ${colorValue} 70%,
+                          transparent 70%, transparent 80%,
+                          ${colorValue} 80%, ${colorValue} 90%,
+                          transparent 90%, transparent 100%)`,
+                        backgroundSize: '200% 100%',
+                        animation: `moveGradient 3s linear infinite`
+                      }}
+                    ></div>
                   </div>
                   
                   <div className="p-5 flex flex-col items-center">
@@ -433,7 +419,15 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                         </motion.div>
                       ) : (
                         <motion.div
-                          className={`flex items-center justify-center w-10 h-10 rounded-full bg-${dynamicColor}/10`}
+                          style={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            justifyContent: 'center', 
+                            width: '40px', 
+                            height: '40px', 
+                            borderRadius: '9999px', 
+                            backgroundColor: `${colorValue}1A` // 10% opacity
+                          }}
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{ 
@@ -444,11 +438,15 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                           }}
                         >
                           <motion.span
-                            className={`text-lg font-semibold text-${dynamicColor}`}
+                            style={{ 
+                              fontSize: '1.125rem', 
+                              fontWeight: 600, 
+                              color: colorValue,
+                            }}
                             animate={{
                               textShadow: [
                                 "0 0 0px transparent",
-                                `0 0 10px var(--color-${dynamicColor})`,
+                                `0 0 10px ${colorValue}`,
                                 "0 0 0px transparent"
                               ]
                             }}
@@ -464,7 +462,13 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                           
                           {/* Cercles concentriques animés avec couleur dynamique */}
                           <motion.div
-                            className={`absolute w-12 h-12 rounded-full border border-${dynamicColor}/20`}
+                            style={{ 
+                              position: 'absolute', 
+                              width: '48px', 
+                              height: '48px', 
+                              borderRadius: '9999px', 
+                              border: `1px solid ${colorValue}33` // 20% opacity
+                            }}
                             animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
                             transition={{
                               duration: 3,
@@ -473,7 +477,13 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                             }}
                           />
                           <motion.div
-                            className={`absolute w-16 h-16 rounded-full border border-${dynamicColor}/10`}
+                            style={{ 
+                              position: 'absolute', 
+                              width: '64px', 
+                              height: '64px', 
+                              borderRadius: '9999px', 
+                              border: `1px solid ${colorValue}1A` // 10% opacity
+                            }}
                             animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
                             transition={{
                               duration: 3,
@@ -511,22 +521,54 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                   
                   {/* Points lumineux aux coins - effet tech avec couleur dynamique */}
                   <motion.div 
-                    className={`absolute top-0 left-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
+                    style={{ 
+                      position: 'absolute', 
+                      top: 0, 
+                      left: 0, 
+                      width: '4px', 
+                      height: '4px', 
+                      borderRadius: '9999px', 
+                      backgroundColor: colorValue 
+                    }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay }}
                   />
                   <motion.div 
-                    className={`absolute top-0 right-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
+                    style={{ 
+                      position: 'absolute', 
+                      top: 0, 
+                      right: 0, 
+                      width: '4px', 
+                      height: '4px', 
+                      borderRadius: '9999px', 
+                      backgroundColor: colorValue 
+                    }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 0.5 }}
                   />
                   <motion.div 
-                    className={`absolute bottom-0 left-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
+                    style={{ 
+                      position: 'absolute', 
+                      bottom: 0, 
+                      left: 0, 
+                      width: '4px', 
+                      height: '4px', 
+                      borderRadius: '9999px', 
+                      backgroundColor: colorValue 
+                    }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 1 }}
                   />
                   <motion.div 
-                    className={`absolute bottom-0 right-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
+                    style={{ 
+                      position: 'absolute', 
+                      bottom: 0, 
+                      right: 0, 
+                      width: '4px', 
+                      height: '4px', 
+                      borderRadius: '9999px', 
+                      backgroundColor: colorValue 
+                    }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 1.5 }}
                   />
@@ -536,6 +578,14 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           })}
         </motion.div>
       </motion.div>
+      
+      {/* Ajout de la keyframe CSS pour l'animation des lignes pointillées */}
+      <style jsx global>{`
+        @keyframes moveGradient {
+          0% { background-position: 0% 0%; }
+          100% { background-position: 200% 0%; }
+        }
+      `}</style>
     </section>
   )
 }
