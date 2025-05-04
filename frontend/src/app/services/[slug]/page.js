@@ -1,3 +1,44 @@
+// app/services/[slug]/page.js
+import { notFound } from 'next/navigation'
+
+// Importer les composants améliorés
+import EnhancedServiceHero from '@/components/services/ServiceHero'
+import ServiceIntroduction from '@/components/services/ServiceIntroduction'
+import EnhancedServiceFeatures from '@/components/services/ServiceFeatures'
+import EnhancedServiceProcess from '@/components/services/ServiceProcess'
+import ServiceTechnologies from '@/components/services/ServiceTechnologies'
+import ServicePortfolio from '@/components/services/ServicePortfolio'
+import EnhancedServiceFAQ from '@/components/services/ServiceFAQ'
+import EnhancedServiceCTA from '@/components/services/ServiceCTA'
+
+import { getServiceBySlug, getAllServiceSlugs } from '@/utils/api'
+
+export async function generateStaticParams() {
+  const slugs = await getAllServiceSlugs()
+  return slugs.map(({ slug }) => ({ slug }))
+}
+
+export async function generateMetadata({ params }) {
+  const service = await getServiceBySlug(params.slug)
+
+  if (!service) {
+    return {
+      title: 'Service introuvable | SALLTECH',
+      description: 'Ce service est introuvable.'
+    }
+  }
+
+  return {
+    title: service.seo?.metaTitle || `${service.titre_page || service.Titre || 'Service'} | SALLTECH`,
+    description: service.seo?.metaDescription || '',
+    openGraph: {
+      title: service.seo?.metaTitle || '',
+      description: service.seo?.metaDescription || ''
+    },
+    keywords: service.seo?.keywords || ''
+  }
+}
+
 export default async function EnhancedServicePage({ params }) {
   const service = await getServiceBySlug(params.slug)
 
