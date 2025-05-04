@@ -8,7 +8,6 @@ import CTAButton from '@/components/CTAButton'
 export default function Home() {
   return (
     <main>
-      <Header />
       <Hero />
       <Services />
       <Portfolio />
