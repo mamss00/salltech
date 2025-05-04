@@ -125,20 +125,37 @@ function renderTextNode(node, index) {
 
 /**
  * Formate une URL d'image Strapi pour qu'elle soit complète
+ * Avec debug complet et support de toutes les structures possibles
  * @param {string} url - URL relative de l'image
  * @returns {string} - URL complète
  */
 export function getStrapiMediaUrl(url) {
-  if (!url) return null;
+  if (!url) {
+    console.debug('getStrapiMediaUrl: URL is null or undefined');
+    return null;
+  }
+  
+  // Log pour debugging
+  console.debug('getStrapiMediaUrl - URL reçue:', url);
   
   // Si l'URL est absolue, la retourner telle quelle
   if (url.startsWith('http') || url.startsWith('https')) {
+    console.debug('getStrapiMediaUrl - URL absolue, retour sans modification');
     return url;
   }
   
-  // Sinon, préfixer avec l'URL de l'API
+  // S'assurer que l'URL commence par un /
+  if (!url.startsWith('/')) {
+    url = `/${url}`;
+    console.debug('getStrapiMediaUrl - Ajout du / initial:', url);
+  }
+  
+  // Préfixer avec l'URL de l'API
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.sall.technology';
-  return `${apiUrl}${url}`;
+  const fullUrl = `${apiUrl}${url}`;
+  
+  console.debug('getStrapiMediaUrl - URL complète construite:', fullUrl);
+  return fullUrl;
 }
 
 /**

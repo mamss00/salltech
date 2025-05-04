@@ -50,13 +50,37 @@ function normalizeAttributes(entry) {
     }
   }
   
+  // Normalisation spécifique pour les technologies et leurs logos
+  if (attrs.technologies?.data) {
+    attrs.technologies = attrs.technologies.data.map(tech => {
+      const techData = { id: tech.id, ...tech.attributes };
+      
+      // Normaliser les logos des technologies
+      if (techData.logo?.data) {
+        if (Array.isArray(techData.logo.data)) {
+          techData.logo = techData.logo.data.map(img => ({
+            id: img.id,
+            ...img.attributes
+          }));
+        } else {
+          techData.logo = {
+            id: techData.logo.data.id,
+            ...techData.logo.data.attributes
+          };
+        }
+      }
+      
+      return techData;
+    });
+  }
+  
   // Ajout de l'ID à l'objet normalisé
   return { id: entry.id, ...attrs };
 }
 
 export async function getServices() {
   try {
-    const url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
+    const url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
@@ -86,7 +110,7 @@ export async function getServiceBySlug(slug) {
                 `&populate[caracteristiques]=true` +
                 `&populate[types_services]=true` +
                 `&populate[methodologie]=true` +
-                `&populate[technologies]=true` +
+                `&populate[technologies][populate][logo]=true` +
                 `&populate[faq]=true` +
                 `&populate[seo][populate]=*` +
                 `&populate[projets_lies][populate]=*`;
