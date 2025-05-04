@@ -12,6 +12,16 @@ export function titreToSlug(titre) {
 }
 
 /**
+ * Ajoute un paramètre timestamp pour éviter le cache
+ * @param {string} url - URL de base
+ * @returns {string} - URL avec paramètre timestamp
+ */
+function addNoCacheParam(url) {
+  const separator = url.includes('?') ? '&' : '?';
+  return `${url}${separator}timestamp=${Date.now()}`;
+}
+
+/**
  * Normalise les données reçues de Strapi pour être facilement utilisables
  * @param {Object} entry - Entrée de données Strapi
  * @returns {Object} - Données normalisées
@@ -80,7 +90,10 @@ function normalizeAttributes(entry) {
 
 export async function getServices() {
   try {
-    const url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
+    let url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
+    // Ajouter le paramètre timestamp pour éviter le cache
+    url = addNoCacheParam(url);
+    
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
@@ -105,7 +118,7 @@ export async function getAllServiceSlugs() {
 
 export async function getServiceBySlug(slug) {
   try {
-    const url = `${API_URL}/api/services?filters[slug][$eq]=${slug}` +
+    let url = `${API_URL}/api/services?filters[slug][$eq]=${slug}` +
                 `&populate[Image]=true` +
                 `&populate[caracteristiques]=true` +
                 `&populate[types_services]=true` +
@@ -114,6 +127,9 @@ export async function getServiceBySlug(slug) {
                 `&populate[faq]=true` +
                 `&populate[seo][populate]=*` +
                 `&populate[projets_lies][populate]=*`;
+    
+    // Ajouter le paramètre timestamp pour éviter le cache
+    url = addNoCacheParam(url);
     
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
@@ -129,7 +145,10 @@ export async function getServiceBySlug(slug) {
 
 export async function getProjects() {
   try {
-    const url = `${API_URL}/api/projets?populate=*`;
+    let url = `${API_URL}/api/projets?populate=*`;
+    // Ajouter le paramètre timestamp pour éviter le cache
+    url = addNoCacheParam(url);
+    
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
@@ -142,7 +161,10 @@ export async function getProjects() {
 
 export async function getHomePageContent() {
   try {
-    const url = `${API_URL}/api/home-page?populate=*`;
+    let url = `${API_URL}/api/home-page?populate=*`;
+    // Ajouter le paramètre timestamp pour éviter le cache
+    url = addNoCacheParam(url);
+    
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
@@ -155,7 +177,10 @@ export async function getHomePageContent() {
 
 export async function getContactInfo() {
   try {
-    const url = `${API_URL}/api/contact-info`;
+    let url = `${API_URL}/api/contact-info`;
+    // Ajouter le paramètre timestamp pour éviter le cache
+    url = addNoCacheParam(url);
+    
     const res = await fetch(url);
     if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
     const data = await res.json();
@@ -168,7 +193,11 @@ export async function getContactInfo() {
 
 export async function submitContactForm(formData) {
   try {
-    const url = `${API_URL}/api/contact`;
+    let url = `${API_URL}/api/contact`;
+    // Pour les requêtes POST, pas besoin de casser le cache mais on peut garder
+    // la cohérence du code
+    url = addNoCacheParam(url);
+    
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -197,5 +226,9 @@ export function getStrapiMediaUrl(url) {
   
   // Sinon, préfixer avec l'URL de l'API
   const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'https://api.sall.technology';
-  return `${apiUrl}${url}`;
+  
+  // Pour les fichiers médias, on peut également ajouter un timestamp pour éviter 
+  // le cache du navigateur quand l'image a été modifiée
+  const mediaUrl = `${apiUrl}${url}`;
+  return addNoCacheParam(mediaUrl);
 }
