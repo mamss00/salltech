@@ -1,12 +1,15 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import { getStrapiMediaUrl } from '@/utils/helpers'
 
 export default function ServiceTechnologies({ technologies, color = 'blue' }) {
+  // État pour stocker les couleurs dominantes des logos
+  const [logoDominantColors, setLogoDominantColors] = useState({});
+  
   // Référence pour l'animation au défilement
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -57,8 +60,113 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     }
   }
   
-  // Fonction pour déterminer la couleur dynamique en fonction de l'index
-  const getColorForIndex = (index) => {
+  // Fonction pour déterminer la couleur dynamique en fonction de l'index ou du nom de technologie
+  const getColorForTech = (index, techName = '') => {
+    // Mapping de certaines technologies connues à leurs couleurs
+    const techColorMap = {
+      'react': 'blue',
+      'vue': 'green',
+      'angular': 'red',
+      'node': 'green',
+      'javascript': 'yellow',
+      'typescript': 'blue',
+      'php': 'purple',
+      'python': 'blue',
+      'java': 'red',
+      'mongodb': 'green',
+      'mysql': 'blue',
+      'postgresql': 'blue',
+      'firebase': 'yellow',
+      'aws': 'orange',
+      'docker': 'blue',
+      'kubernetes': 'blue',
+      'html': 'red',
+      'css': 'blue',
+      'sass': 'pink',
+      'tailwind': 'blue',
+      'bootstrap': 'purple',
+      'wordpress': 'blue',
+      'laravel': 'red',
+      'symfony': 'black',
+      'express': 'gray',
+      'graphql': 'pink',
+      'apollo': 'purple',
+      'redux': 'purple',
+      'vuex': 'green',
+      'gatsby': 'purple',
+      'next': 'black',
+      'nuxt': 'green',
+      'flutter': 'blue',
+      'react native': 'blue',
+      'swift': 'orange',
+      'kotlin': 'purple',
+      'stripe': 'purple',
+      'paypal': 'blue',
+      'android': 'green',
+      'ios': 'gray',
+      'figma': 'purple',
+      'sketch': 'orange',
+      'adobe': 'red',
+      'photoshop': 'blue',
+      'illustrator': 'orange',
+      'xd': 'purple',
+      'indesign': 'pink',
+      'git': 'orange',
+      'github': 'black',
+      'gitlab': 'orange',
+      'bitbucket': 'blue',
+      'netlify': 'blue',
+      'vercel': 'black',
+      'heroku': 'purple',
+      'digitalocean': 'blue',
+      'google cloud': 'blue',
+      'azure': 'blue',
+      'redis': 'red',
+      'elasticsearch': 'green',
+      'go': 'blue',
+      'rust': 'orange',
+      'c#': 'purple',
+      '.net': 'purple',
+      'ruby': 'red',
+      'rails': 'red',
+      'django': 'green',
+      'flask': 'black',
+      'spring': 'green',
+      'fastapi': 'green',
+      'webpack': 'blue',
+      'babel': 'yellow',
+      'jest': 'red',
+      'cypress': 'green',
+      'selenium': 'green',
+      'docker compose': 'blue',
+      'nginx': 'green',
+      'apache': 'red',
+      'linux': 'black',
+      'ubuntu': 'orange',
+      'debian': 'red',
+      'centos': 'purple',
+      'windows': 'blue',
+      'macos': 'gray',
+      'jira': 'blue',
+      'confluence': 'blue',
+      'slack': 'purple',
+      'discord': 'purple',
+      'trello': 'blue',
+      'asana': 'red',
+      'notion': 'black'
+    };
+
+    // Essayer de trouver une correspondance dans le mapping des technologies
+    if (techName) {
+      const lowerTechName = techName.toLowerCase();
+      for (const [tech, techColor] of Object.entries(techColorMap)) {
+        if (lowerTechName.includes(tech)) {
+          return techColor;
+        }
+      }
+    }
+    
+    // Si aucune correspondance n'est trouvée, utiliser l'index
     if (index % 3 === 0) return 'blue';
     if (index % 3 === 1) return 'purple';
     return 'red';
@@ -232,8 +340,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
               }
             }
             
-            // Couleur dynamique basée sur l'index
-            const dynamicColor = getColorForIndex(index);
+            // Couleur dynamique basée sur le nom de la technologie
+            const dynamicColor = getColorForTech(index, tech.nom);
             
             // Effet de délai progressif
             const delay = 0.15 * index;
@@ -254,52 +362,29 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                 className="h-full"
               >
                 <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg relative group">
-                  {/* Ligne décorative adaptative - change en fonction de la présence du logo */}
+                  {/* Ligne décorative animée pour toutes les technologies */}
                   <div className="relative h-1">
-                    {logoUrl ? (
-                      /* Pour les technologies avec logo, ligne animée avec couleur dynamique */
+                    <motion.div
+                      className="absolute inset-x-0 top-0 h-1 overflow-hidden"
+                      initial={{ opacity: 0.7 }}
+                    >
                       <motion.div
-                        className="absolute inset-x-0 top-0 h-1"
-                        initial={{ backgroundPosition: "0% 0%" }}
+                        className="absolute inset-0"
                         animate={{
-                          background: [
-                            `linear-gradient(90deg, var(--color-${dynamicColor}) 0%, transparent 0%)`,
-                            `linear-gradient(90deg, var(--color-${dynamicColor}) 33%, transparent 33%)`,
-                            `linear-gradient(90deg, var(--color-${dynamicColor}) 66%, transparent 66%)`,
-                            `linear-gradient(90deg, var(--color-${dynamicColor}) 100%, transparent 100%)`,
+                          backgroundImage: [
+                            `linear-gradient(90deg, var(--color-${dynamicColor}) 10%, transparent 10%, transparent 20%, var(--color-${dynamicColor}) 20%, var(--color-${dynamicColor}) 30%, transparent 30%, transparent 40%, var(--color-${dynamicColor}) 40%, var(--color-${dynamicColor}) 50%, transparent 50%, transparent 60%, var(--color-${dynamicColor}) 60%, var(--color-${dynamicColor}) 70%, transparent 70%, transparent 80%, var(--color-${dynamicColor}) 80%, var(--color-${dynamicColor}) 90%, transparent 90%)`,
+                            `linear-gradient(90deg, transparent 10%, var(--color-${dynamicColor}) 10%, var(--color-${dynamicColor}) 20%, transparent 20%, transparent 30%, var(--color-${dynamicColor}) 30%, var(--color-${dynamicColor}) 40%, transparent 40%, transparent 50%, var(--color-${dynamicColor}) 50%, var(--color-${dynamicColor}) 60%, transparent 60%, transparent 70%, var(--color-${dynamicColor}) 70%, var(--color-${dynamicColor}) 80%, transparent 80%, transparent 90%, var(--color-${dynamicColor}) 90%)`
                           ],
-                          transition: {
-                            times: [0, 0.33, 0.66, 1],
-                            duration: 1.5,
-                            delay: delay,
-                            ease: "easeInOut"
-                          }
+                          backgroundSize: ["100% 100%", "200% 100%", "100% 100%"]
+                        }}
+                        transition={{
+                          duration: 3,
+                          repeat: Infinity,
+                          repeatType: "mirror",
+                          delay: delay
                         }}
                       />
-                    ) : (
-                      /* Pour les technologies sans logo, motif géométrique pulsant avec couleur dynamique */
-                      <motion.div
-                        className="absolute inset-x-0 top-0 h-1 overflow-hidden"
-                        initial={{ opacity: 0.7 }}
-                      >
-                        <motion.div
-                          className="absolute inset-0"
-                          animate={{
-                            backgroundImage: [
-                              `linear-gradient(90deg, var(--color-${dynamicColor}) 10%, transparent 10%, transparent 20%, var(--color-${dynamicColor}) 20%, var(--color-${dynamicColor}) 30%, transparent 30%, transparent 40%, var(--color-${dynamicColor}) 40%, var(--color-${dynamicColor}) 50%, transparent 50%, transparent 60%, var(--color-${dynamicColor}) 60%, var(--color-${dynamicColor}) 70%, transparent 70%, transparent 80%, var(--color-${dynamicColor}) 80%, var(--color-${dynamicColor}) 90%, transparent 90%)`,
-                              `linear-gradient(90deg, transparent 10%, var(--color-${dynamicColor}) 10%, var(--color-${dynamicColor}) 20%, transparent 20%, transparent 30%, var(--color-${dynamicColor}) 30%, var(--color-${dynamicColor}) 40%, transparent 40%, transparent 50%, var(--color-${dynamicColor}) 50%, var(--color-${dynamicColor}) 60%, transparent 60%, transparent 70%, var(--color-${dynamicColor}) 70%, var(--color-${dynamicColor}) 80%, transparent 80%, transparent 90%, var(--color-${dynamicColor}) 90%)`
-                            ],
-                            backgroundSize: ["100% 100%", "200% 100%", "100% 100%"]
-                          }}
-                          transition={{
-                            duration: 3,
-                            repeat: Infinity,
-                            repeatType: "mirror",
-                            delay: delay
-                          }}
-                        />
-                      </motion.div>
-                    )}
+                    </motion.div>
                   </div>
                   
                   <div className="p-5 flex flex-col items-center">
