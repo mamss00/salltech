@@ -52,57 +52,111 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     }
   }
   
-  // Palette de couleurs personnalisées pour chaque technologie
-  const techColorSchemes = {
-    'Node.js': {
-      primary: 'rgb(83, 158, 67)', // Vert Node.js
-      secondary: 'rgb(60, 120, 50)',
-      tertiary: 'rgb(40, 90, 33)',
-      gradient: 'linear-gradient(90deg, rgb(83, 158, 67) 0%, rgb(60, 120, 50) 50%, rgb(40, 90, 33) 100%)'
-    },
+  // Base de données des couleurs des technologies
+  const techColors = {
     'React': {
       primary: 'rgb(97, 218, 251)', // Bleu React
       secondary: 'rgb(20, 158, 202)',
-      tertiary: 'rgb(8, 126, 164)',
-      gradient: 'linear-gradient(90deg, rgb(97, 218, 251) 0%, rgb(20, 158, 202) 50%, rgb(8, 126, 164) 100%)'
+      tertiary: 'rgb(8, 126, 164)'
+    },
+    'Next': {
+      primary: 'rgb(0, 0, 0)', // Noir Next.js
+      secondary: 'rgb(50, 50, 50)',
+      tertiary: 'rgb(100, 100, 100)'
+    },
+    'Node': {
+      primary: 'rgb(83, 158, 67)', // Vert Node.js
+      secondary: 'rgb(60, 120, 50)',
+      tertiary: 'rgb(40, 90, 33)'
     },
     'WordPress': {
       primary: 'rgb(33, 117, 155)', // Bleu WordPress
       secondary: 'rgb(25, 90, 120)',
-      tertiary: 'rgb(15, 70, 90)',
-      gradient: 'linear-gradient(90deg, rgb(33, 117, 155) 0%, rgb(25, 90, 120) 50%, rgb(15, 70, 90) 100%)'
+      tertiary: 'rgb(15, 70, 90)'
     },
-    'TailwindCSS': {
+    'Tailwind': {
       primary: 'rgb(56, 189, 248)', // Bleu Tailwind
       secondary: 'rgb(45, 150, 200)',
-      tertiary: 'rgb(30, 100, 150)',
-      gradient: 'linear-gradient(90deg, rgb(56, 189, 248) 0%, rgb(45, 150, 200) 50%, rgb(30, 100, 150) 100%)'
+      tertiary: 'rgb(30, 100, 150)'
     },
     'MongoDB': {
       primary: 'rgb(77, 179, 61)', // Vert MongoDB
       secondary: 'rgb(57, 150, 41)',
-      tertiary: 'rgb(37, 120, 21)',
-      gradient: 'linear-gradient(90deg, rgb(77, 179, 61) 0%, rgb(57, 150, 41) 50%, rgb(37, 120, 21) 100%)'
+      tertiary: 'rgb(37, 120, 21)'
     },
     'Docker': {
       primary: 'rgb(13, 136, 209)', // Bleu Docker
       secondary: 'rgb(10, 100, 160)',
-      tertiary: 'rgb(6, 80, 130)',
-      gradient: 'linear-gradient(90deg, rgb(13, 136, 209) 0%, rgb(10, 100, 160) 50%, rgb(6, 80, 130) 100%)'
+      tertiary: 'rgb(6, 80, 130)'
+    },
+    'PHP': {
+      primary: 'rgb(119, 123, 179)', // Violet PHP
+      secondary: 'rgb(90, 94, 150)',
+      tertiary: 'rgb(70, 74, 130)'
+    },
+    'MySQL': {
+      primary: 'rgb(0, 117, 143)', // Bleu MySQL
+      secondary: 'rgb(0, 90, 110)',
+      tertiary: 'rgb(0, 70, 90)'
+    },
+    'Laravel': {
+      primary: 'rgb(255, 45, 32)', // Rouge Laravel
+      secondary: 'rgb(200, 35, 25)',
+      tertiary: 'rgb(160, 25, 20)'
+    },
+    'Vue': {
+      primary: 'rgb(65, 184, 131)', // Vert Vue.js
+      secondary: 'rgb(50, 160, 110)',
+      tertiary: 'rgb(35, 140, 95)'
+    },
+    'Python': {
+      primary: 'rgb(55, 118, 171)', // Bleu Python
+      secondary: 'rgb(255, 211, 67)',
+      tertiary: 'rgb(55, 118, 171)'
     }
   };
   
-  // Couleurs par défaut si la techno n'est pas dans notre liste
-  const defaultColorScheme = {
+  // Couleurs par défaut
+  const defaultColors = {
     primary: `var(--color-${color})`,
     secondary: `var(--color-purple)`,
-    tertiary: `var(--color-red)`,
-    gradient: `linear-gradient(90deg, var(--color-${color}) 0%, var(--color-purple) 50%, var(--color-red) 100%)`
+    tertiary: `var(--color-red)`
   };
   
-  // Fonction pour obtenir le schéma de couleur d'une technologie
-  const getTechColorScheme = (techName) => {
-    return techColorSchemes[techName] || defaultColorScheme;
+  // Fonction pour analyser le nom de la technologie et trouver la meilleure correspondance
+  const getTechColorScheme = (fullTechName) => {
+    if (!fullTechName) return defaultColors;
+    
+    // Séparer les différentes parties du nom (ex: "React & Next.js" -> ["React", "Next.js"])
+    const techParts = fullTechName.split(/\s*[&,+]\s*|\s+/).map(part => 
+      part.replace(/\.js$/i, '').replace(/CSS$/i, '').trim()
+    );
+    
+    // Chercher une correspondance pour chaque partie
+    for (const part of techParts) {
+      // Chercher une correspondance exacte
+      for (const [tech, colors] of Object.entries(techColors)) {
+        if (part.toLowerCase() === tech.toLowerCase()) {
+          return colors;
+        }
+      }
+      
+      // Chercher une correspondance partielle
+      for (const [tech, colors] of Object.entries(techColors)) {
+        if (part.toLowerCase().includes(tech.toLowerCase()) || 
+            tech.toLowerCase().includes(part.toLowerCase())) {
+          return colors;
+        }
+      }
+    }
+    
+    // Si aucune correspondance n'est trouvée, utiliser les couleurs par défaut
+    return defaultColors;
+  };
+  
+  // Fonction pour créer un dégradé à partir des couleurs
+  const createGradient = (colorScheme) => {
+    return `linear-gradient(90deg, ${colorScheme.primary} 0%, ${colorScheme.secondary} 50%, ${colorScheme.tertiary} 100%)`;
   };
   
   if (!technologies || technologies.length === 0) {
@@ -232,8 +286,9 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
               logoUrl = getStrapiMediaUrl(tech.logo.url);
             }
             
-            // Obtenir le schéma de couleur pour cette technologie
+            // Obtenir dynamiquement les couleurs pour cette technologie
             const colorScheme = getTechColorScheme(tech.nom);
+            const gradient = createGradient(colorScheme);
             
             // Effet de délai progressif
             const delay = 0.15 * index;
@@ -259,7 +314,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                     <motion.div
                       className="h-full w-full"
                       style={{
-                        backgroundImage: colorScheme.gradient,
+                        backgroundImage: gradient,
                         backgroundSize: "200% 100%"
                       }}
                       animate={{
@@ -371,7 +426,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                     
                     {/* Nom de la technologie */}
                     <motion.h3
-                      className="text-base font-medium mb-1 text-center min-h-[2.5rem] flex items-center justify-center transition-colors duration-300"
+                      className="text-base font-medium mb-1 min-h-[2.5rem] flex items-center justify-center text-center transition-colors duration-300"
                       style={{ 
                         color: 'rgba(70, 70, 70, 1)', 
                       }}
@@ -387,7 +442,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                     <motion.div
                       className="h-px my-2"
                       style={{ 
-                        backgroundImage: colorScheme.gradient,
+                        backgroundImage: gradient,
                         backgroundSize: "200% 100%"
                       }}
                       initial={{ width: 0 }}
@@ -405,22 +460,24 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                       }}
                     />
                     
-                    {/* Description avec effet d'apparition */}
+                    {/* Description avec effet d'apparition et de défilement */}
                     {tech.description && (
                       <motion.div
                         className="text-xs text-gray-500 text-center h-[2.5em] overflow-hidden relative"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "2.5em" }}
                         transition={{ delay: delay + 0.4, duration: 0.4 }}
                       >
                         <motion.div
-                          style={{ y: 0 }}
-                          animate={{ y: [0, -30, 0] }}
+                          initial={{ y: 0 }}
+                          animate={{ 
+                            y: tech.description.length > 30 ? [-40, 0, -40] : 0
+                          }}
                           transition={{
-                            duration: 12,
+                            duration: 10,
                             repeat: Infinity,
-                            ease: "easeInOut",
-                            delay: delay + 0.5
+                            repeatType: "loop",
+                            delay: delay + 1
                           }}
                         >
                           {tech.description}
