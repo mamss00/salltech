@@ -52,27 +52,58 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     }
   }
   
-  // Fonction pour déterminer la couleur basée sur le nom de la technologie
-  const getTechColor = (techName) => {
-    // Mapper les technologies à des couleurs parmi celles définies
-    const techColorMap = {
-      'Node.js': 'blue',
-      'MongoDB': 'blue',
-      'Docker': 'blue',
-      'WordPress': 'purple',
-      'TailwindCSS': 'purple',
-      'React': 'blue',
+  // Palette de couleurs personnalisées pour chaque technologie
+  const techColorSchemes = {
+    'Node.js': {
+      primary: 'rgb(83, 158, 67)', // Vert Node.js
+      secondary: 'rgb(60, 120, 50)',
+      tertiary: 'rgb(40, 90, 33)',
+      gradient: 'linear-gradient(90deg, rgb(83, 158, 67) 0%, rgb(60, 120, 50) 50%, rgb(40, 90, 33) 100%)'
+    },
+    'React': {
+      primary: 'rgb(97, 218, 251)', // Bleu React
+      secondary: 'rgb(20, 158, 202)',
+      tertiary: 'rgb(8, 126, 164)',
+      gradient: 'linear-gradient(90deg, rgb(97, 218, 251) 0%, rgb(20, 158, 202) 50%, rgb(8, 126, 164) 100%)'
+    },
+    'WordPress': {
+      primary: 'rgb(33, 117, 155)', // Bleu WordPress
+      secondary: 'rgb(25, 90, 120)',
+      tertiary: 'rgb(15, 70, 90)',
+      gradient: 'linear-gradient(90deg, rgb(33, 117, 155) 0%, rgb(25, 90, 120) 50%, rgb(15, 70, 90) 100%)'
+    },
+    'TailwindCSS': {
+      primary: 'rgb(56, 189, 248)', // Bleu Tailwind
+      secondary: 'rgb(45, 150, 200)',
+      tertiary: 'rgb(30, 100, 150)',
+      gradient: 'linear-gradient(90deg, rgb(56, 189, 248) 0%, rgb(45, 150, 200) 50%, rgb(30, 100, 150) 100%)'
+    },
+    'MongoDB': {
+      primary: 'rgb(77, 179, 61)', // Vert MongoDB
+      secondary: 'rgb(57, 150, 41)',
+      tertiary: 'rgb(37, 120, 21)',
+      gradient: 'linear-gradient(90deg, rgb(77, 179, 61) 0%, rgb(57, 150, 41) 50%, rgb(37, 120, 21) 100%)'
+    },
+    'Docker': {
+      primary: 'rgb(13, 136, 209)', // Bleu Docker
+      secondary: 'rgb(10, 100, 160)',
+      tertiary: 'rgb(6, 80, 130)',
+      gradient: 'linear-gradient(90deg, rgb(13, 136, 209) 0%, rgb(10, 100, 160) 50%, rgb(6, 80, 130) 100%)'
     }
-    
-    // Retourner la couleur correspondante ou la couleur par défaut
-    return techColorMap[techName] || color;
-  }
+  };
   
-  // Fonction pour obtenir le gradient basé sur la couleur
-  const getGradientBackground = (techName) => {
-    const mainColor = getTechColor(techName);
-    return `linear-gradient(90deg, var(--color-${mainColor}) 0%, var(--color-purple) 50%, var(--color-red) 100%)`;
-  }
+  // Couleurs par défaut si la techno n'est pas dans notre liste
+  const defaultColorScheme = {
+    primary: `var(--color-${color})`,
+    secondary: `var(--color-purple)`,
+    tertiary: `var(--color-red)`,
+    gradient: `linear-gradient(90deg, var(--color-${color}) 0%, var(--color-purple) 50%, var(--color-red) 100%)`
+  };
+  
+  // Fonction pour obtenir le schéma de couleur d'une technologie
+  const getTechColorScheme = (techName) => {
+    return techColorSchemes[techName] || defaultColorScheme;
+  };
   
   if (!technologies || technologies.length === 0) {
     return null;
@@ -201,8 +232,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
               logoUrl = getStrapiMediaUrl(tech.logo.url);
             }
             
-            // Déterminer la couleur principale pour cette technologie
-            const techColor = getTechColor(tech.nom);
+            // Obtenir le schéma de couleur pour cette technologie
+            const colorScheme = getTechColorScheme(tech.nom);
             
             // Effet de délai progressif
             const delay = 0.15 * index;
@@ -228,7 +259,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                     <motion.div
                       className="h-full w-full"
                       style={{
-                        backgroundImage: getGradientBackground(tech.nom),
+                        backgroundImage: colorScheme.gradient,
                         backgroundSize: "200% 100%"
                       }}
                       animate={{
@@ -281,7 +312,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                         </motion.div>
                       ) : (
                         <motion.div
-                          className={`flex items-center justify-center w-10 h-10 rounded-full bg-${techColor}/10`}
+                          className="flex items-center justify-center w-10 h-10 rounded-full"
+                          style={{ backgroundColor: `${colorScheme.primary}15` }}
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{ 
@@ -292,11 +324,12 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                           }}
                         >
                           <motion.span
-                            className={`text-lg font-semibold text-${techColor}`}
+                            style={{ color: colorScheme.primary }}
+                            className="text-lg font-semibold"
                             animate={{
                               textShadow: [
                                 "0 0 0px transparent",
-                                `0 0 10px var(--color-${techColor})`,
+                                `0 0 10px ${colorScheme.primary}`,
                                 "0 0 0px transparent"
                               ]
                             }}
@@ -312,7 +345,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                           
                           {/* Cercles concentriques animés */}
                           <motion.div
-                            className={`absolute w-12 h-12 rounded-full border border-${techColor}/20`}
+                            style={{ borderColor: `${colorScheme.primary}30` }}
+                            className="absolute w-12 h-12 rounded-full border"
                             animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
                             transition={{
                               duration: 3,
@@ -321,7 +355,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                             }}
                           />
                           <motion.div
-                            className={`absolute w-16 h-16 rounded-full border border-${techColor}/10`}
+                            style={{ borderColor: `${colorScheme.primary}15` }}
+                            className="absolute w-16 h-16 rounded-full border"
                             animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
                             transition={{
                               duration: 3,
@@ -336,7 +371,11 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                     
                     {/* Nom de la technologie */}
                     <motion.h3
-                      className={`text-base font-medium mb-1 text-center min-h-[2.5rem] flex items-center justify-center group-hover:text-${techColor} transition-colors duration-300`}
+                      className="text-base font-medium mb-1 text-center min-h-[2.5rem] flex items-center justify-center transition-colors duration-300"
+                      style={{ 
+                        color: 'rgba(70, 70, 70, 1)', 
+                      }}
+                      whileHover={{ color: colorScheme.primary }}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: delay + 0.3, duration: 0.4 }}
@@ -346,10 +385,24 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                     
                     {/* Ligne décorative */}
                     <motion.div
-                      className={`h-px bg-gradient-to-r from-${techColor} via-purple to-red my-2`}
+                      className="h-px my-2"
+                      style={{ 
+                        backgroundImage: colorScheme.gradient,
+                        backgroundSize: "200% 100%"
+                      }}
                       initial={{ width: 0 }}
-                      animate={{ width: '40px' }}
-                      transition={{ delay: delay + 0.35, duration: 0.6 }}
+                      animate={{ 
+                        width: '40px',
+                        backgroundPosition: ["0% 0%", "100% 0%", "0% 0%"]
+                      }}
+                      transition={{ 
+                        width: { delay: delay + 0.35, duration: 0.6 },
+                        backgroundPosition: {
+                          duration: 8,
+                          repeat: Infinity,
+                          ease: "easeInOut"
+                        }
+                      }}
                     />
                     
                     {/* Description avec effet d'apparition */}
@@ -361,13 +414,13 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                         transition={{ delay: delay + 0.4, duration: 0.4 }}
                       >
                         <motion.div
-                          initial={{ y: 0 }}
-                          animate={{ y: [-30, 0, -30] }}
+                          style={{ y: 0 }}
+                          animate={{ y: [0, -30, 0] }}
                           transition={{
-                            duration: 8,
+                            duration: 12,
                             repeat: Infinity,
-                            repeatType: "loop",
-                            delay: delay + 1
+                            ease: "easeInOut",
+                            delay: delay + 0.5
                           }}
                         >
                           {tech.description}
@@ -378,22 +431,26 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                   
                   {/* Points lumineux aux coins */}
                   <motion.div 
-                    className={`absolute top-0 left-0 w-1 h-1 rounded-full bg-${techColor}`}
+                    className="absolute top-0 left-0 w-1 h-1 rounded-full"
+                    style={{ backgroundColor: colorScheme.primary }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay }}
                   />
                   <motion.div 
-                    className={`absolute top-0 right-0 w-1 h-1 rounded-full bg-${techColor}`}
+                    className="absolute top-0 right-0 w-1 h-1 rounded-full"
+                    style={{ backgroundColor: colorScheme.secondary }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 0.5 }}
                   />
                   <motion.div 
-                    className={`absolute bottom-0 left-0 w-1 h-1 rounded-full bg-${techColor}`}
+                    className="absolute bottom-0 left-0 w-1 h-1 rounded-full"
+                    style={{ backgroundColor: colorScheme.secondary }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 1 }}
                   />
                   <motion.div 
-                    className={`absolute bottom-0 right-0 w-1 h-1 rounded-full bg-${techColor}`}
+                    className="absolute bottom-0 right-0 w-1 h-1 rounded-full"
+                    style={{ backgroundColor: colorScheme.primary }}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 1.5 }}
                   />
@@ -410,7 +467,12 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           transition={{ delay: 1, duration: 0.6 }}
           className="flex justify-center mt-14"
         >
-          <div className={`w-12 h-12 rounded-full bg-gradient-to-br from-${color} via-purple to-red shadow-md flex items-center justify-center text-white cursor-pointer`}>
+          <div 
+            className="w-12 h-12 rounded-full shadow-md flex items-center justify-center text-white cursor-pointer"
+            style={{ 
+              background: `linear-gradient(135deg, var(--color-${color}) 0%, var(--color-purple) 50%, var(--color-red) 100%)` 
+            }}
+          >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
             </svg>
