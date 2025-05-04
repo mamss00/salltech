@@ -57,6 +57,13 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     }
   }
   
+  // Fonction pour déterminer la couleur dynamique en fonction de l'index
+  const getColorForIndex = (index) => {
+    if (index % 3 === 0) return 'blue';
+    if (index % 3 === 1) return 'purple';
+    return 'red';
+  };
+  
   if (!technologies || technologies.length === 0) {
     return null;
   }
@@ -225,8 +232,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
               }
             }
             
-            // Pour déboguer
-            console.log(`Logo pour ${tech.nom}:`, tech.logo, logoUrl);
+            // Couleur dynamique basée sur l'index
+            const dynamicColor = getColorForIndex(index);
             
             // Effet de délai progressif
             const delay = 0.15 * index;
@@ -250,16 +257,16 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                   {/* Ligne décorative adaptative - change en fonction de la présence du logo */}
                   <div className="relative h-1">
                     {logoUrl ? (
-                      /* Pour les technologies avec logo, ligne animée avec une forme inspirée du logo */
+                      /* Pour les technologies avec logo, ligne animée avec couleur dynamique */
                       <motion.div
                         className="absolute inset-x-0 top-0 h-1"
                         initial={{ backgroundPosition: "0% 0%" }}
                         animate={{
                           background: [
-                            `linear-gradient(90deg, var(--color-${color}) 0%, transparent 0%)`,
-                            `linear-gradient(90deg, var(--color-${color}) 33%, transparent 33%)`,
-                            `linear-gradient(90deg, var(--color-${color}) 66%, transparent 66%)`,
-                            `linear-gradient(90deg, var(--color-${color}) 100%, transparent 100%)`,
+                            `linear-gradient(90deg, var(--color-${dynamicColor}) 0%, transparent 0%)`,
+                            `linear-gradient(90deg, var(--color-${dynamicColor}) 33%, transparent 33%)`,
+                            `linear-gradient(90deg, var(--color-${dynamicColor}) 66%, transparent 66%)`,
+                            `linear-gradient(90deg, var(--color-${dynamicColor}) 100%, transparent 100%)`,
                           ],
                           transition: {
                             times: [0, 0.33, 0.66, 1],
@@ -270,7 +277,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                         }}
                       />
                     ) : (
-                      /* Pour les technologies sans logo, motif géométrique pulsant */
+                      /* Pour les technologies sans logo, motif géométrique pulsant avec couleur dynamique */
                       <motion.div
                         className="absolute inset-x-0 top-0 h-1 overflow-hidden"
                         initial={{ opacity: 0.7 }}
@@ -279,8 +286,8 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                           className="absolute inset-0"
                           animate={{
                             backgroundImage: [
-                              `linear-gradient(90deg, var(--color-${color}) 10%, transparent 10%, transparent 20%, var(--color-${color}) 20%, var(--color-${color}) 30%, transparent 30%, transparent 40%, var(--color-${color}) 40%, var(--color-${color}) 50%, transparent 50%, transparent 60%, var(--color-${color}) 60%, var(--color-${color}) 70%, transparent 70%, transparent 80%, var(--color-${color}) 80%, var(--color-${color}) 90%, transparent 90%)`,
-                              `linear-gradient(90deg, transparent 10%, var(--color-${color}) 10%, var(--color-${color}) 20%, transparent 20%, transparent 30%, var(--color-${color}) 30%, var(--color-${color}) 40%, transparent 40%, transparent 50%, var(--color-${color}) 50%, var(--color-${color}) 60%, transparent 60%, transparent 70%, var(--color-${color}) 70%, var(--color-${color}) 80%, transparent 80%, transparent 90%, var(--color-${color}) 90%)`
+                              `linear-gradient(90deg, var(--color-${dynamicColor}) 10%, transparent 10%, transparent 20%, var(--color-${dynamicColor}) 20%, var(--color-${dynamicColor}) 30%, transparent 30%, transparent 40%, var(--color-${dynamicColor}) 40%, var(--color-${dynamicColor}) 50%, transparent 50%, transparent 60%, var(--color-${dynamicColor}) 60%, var(--color-${dynamicColor}) 70%, transparent 70%, transparent 80%, var(--color-${dynamicColor}) 80%, var(--color-${dynamicColor}) 90%, transparent 90%)`,
+                              `linear-gradient(90deg, transparent 10%, var(--color-${dynamicColor}) 10%, var(--color-${dynamicColor}) 20%, transparent 20%, transparent 30%, var(--color-${dynamicColor}) 30%, var(--color-${dynamicColor}) 40%, transparent 40%, transparent 50%, var(--color-${dynamicColor}) 50%, var(--color-${dynamicColor}) 60%, transparent 60%, transparent 70%, var(--color-${dynamicColor}) 70%, var(--color-${dynamicColor}) 80%, transparent 80%, transparent 90%, var(--color-${dynamicColor}) 90%)`
                             ],
                             backgroundSize: ["100% 100%", "200% 100%", "100% 100%"]
                           }}
@@ -296,7 +303,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                   </div>
                   
                   <div className="p-5 flex flex-col items-center">
-                    {/* Logo ou initial avec container standardisé */}
+                    {/* Logo ou initial avec container standardisé et couleur dynamique */}
                     <div className="relative w-16 h-16 flex items-center justify-center mb-4 overflow-hidden">
                       {logoUrl ? (
                         <motion.div
@@ -341,7 +348,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                         </motion.div>
                       ) : (
                         <motion.div
-                          className={`flex items-center justify-center w-10 h-10 rounded-full bg-${color}/10`}
+                          className={`flex items-center justify-center w-10 h-10 rounded-full bg-${dynamicColor}/10`}
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{ 
@@ -352,11 +359,11 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                           }}
                         >
                           <motion.span
-                            className={`text-lg font-semibold text-${color}`}
+                            className={`text-lg font-semibold text-${dynamicColor}`}
                             animate={{
                               textShadow: [
                                 "0 0 0px transparent",
-                                `0 0 10px var(--color-${color})`,
+                                `0 0 10px var(--color-${dynamicColor})`,
                                 "0 0 0px transparent"
                               ]
                             }}
@@ -370,9 +377,9 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                             {tech.nom?.charAt(0) || '?'}
                           </motion.span>
                           
-                          {/* Cercles concentriques animés */}
+                          {/* Cercles concentriques animés avec couleur dynamique */}
                           <motion.div
-                            className={`absolute w-12 h-12 rounded-full border border-${color}/20`}
+                            className={`absolute w-12 h-12 rounded-full border border-${dynamicColor}/20`}
                             animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
                             transition={{
                               duration: 3,
@@ -381,7 +388,7 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                             }}
                           />
                           <motion.div
-                            className={`absolute w-16 h-16 rounded-full border border-${color}/10`}
+                            className={`absolute w-16 h-16 rounded-full border border-${dynamicColor}/10`}
                             animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
                             transition={{
                               duration: 3,
@@ -417,24 +424,24 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                     )}
                   </div>
                   
-                  {/* Points lumineux aux coins - effet tech */}
+                  {/* Points lumineux aux coins - effet tech avec couleur dynamique */}
                   <motion.div 
-                    className={`absolute top-0 left-0 w-1 h-1 rounded-full bg-${color}`}
+                    className={`absolute top-0 left-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay }}
                   />
                   <motion.div 
-                    className={`absolute top-0 right-0 w-1 h-1 rounded-full bg-${color}`}
+                    className={`absolute top-0 right-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 0.5 }}
                   />
                   <motion.div 
-                    className={`absolute bottom-0 left-0 w-1 h-1 rounded-full bg-${color}`}
+                    className={`absolute bottom-0 left-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 1 }}
                   />
                   <motion.div 
-                    className={`absolute bottom-0 right-0 w-1 h-1 rounded-full bg-${color}`}
+                    className={`absolute bottom-0 right-0 w-1 h-1 rounded-full bg-${dynamicColor}`}
                     animate={{ opacity: [0.2, 1, 0.2] }}
                     transition={{ duration: 2, repeat: Infinity, delay: delay + 1.5 }}
                   />
