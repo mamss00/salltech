@@ -47,16 +47,14 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
     return () => clearInterval(interval);
   }, [totalItems]);
   
-  // Préparer les 6 technologies à afficher - 1 au centre et 5 autour
+  // Préparer les 5 technologies à afficher - 1 mise en avant (au milieu) et 4 autour
   const getVisibleTechnologies = () => {
     const result = [];
     
-    // La technologie active (centrale)
-    result.push(allTechnologies[activeIndex]);
-    
-    // Les 5 technologies autour
-    for (let i = 1; i <= 5; i++) {
-      const index = (activeIndex + i) % totalItems;
+    // Ajouter les 2 technologies avant la technologie active
+    for (let i = -2; i <= 2; i++) {
+      // Calcul de l'index avec gestion du dépassement (boucle)
+      const index = (activeIndex + i + totalItems) % totalItems;
       result.push(allTechnologies[index]);
     }
     
@@ -223,65 +221,51 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           </motion.p>
         </motion.div>
 
-        {/* Grille avec 1 élément central et 5 éléments autour */}
+        {/* Grille avec 1 élément mis en avant et 4 autres autour */}
         <motion.div 
           ref={techGridRef}
           initial={{ opacity: 0 }}
           animate={techGridInView ? { opacity: 1 } : {}}
           transition={{ duration: 0.8 }}
-          className="flex flex-col items-center justify-center"
+          className="relative w-full max-w-6xl mx-auto"
         >
-          {/* Structure spéciale avec 1 élément au centre et 5 autour */}
-          <div className="relative w-full max-w-6xl">
-            {/* Technologie centrale mise en évidence */}
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`center-${activeIndex}`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.5 }}
-                className="mx-auto mb-12 max-w-md"
-              >
-                {/* Carte de la technologie centrale */}
-                {visibleTechnologies[0] && (
-                  <TechCard 
-                    tech={visibleTechnologies[0]} 
-                    isCentered={true}
-                    getColorsForTech={getColorsForTech}
-                  />
-                )}
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Technologies secondaires autour (5) */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-              {visibleTechnologies.slice(1).map((tech, idx) => (
+          {/* Structure avec 5 technologies sur la même ligne, celle du milieu mise en avant */}
+          <div className="grid grid-cols-5 gap-4">
+            {visibleTechnologies.slice(0, 5).map((tech, idx) => {
+              const isCenter = idx === 2; // La troisième position (index 2) est au milieu
+              
+              return (
                 <motion.div
                   key={`tech-${idx}-${activeIndex}`}
                   initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 0.85, y: 0 }}
+                  animate={{ 
+                    opacity: isCenter ? 1 : 0.85, 
+                    y: 0,
+                    scale: isCenter ? 1.1 : 1,
+                    zIndex: isCenter ? 10 : 1
+                  }}
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ 
                     duration: 0.4,
-                    delay: 0.1 * idx
+                    delay: isCenter ? 0 : 0.1 * idx
                   }}
                   whileHover={{ 
                     opacity: 1, 
                     y: -5,
+                    scale: isCenter ? 1.15 : 1.05,
                     transition: { duration: 0.2 } 
                   }}
-                  onClick={() => setActiveIndex((activeIndex + idx + 1) % totalItems)}
-                  className="cursor-pointer"
+                  onClick={() => setActiveIndex((activeIndex + idx) % totalItems)}
+                  className={`cursor-pointer ${isCenter ? 'col-span-1' : 'col-span-1'}`}
                 >
                   <TechCard 
                     tech={tech} 
-                    isCentered={false}
+                    isCentered={isCenter}
                     getColorsForTech={getColorsForTech}
                   />
                 </motion.div>
-              ))}
-            </div>
+              );
+            })}
           </div>
 
           {/* Indicateurs de technologies (points) */}
