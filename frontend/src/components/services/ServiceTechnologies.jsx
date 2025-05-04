@@ -1,14 +1,12 @@
 'use client'
 
-import { useRef, useEffect } from 'react'
-import { motion, useScroll, useTransform, useAnimation } from 'framer-motion'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
-import Link from 'next/link'
-import DynamicIcon from '@/utils/DynamicIcon'
 import { getStrapiMediaUrl } from '@/utils/helpers'
 
-export default function ServiceTechnologies({ technologies, color = 'blue' }) {
+export default function ServiceTechnologies({ technologies = [], color = 'blue' }) {
   // Référence pour l'animation au défilement
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -22,6 +20,48 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
   // Animation des titres et contenu
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [techGridRef, techGridInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  
+  // Technologies par défaut si moins de 6 sont fournies
+  const defaultTechs = [
+    { nom: "React", description: "Bibliothèque JavaScript pour créer des interfaces utilisateur dynamiques" },
+    { nom: "Next.js", description: "Framework React orienté serveur pour des applications web performantes" },
+    { nom: "Tailwind CSS", description: "Framework CSS utilitaire pour un développement rapide" },
+    { nom: "Node.js", description: "Environnement d'exécution JavaScript côté serveur" },
+    { nom: "MongoDB", description: "Base de données NoSQL orientée document" },
+    { nom: "Laravel", description: "Framework PHP élégant pour le développement web" }
+  ];
+  
+  // Construire la liste complète des technologies (au moins 6)
+  const allTechnologies = technologies.length >= 6 
+    ? technologies 
+    : [...technologies, ...defaultTechs.slice(0, 6 - technologies.length)];
+  
+  // État pour gérer le défilement des technologies
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [visibleTechs, setVisibleTechs] = useState(allTechnologies.slice(0, 6));
+  
+  // Intervalle de défilement automatique (toutes les 3 secondes)
+  useEffect(() => {
+    if (allTechnologies.length <= 6) return; // Pas de défilement si 6 ou moins de technologies
+    
+    const interval = setInterval(() => {
+      setCurrentIndex(prevIndex => {
+        const nextIndex = (prevIndex + 1) % allTechnologies.length;
+        
+        // Mettre à jour les technologies visibles
+        const newVisibleTechs = [];
+        for (let i = 0; i < 6; i++) {
+          const idx = (nextIndex + i) % allTechnologies.length;
+          newVisibleTechs.push(allTechnologies[idx]);
+        }
+        setVisibleTechs(newVisibleTechs);
+        
+        return nextIndex;
+      });
+    }, 3000);
+    
+    return () => clearInterval(interval);
+  }, [allTechnologies.length]);
   
   // Variants pour la grille
   const gridVariants = {
@@ -52,116 +92,18 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
     }
   }
   
-  // Base de données des couleurs des technologies
-  const techColors = {
-    'React': {
-      primary: 'rgb(97, 218, 251)', // Bleu React
-      secondary: 'rgb(20, 158, 202)',
-      tertiary: 'rgb(8, 126, 164)'
-    },
-    'Next': {
-      primary: 'rgb(0, 0, 0)', // Noir Next.js
-      secondary: 'rgb(50, 50, 50)',
-      tertiary: 'rgb(100, 100, 100)'
-    },
-    'Node': {
-      primary: 'rgb(83, 158, 67)', // Vert Node.js
-      secondary: 'rgb(60, 120, 50)',
-      tertiary: 'rgb(40, 90, 33)'
-    },
-    'WordPress': {
-      primary: 'rgb(33, 117, 155)', // Bleu WordPress
-      secondary: 'rgb(25, 90, 120)',
-      tertiary: 'rgb(15, 70, 90)'
-    },
-    'Tailwind': {
-      primary: 'rgb(56, 189, 248)', // Bleu Tailwind
-      secondary: 'rgb(45, 150, 200)',
-      tertiary: 'rgb(30, 100, 150)'
-    },
-    'MongoDB': {
-      primary: 'rgb(77, 179, 61)', // Vert MongoDB
-      secondary: 'rgb(57, 150, 41)',
-      tertiary: 'rgb(37, 120, 21)'
-    },
-    'Docker': {
-      primary: 'rgb(13, 136, 209)', // Bleu Docker
-      secondary: 'rgb(10, 100, 160)',
-      tertiary: 'rgb(6, 80, 130)'
-    },
-    'PHP': {
-      primary: 'rgb(119, 123, 179)', // Violet PHP
-      secondary: 'rgb(90, 94, 150)',
-      tertiary: 'rgb(70, 74, 130)'
-    },
-    'MySQL': {
-      primary: 'rgb(0, 117, 143)', // Bleu MySQL
-      secondary: 'rgb(0, 90, 110)',
-      tertiary: 'rgb(0, 70, 90)'
-    },
-    'Laravel': {
-      primary: 'rgb(255, 45, 32)', // Rouge Laravel
-      secondary: 'rgb(200, 35, 25)',
-      tertiary: 'rgb(160, 25, 20)'
-    },
-    'Vue': {
-      primary: 'rgb(65, 184, 131)', // Vert Vue.js
-      secondary: 'rgb(50, 160, 110)',
-      tertiary: 'rgb(35, 140, 95)'
-    },
-    'Python': {
-      primary: 'rgb(55, 118, 171)', // Bleu Python
-      secondary: 'rgb(255, 211, 67)',
-      tertiary: 'rgb(55, 118, 171)'
-    }
+  // Définir les couleurs en fonction de l'index
+  const getColorsByIndex = (idx) => {
+    const colors = [
+      { primary: "rgb(52, 152, 219)", secondary: "rgb(41, 128, 185)" }, // Bleu
+      { primary: "rgb(155, 89, 182)", secondary: "rgb(142, 68, 173)" }, // Violet
+      { primary: "rgb(231, 76, 60)", secondary: "rgb(192, 57, 43)" },   // Rouge
+      { primary: "rgb(46, 204, 113)", secondary: "rgb(39, 174, 96)" },  // Vert
+      { primary: "rgb(241, 196, 15)", secondary: "rgb(243, 156, 18)" }, // Jaune
+      { primary: "rgb(52, 73, 94)", secondary: "rgb(44, 62, 80)" }      // Bleu-gris
+    ];
+    return colors[idx % colors.length];
   };
-  
-  // Couleurs par défaut
-  const defaultColors = {
-    primary: `var(--color-${color})`,
-    secondary: `var(--color-purple)`,
-    tertiary: `var(--color-red)`
-  };
-  
-  // Fonction pour analyser le nom de la technologie et trouver la meilleure correspondance
-  const getTechColorScheme = (fullTechName) => {
-    if (!fullTechName) return defaultColors;
-    
-    // Séparer les différentes parties du nom (ex: "React & Next.js" -> ["React", "Next.js"])
-    const techParts = fullTechName.split(/\s*[&,+]\s*|\s+/).map(part => 
-      part.replace(/\.js$/i, '').replace(/CSS$/i, '').trim()
-    );
-    
-    // Chercher une correspondance pour chaque partie
-    for (const part of techParts) {
-      // Chercher une correspondance exacte
-      for (const [tech, colors] of Object.entries(techColors)) {
-        if (part.toLowerCase() === tech.toLowerCase()) {
-          return colors;
-        }
-      }
-      
-      // Chercher une correspondance partielle
-      for (const [tech, colors] of Object.entries(techColors)) {
-        if (part.toLowerCase().includes(tech.toLowerCase()) || 
-            tech.toLowerCase().includes(part.toLowerCase())) {
-          return colors;
-        }
-      }
-    }
-    
-    // Si aucune correspondance n'est trouvée, utiliser les couleurs par défaut
-    return defaultColors;
-  };
-  
-  // Fonction pour créer un dégradé à partir des couleurs
-  const createGradient = (colorScheme) => {
-    return `linear-gradient(90deg, ${colorScheme.primary} 0%, ${colorScheme.secondary} 50%, ${colorScheme.tertiary} 100%)`;
-  };
-  
-  if (!technologies || technologies.length === 0) {
-    return null;
-  }
 
   return (
     <section 
@@ -269,7 +211,29 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           </motion.p>
         </motion.div>
         
-        {/* Grille de technologies avec style tech */}
+        {/* Indicateur de défilement */}
+        {allTechnologies.length > 6 && (
+          <div className="flex justify-center mb-6">
+            <div className="flex items-center space-x-1">
+              <div className="text-sm text-gray-500">
+                <span className="font-medium">{currentIndex + 1}</span>
+                <span className="mx-1">/</span>
+                <span>{allTechnologies.length}</span>
+              </div>
+              <div className="w-32 h-1 bg-gray-200 rounded-full ml-3 relative overflow-hidden">
+                <motion.div 
+                  className={`absolute inset-y-0 left-0 bg-${color} rounded-full`}
+                  style={{ 
+                    width: `${(currentIndex + 1) / allTechnologies.length * 100}%`,
+                  }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Grille de 6 technologies avec style tech et animation */}
         <motion.div
           ref={techGridRef}
           variants={gridVariants}
@@ -277,245 +241,295 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           animate={techGridInView ? "visible" : "hidden"}
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
         >
-          {technologies.map((tech, index) => {
-            // Récupérer l'URL du logo
-            let logoUrl = null;
-            if (tech.logo?.data) {
-              logoUrl = getStrapiMediaUrl(tech.logo.data.attributes.url);
-            } else if (tech.logo?.url) {
-              logoUrl = getStrapiMediaUrl(tech.logo.url);
-            }
-            
-            // Obtenir dynamiquement les couleurs pour cette technologie
-            const colorScheme = getTechColorScheme(tech.nom);
-            const gradient = createGradient(colorScheme);
-            
-            // Effet de délai progressif
-            const delay = 0.15 * index;
+          <AnimatePresence mode="wait">
+            {visibleTechs.map((tech, index) => {
+              // Récupérer l'URL du logo
+              let logoUrl = null;
+              if (tech.logo?.data) {
+                logoUrl = getStrapiMediaUrl(tech.logo.data.attributes.url);
+              } else if (tech.logo?.url) {
+                logoUrl = getStrapiMediaUrl(tech.logo.url);
+              }
+              
+              const { primary, secondary } = getColorsByIndex(index);
+              
+              // Effet de délai progressif
+              const delay = 0.05 * index;
 
-            return (
-              <motion.div 
-                key={index}
-                variants={cardVariants}
-                custom={index}
-                whileHover={{ 
-                  y: -8,
-                  transition: { 
-                    type: "spring", 
-                    stiffness: 400, 
-                    damping: 10 
-                  }
-                }}
-                className="h-full"
-              >
-                <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg relative group">
-                  {/* Ligne décorative adaptative */}
-                  <div className="h-1 w-full overflow-hidden">
-                    <motion.div
-                      className="h-full w-full"
-                      style={{
-                        backgroundImage: gradient,
-                        backgroundSize: "200% 100%"
-                      }}
-                      animate={{
-                        backgroundPosition: ["0% 0%", "100% 0%", "0% 0%"]
-                      }}
-                      transition={{
-                        duration: 8,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  </div>
-                  
-                  <div className="p-5 flex flex-col items-center">
-                    {/* Logo ou initial avec container standardisé */}
-                    <div className="relative w-16 h-16 flex items-center justify-center mb-4 overflow-hidden">
-                      {logoUrl ? (
-                        <motion.div
-                          className="w-full h-full flex items-center justify-center"
-                          initial={{ scale: 0, rotateY: 90 }}
-                          animate={{ scale: 1, rotateY: 0 }}
-                          transition={{ 
-                            type: "spring",
-                            stiffness: 70,
-                            damping: 15,
-                            delay: delay + 0.2
-                          }}
-                        >
-                          <Image
-                            src={logoUrl}
-                            alt={tech.nom || `Technologie ${index + 1}`}
-                            width={64}
-                            height={64}
-                            className="object-contain max-w-full max-h-full"
-                          />
-                          
-                          {/* Effet de brillance sur le logo */}
+              return (
+                <motion.div 
+                  key={`${currentIndex}-${index}`}
+                  variants={cardVariants}
+                  custom={index}
+                  whileHover={{ 
+                    y: -8,
+                    transition: { 
+                      type: "spring", 
+                      stiffness: 400, 
+                      damping: 10 
+                    }
+                  }}
+                  className="h-full"
+                >
+                  <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 hover:shadow-lg relative group">
+                    {/* Ligne décorative animée */}
+                    <div className="h-1 w-full overflow-hidden">
+                      <motion.div
+                        className="h-full w-full"
+                        style={{
+                          background: `linear-gradient(90deg, ${primary} 0%, ${secondary} 100%)`,
+                          backgroundSize: "200% 100%"
+                        }}
+                        animate={{
+                          backgroundPosition: ["0% 0%", "100% 0%"]
+                        }}
+                        transition={{
+                          duration: 4,
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                        }}
+                      />
+                    </div>
+                    
+                    <div className="p-5 flex flex-col items-center">
+                      {/* Logo ou initial avec container standardisé */}
+                      <div className="relative w-16 h-16 flex items-center justify-center mb-4 overflow-hidden">
+                        {logoUrl ? (
                           <motion.div
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
-                            initial={{ x: "200%" }}
-                            animate={{ x: ["-200%", "200%"] }}
-                            transition={{
-                              duration: 2,
-                              repeat: Infinity,
-                              repeatDelay: 4,
-                              delay: delay + 1,
-                              ease: "easeInOut"
-                            }}
-                          />
-                        </motion.div>
-                      ) : (
-                        <motion.div
-                          className="flex items-center justify-center w-10 h-10 rounded-full"
-                          style={{ backgroundColor: `${colorScheme.primary}15` }}
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}
-                          transition={{ 
-                            type: "spring", 
-                            stiffness: 100,
-                            damping: 15,
-                            delay: delay + 0.2
-                          }}
-                        >
-                          <motion.span
-                            style={{ color: colorScheme.primary }}
-                            className="text-lg font-semibold"
-                            animate={{
-                              textShadow: [
-                                "0 0 0px transparent",
-                                `0 0 10px ${colorScheme.primary}`,
-                                "0 0 0px transparent"
-                              ]
-                            }}
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              repeatType: "mirror",
-                              delay: delay
+                            className="w-full h-full flex items-center justify-center"
+                            initial={{ scale: 0, rotateY: 90 }}
+                            animate={{ scale: 1, rotateY: 0 }}
+                            transition={{ 
+                              type: "spring",
+                              stiffness: 70,
+                              damping: 15,
+                              delay: delay + 0.2
                             }}
                           >
-                            {tech.nom?.charAt(0) || '?'}
-                          </motion.span>
-                          
-                          {/* Cercles concentriques animés */}
+                            <Image
+                              src={logoUrl}
+                              alt={tech.nom || `Technologie ${index + 1}`}
+                              width={64}
+                              height={64}
+                              className="object-contain max-w-full max-h-full"
+                            />
+                            
+                            {/* Effet de brillance sur le logo */}
+                            <motion.div
+                              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                              initial={{ x: "200%" }}
+                              animate={{ x: ["-200%", "200%"] }}
+                              transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                repeatDelay: 4,
+                                delay: delay + 1,
+                                ease: "easeInOut"
+                              }}
+                            />
+                          </motion.div>
+                        ) : (
                           <motion.div
-                            style={{ borderColor: `${colorScheme.primary}30` }}
-                            className="absolute w-12 h-12 rounded-full border"
-                            animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              repeatType: "mirror"
+                            className="flex items-center justify-center w-10 h-10 rounded-full"
+                            style={{ backgroundColor: `${primary}20` }}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{ 
+                              type: "spring", 
+                              stiffness: 100,
+                              damping: 15,
+                              delay: delay + 0.2
                             }}
-                          />
-                          <motion.div
-                            style={{ borderColor: `${colorScheme.primary}15` }}
-                            className="absolute w-16 h-16 rounded-full border"
-                            animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
-                            transition={{
-                              duration: 3,
-                              repeat: Infinity,
-                              repeatType: "mirror",
-                              delay: 0.2
-                            }}
-                          />
+                          >
+                            <motion.span
+                              style={{ color: primary }}
+                              className="text-lg font-semibold"
+                              animate={{
+                                textShadow: [
+                                  "0 0 0px transparent",
+                                  `0 0 10px ${primary}`,
+                                  "0 0 0px transparent"
+                                ]
+                              }}
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                repeatType: "mirror",
+                                delay: delay
+                              }}
+                            >
+                              {tech.nom?.charAt(0) || '?'}
+                            </motion.span>
+                            
+                            {/* Cercles concentriques animés */}
+                            <motion.div
+                              style={{ borderColor: `${primary}30` }}
+                              className="absolute w-12 h-12 rounded-full border"
+                              animate={{ scale: [1, 1.2, 1], opacity: [0.6, 1, 0.6] }}
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                repeatType: "mirror"
+                              }}
+                            />
+                            <motion.div
+                              style={{ borderColor: `${primary}15` }}
+                              className="absolute w-16 h-16 rounded-full border"
+                              animate={{ scale: [1, 1.3, 1], opacity: [0.4, 0.8, 0.4] }}
+                              transition={{
+                                duration: 3,
+                                repeat: Infinity,
+                                repeatType: "mirror",
+                                delay: 0.2
+                              }}
+                            />
+                          </motion.div>
+                        )}
+                      </div>
+                      
+                      {/* Position de la technologie et total */}
+                      <motion.div
+                        className="absolute bottom-1.5 right-2"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 0.5 }}
+                        whileHover={{ opacity: 1 }}
+                        transition={{ delay: delay + 0.3 }}
+                      >
+                        <div 
+                          className="text-xs font-mono"
+                          style={{ color: primary }}
+                        >
+                          0{index + 1}/06
+                        </div>
+                      </motion.div>
+                      
+                      {/* Nom de la technologie */}
+                      <motion.h3
+                        className="text-base font-medium text-center transition-colors duration-300"
+                        style={{ color: 'rgba(70, 70, 70, 1)' }}
+                        whileHover={{ color: primary }}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: delay + 0.3, duration: 0.4 }}
+                      >
+                        {tech.nom || `Technologie ${index + 1}`}
+                      </motion.h3>
+                      
+                      {/* Ligne décorative */}
+                      <motion.div
+                        className="h-px my-2"
+                        style={{ 
+                          background: `linear-gradient(90deg, ${primary}, ${secondary})`,
+                          backgroundSize: "200% 100%"
+                        }}
+                        initial={{ width: 0 }}
+                        animate={{ 
+                          width: '40px',
+                          backgroundPosition: ["0% 0%", "100% 0%"]
+                        }}
+                        transition={{ 
+                          width: { delay: delay + 0.35, duration: 0.6 },
+                          backgroundPosition: {
+                            duration: 3,
+                            repeat: Infinity,
+                            repeatType: "reverse"
+                          }
+                        }}
+                      />
+                      
+                      {/* Description avec effet de défilement */}
+                      {tech.description && (
+                        <motion.div
+                          className="text-xs text-gray-500 text-center h-12 overflow-hidden relative"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          transition={{ delay: delay + 0.4, duration: 0.4 }}
+                        >
+                          {tech.description.length > 40 ? (
+                            // Animation de défilement si le texte est long
+                            <motion.div
+                              initial={{ y: 0 }}
+                              animate={{ 
+                                y: [0, -40, 0]
+                              }}
+                              transition={{
+                                y: {
+                                  duration: 8,
+                                  times: [0, 0.4, 1],
+                                  repeat: Infinity,
+                                  repeatDelay: 2,
+                                  ease: "easeInOut"
+                                }
+                              }}
+                            >
+                              {tech.description}
+                            </motion.div>
+                          ) : (
+                            // Pas d'animation si le texte est court
+                            <div>{tech.description}</div>
+                          )}
                         </motion.div>
                       )}
                     </div>
                     
-                    {/* Nom de la technologie */}
-                    <motion.h3
-                      className="text-base font-medium mb-1 min-h-[2.5rem] flex items-center justify-center text-center transition-colors duration-300"
-                      style={{ 
-                        color: 'rgba(70, 70, 70, 1)', 
-                      }}
-                      whileHover={{ color: colorScheme.primary }}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: delay + 0.3, duration: 0.4 }}
-                    >
-                      {tech.nom || `Technologie ${index + 1}`}
-                    </motion.h3>
-                    
-                    {/* Ligne décorative */}
-                    <motion.div
-                      className="h-px my-2"
-                      style={{ 
-                        backgroundImage: gradient,
-                        backgroundSize: "200% 100%"
-                      }}
-                      initial={{ width: 0 }}
-                      animate={{ 
-                        width: '40px',
-                        backgroundPosition: ["0% 0%", "100% 0%", "0% 0%"]
-                      }}
-                      transition={{ 
-                        width: { delay: delay + 0.35, duration: 0.6 },
-                        backgroundPosition: {
-                          duration: 8,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }
-                      }}
+                    {/* Points lumineux aux coins - effet tech */}
+                    <motion.div 
+                      className="absolute top-0 left-0 w-1 h-1 rounded-full"
+                      style={{ backgroundColor: primary }}
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: delay }}
                     />
-                    
-                    {/* Description avec effet d'apparition et de défilement */}
-                    {tech.description && (
-                      <motion.div
-                        className="text-xs text-gray-500 text-center h-[2.5em] overflow-hidden relative"
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "2.5em" }}
-                        transition={{ delay: delay + 0.4, duration: 0.4 }}
-                      >
-                        <motion.div
-                          initial={{ y: 0 }}
-                          animate={{ 
-                            y: tech.description.length > 30 ? [-40, 0, -40] : 0
-                          }}
-                          transition={{
-                            duration: 10,
-                            repeat: Infinity,
-                            repeatType: "loop",
-                            delay: delay + 1
-                          }}
-                        >
-                          {tech.description}
-                        </motion.div>
-                      </motion.div>
-                    )}
+                    <motion.div 
+                      className="absolute top-0 right-0 w-1 h-1 rounded-full"
+                      style={{ backgroundColor: secondary }}
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: delay + 0.5 }}
+                    />
+                    <motion.div 
+                      className="absolute bottom-0 left-0 w-1 h-1 rounded-full"
+                      style={{ backgroundColor: secondary }}
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: delay + 1 }}
+                    />
+                    <motion.div 
+                      className="absolute bottom-0 right-0 w-1 h-1 rounded-full"
+                      style={{ backgroundColor: primary }}
+                      animate={{ opacity: [0.2, 1, 0.2] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: delay + 1.5 }}
+                    />
                   </div>
-                  
-                  {/* Points lumineux aux coins */}
-                  <motion.div 
-                    className="absolute top-0 left-0 w-1 h-1 rounded-full"
-                    style={{ backgroundColor: colorScheme.primary }}
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: delay }}
-                  />
-                  <motion.div 
-                    className="absolute top-0 right-0 w-1 h-1 rounded-full"
-                    style={{ backgroundColor: colorScheme.secondary }}
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: delay + 0.5 }}
-                  />
-                  <motion.div 
-                    className="absolute bottom-0 left-0 w-1 h-1 rounded-full"
-                    style={{ backgroundColor: colorScheme.secondary }}
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: delay + 1 }}
-                  />
-                  <motion.div 
-                    className="absolute bottom-0 right-0 w-1 h-1 rounded-full"
-                    style={{ backgroundColor: colorScheme.primary }}
-                    animate={{ opacity: [0.2, 1, 0.2] }}
-                    transition={{ duration: 2, repeat: Infinity, delay: delay + 1.5 }}
-                  />
-                </div>
-              </motion.div>
-            );
-          })}
+                </motion.div>
+              );
+            })}
+          </AnimatePresence>
         </motion.div>
+        
+        {/* Indicateurs de navigation si plus de 6 technologies */}
+        {allTechnologies.length > 6 && (
+          <div className="flex justify-center mt-8 space-x-1">
+            {Array.from({ length: Math.min(10, allTechnologies.length) }).map((_, idx) => (
+              <motion.button
+                key={idx}
+                className="w-2 h-2 rounded-full bg-gray-300 focus:outline-none"
+                animate={{ 
+                  backgroundColor: currentIndex === idx ? `var(--color-${color})` : "rgb(209, 213, 219)" 
+                }}
+                onClick={() => {
+                  setCurrentIndex(idx);
+                  // Mettre à jour les technologies visibles
+                  const newVisibleTechs = [];
+                  for (let i = 0; i < 6; i++) {
+                    const techIdx = (idx + i) % allTechnologies.length;
+                    newVisibleTechs.push(allTechnologies[techIdx]);
+                  }
+                  setVisibleTechs(newVisibleTechs);
+                }}
+                whileHover={{ scale: 1.5 }}
+                whileTap={{ scale: 0.9 }}
+              />
+            ))}
+          </div>
+        )}
         
         {/* Bouton de fin de section */}
         <motion.div
