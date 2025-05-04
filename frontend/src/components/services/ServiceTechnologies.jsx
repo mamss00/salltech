@@ -61,17 +61,56 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
     visibleTechnologies.push(...additionalTechs);
   }
   
-  // Définir les couleurs en fonction de l'index
-  const getColorsByIndex = (idx) => {
-    const colors = [
-      { primary: "rgb(52, 152, 219)", secondary: "rgb(41, 128, 185)" }, // Bleu
-      { primary: "rgb(155, 89, 182)", secondary: "rgb(142, 68, 173)" }, // Violet
-      { primary: "rgb(231, 76, 60)", secondary: "rgb(192, 57, 43)" },   // Rouge
-      { primary: "rgb(46, 204, 113)", secondary: "rgb(39, 174, 96)" },  // Vert
-      { primary: "rgb(241, 196, 15)", secondary: "rgb(243, 156, 18)" }, // Jaune
-      { primary: "rgb(52, 73, 94)", secondary: "rgb(44, 62, 80)" }      // Bleu-gris
-    ];
-    return colors[idx % colors.length];
+  // Définir les couleurs en fonction de la technologie
+  const getColorsForTech = (techName) => {
+    const techColors = {
+      // Couleurs adaptées aux technologies courantes
+      'React': { primary: "rgb(97, 218, 251)", secondary: "rgb(20, 158, 202)" }, // Bleu React
+      'Next': { primary: "rgb(0, 0, 0)", secondary: "rgb(70, 70, 70)" },         // Noir Next.js
+      'Tailwind': { primary: "rgb(56, 189, 248)", secondary: "rgb(14, 165, 233)" }, // Bleu Tailwind
+      'Node': { primary: "rgb(83, 158, 67)", secondary: "rgb(60, 120, 50)" },    // Vert Node.js
+      'MongoDB': { primary: "rgb(77, 179, 61)", secondary: "rgb(57, 150, 41)" }, // Vert MongoDB
+      'Laravel': { primary: "rgb(255, 45, 32)", secondary: "rgb(200, 35, 25)" }, // Rouge Laravel
+      'Vue': { primary: "rgb(65, 184, 131)", secondary: "rgb(35, 140, 95)" },    // Vert Vue.js
+      'Angular': { primary: "rgb(221, 0, 49)", secondary: "rgb(180, 0, 40)" },   // Rouge Angular
+      'PHP': { primary: "rgb(119, 123, 179)", secondary: "rgb(90, 94, 150)" },   // Violet PHP
+      'MySQL': { primary: "rgb(0, 117, 143)", secondary: "rgb(0, 90, 110)" },    // Bleu MySQL
+      'Python': { primary: "rgb(55, 118, 171)", secondary: "rgb(255, 211, 67)" },// Bleu/Jaune Python
+      'Java': { primary: "rgb(244, 138, 12)", secondary: "rgb(168, 88, 2)" },    // Orange Java
+      'JavaScript': { primary: "rgb(240, 219, 79)", secondary: "rgb(50, 51, 48)" }, // Jaune/Noir JS
+      'TypeScript': { primary: "rgb(0, 122, 204)", secondary: "rgb(0, 97, 162)" }, // Bleu TypeScript
+      'Docker': { primary: "rgb(13, 136, 209)", secondary: "rgb(10, 100, 160)" }, // Bleu Docker
+      'WordPress': { primary: "rgb(33, 117, 155)", secondary: "rgb(15, 90, 140)" }, // Bleu WordPress
+      'Flutter': { primary: "rgb(69, 209, 253)", secondary: "rgb(66, 165, 245)" }, // Bleu Flutter
+      'Swift': { primary: "rgb(252, 88, 66)", secondary: "rgb(240, 65, 45)" },     // Orange Swift
+      'Kotlin': { primary: "rgb(143, 104, 233)", secondary: "rgb(112, 69, 214)" }, // Violet Kotlin
+      'Ruby': { primary: "rgb(204, 52, 45)", secondary: "rgb(170, 12, 5)" },       // Rouge Ruby
+      'Go': { primary: "rgb(0, 173, 216)", secondary: "rgb(0, 130, 190)" },        // Bleu Go
+    };
+    
+    // Chercher une correspondance approximative dans les noms de technologie
+    if (!techName) return { primary: "rgb(52, 152, 219)", secondary: "rgb(41, 128, 185)" }; // Défaut bleu
+    
+    // Convertir en minuscules pour faciliter la recherche
+    const techNameLower = techName.toLowerCase();
+    
+    for (const [key, value] of Object.entries(techColors)) {
+      if (techNameLower.includes(key.toLowerCase())) {
+        return value;
+      }
+    }
+    
+    // Couleurs par défaut basées sur l'initiale du nom pour une variété
+    const initial = techName.charAt(0).toUpperCase();
+    
+    if (/[A-E]/.test(initial)) return { primary: "rgb(52, 152, 219)", secondary: "rgb(41, 128, 185)" }; // Bleu
+    if (/[F-J]/.test(initial)) return { primary: "rgb(46, 204, 113)", secondary: "rgb(39, 174, 96)" };  // Vert
+    if (/[K-O]/.test(initial)) return { primary: "rgb(155, 89, 182)", secondary: "rgb(142, 68, 173)" }; // Violet
+    if (/[P-T]/.test(initial)) return { primary: "rgb(241, 196, 15)", secondary: "rgb(243, 156, 18)" }; // Jaune
+    if (/[U-Z]/.test(initial)) return { primary: "rgb(231, 76, 60)", secondary: "rgb(192, 57, 43)" };   // Rouge
+    
+    // Défaut
+    return { primary: "rgb(52, 152, 219)", secondary: "rgb(41, 128, 185)" }; // Bleu par défaut
   };
 
   return (
@@ -180,15 +219,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           </motion.p>
         </motion.div>
         
-        {/* Indicateur de progression (visible uniquement s'il y a plus de 6 technologies) */}
-        {totalItems > 6 && (
-          <div className="flex justify-center mb-6">
-            <div className="flex items-center bg-white px-4 py-2 rounded-full shadow-sm">
-              <span className="text-2xl font-bold text-blue mr-1">{currentIndex + 1}</span>
-              <span className="text-gray-400 font-medium">/ {totalItems}</span>
-            </div>
-          </div>
-        )}
+        {/* Nous avons supprimé l'indicateur 1/7 ici */}
         
         {/* Technologies visibles */}
         <motion.div
@@ -207,7 +238,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
               logoUrl = getStrapiMediaUrl(tech.logo.url);
             }
             
-            const { primary, secondary } = getColorsByIndex(index);
+            const { primary, secondary } = getColorsForTech(tech.nom);
             
             // Effet de délai progressif
             const delay = 0.05 * index;
