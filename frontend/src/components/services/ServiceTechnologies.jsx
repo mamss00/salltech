@@ -169,12 +169,23 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
           className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4"
         >
           {technologies.map((tech, index) => {
-            // Récupérer l'URL du logo
-            let logoUrl = null;
-            if (tech.logo?.data) {
-              logoUrl = getStrapiMediaUrl(tech.logo.data.attributes.url);
-            } else if (tech.logo?.url) {
-              logoUrl = getStrapiMediaUrl(tech.logo.url);
+            // Récupérer l'URL du logo en utilisant la même technique que pour l'image principale
+            let logoUrl = tech.logo ? 
+              getStrapiMediaUrl(tech.logo.url || (tech.logo.formats?.medium?.url || tech.logo.formats?.small?.url || tech.logo.formats?.thumbnail?.url)) : 
+              null;
+
+            // Si aucune URL n'est trouvée mais qu'il y a une structure data (comme dans l'API brute)
+            if (!logoUrl && tech.logo?.data) {
+              // Si data est un tableau, prendre le premier élément
+              if (Array.isArray(tech.logo.data) && tech.logo.data.length > 0) {
+                const logoData = tech.logo.data[0].attributes;
+                logoUrl = getStrapiMediaUrl(logoData.url || (logoData.formats?.medium?.url || logoData.formats?.small?.url || logoData.formats?.thumbnail?.url));
+              } 
+              // Sinon, utiliser l'objet data directement
+              else if (tech.logo.data.attributes) {
+                const logoData = tech.logo.data.attributes;
+                logoUrl = getStrapiMediaUrl(logoData.url || (logoData.formats?.medium?.url || logoData.formats?.small?.url || logoData.formats?.thumbnail?.url));
+              }
             }
             
             // Effet de délai progressif
@@ -265,6 +276,13 @@ export default function ServiceTechnologies({ technologies, color = 'blue' }) {
                             width={64}
                             height={64}
                             className="object-contain max-w-full max-h-full"
+                            onError={(e) => {
+                              console.log(`Erreur de chargement d'image pour ${tech.nom}:`, logoUrl);
+                              e.target.onerror = null;
+                              // Fallback vers une lettre si l'image ne peut pas être chargée
+                              e.target.style.display = 'none';
+                              e.target.parentNode.classList.add('logo-error');
+                            }}
                           />
                           
                           {/* Effet de brillance sur le logo */}
