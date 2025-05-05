@@ -19,13 +19,13 @@ async function injectServiceData() {
     
     // Préparation des données avec un slug unique
     const timestamp = Date.now();
-    const slug = `sites-internet-professionnels-${timestamp}`;
+    const slug = `applications-mobiles-${timestamp}`;
     
     // Données du service avec format corrigé pour Strapi 5
     const serviceData = {
       publishedAt: new Date().toISOString(),
-      Titre: "Sites Internet Professionnels en Mauritanie",
-      titre_page: "Création de Sites Web Professionnels à Nouakchott",
+      Titre: "Applications Mobiles en Mauritanie",
+      titre_page: "Développement d'Applications Mobiles à Nouakchott",
       // Format corrigé pour rich text fields
       Description: [
         {
@@ -33,14 +33,14 @@ async function injectServiceData() {
           children: [
             {
               type: "text",
-              text: "Des sites web performants, sécurisés et parfaitement adaptés aux entreprises mauritaniennes pour renforcer votre présence numérique et développer votre activité à Nouakchott et dans toute la Mauritanie."
+              text: "Des applications mobiles innovantes, performantes et parfaitement adaptées aux besoins des entreprises et utilisateurs mauritaniens, développées par notre équipe d'experts à Nouakchott."
             }
           ]
         }
       ],
-      Emoji: "U+1F310", // 🌐
-      Couleur: "from-blue/20 to-blue/5",
-      Ordreaffichage: 1,
+      Emoji: "U+1F4F1", // 📱
+      Couleur: "from-purple/20 to-purple/5",
+      Ordreaffichage: 2,
       slug: slug,
       // Format corrigé pour rich text fields
       introduction: [
@@ -49,7 +49,7 @@ async function injectServiceData() {
           children: [
             {
               type: "text",
-              text: "Un site internet professionnel est aujourd'hui indispensable pour toute entreprise mauritanienne souhaitant développer sa visibilité et son activité. Chez SALLTECH, implantés à Nouakchott, nous concevons des sites web sur mesure qui répondent parfaitement à vos objectifs commerciaux et aux attentes de vos clients mauritaniens et internationaux."
+              text: "Dans un marché mauritanien où plus de 90% des utilisateurs accèdent à internet via leur smartphone, disposer d'une application mobile performante est devenu essentiel pour les entreprises souhaitant se démarquer et offrir une expérience optimale à leurs clients. SALLTECH, basée à Nouakchott, est votre partenaire privilégié pour concevoir et développer des applications mobiles sur mesure, adaptées aux spécificités du marché local."
             }
           ]
         },
@@ -58,194 +58,193 @@ async function injectServiceData() {
           children: [
             {
               type: "text",
-              text: "Notre équipe d'experts mauritaniens utilise les technologies les plus avancées (React, Next.js, Node.js) pour développer des applications web performantes, ainsi que WordPress pour les sites qui nécessitent une gestion de contenu simplifiée. Nous créons des solutions personnalisées qui allient design moderne, performance technique et optimisation pour les moteurs de recherche."
+              text: "Notre équipe de développeurs mauritaniens maîtrise les technologies mobiles les plus avancées (React Native, Flutter, iOS natif, Android natif) pour créer des applications performantes, intuitives et adaptées à tous les appareils. Que vous souhaitiez digitaliser vos services, fidéliser vos clients ou conquérir de nouveaux marchés en Mauritanie et dans la sous-région, nous concevons des solutions mobiles qui répondent précisément à vos objectifs business."
             }
           ]
         }
       ],
       caracteristiques: [
         {
-          titre: "Design Moderne et Local",
-          description: "Interfaces élégantes et professionnelles adaptées aux attentes des consommateurs mauritaniens",
+          titre: "Applications Cross-Platform",
+          description: "Développement d'applications compatibles avec iOS et Android pour une couverture maximale du marché mauritanien",
+          icone: "U+1F310" // 🌐
+        },
+        {
+          titre: "Interfaces Intuitives",
+          description: "Design UX/UI adapté aux habitudes des utilisateurs mauritaniens et aux spécificités culturelles locales",
           icone: "U+1F3A8" // 🎨
         },
         {
-          titre: "Performance sur Tous Appareils",
-          description: "Sites parfaitement optimisés pour les smartphones et les réseaux mobiles mauritaniens",
-          icone: "U+1F4F1" // 📱
-        },
-        {
-          titre: "Visibilité Maximale",
-          description: "Architecture et contenu optimisés pour les recherches locales en Mauritanie et dans la sous-région",
-          icone: "U+1F50D" // 🔍
+          titre: "Performance Optimisée",
+          description: "Applications légères et rapides, parfaitement adaptées aux contraintes de réseau et aux appareils utilisés localement",
+          icone: "U+26A1" // ⚡
         }
       ],
       types_services: [
         {
-          titre: "Site Vitrine Professionnel",
-          description: "Présentez votre entreprise mauritanienne avec élégance et efficacité pour attirer de nouveaux clients locaux et internationaux",
-          icone: "U+1F3E2", // 🏢
+          titre: "Applications Professionnelles",
+          description: "Solutions mobiles pour les entreprises mauritaniennes souhaitant digitaliser leurs services et optimiser leurs processus",
+          icone: "U+1F4BC", // 💼
           fonctionnalites: [
-            { texte: "Design moderne adapté à votre image de marque" },
-            { texte: "Présentation claire de vos produits et services" },
-            { texte: "Site multilingue (français, arabe) adapté au marché local" },
-            { texte: "Formulaires de contact et informations pratiques" }
+            { texte: "Digitalisation des services et processus internes" },
+            { texte: "Applications d'entreprise sur mesure" },
+            { texte: "Outils de gestion et de productivité mobile" },
+            { texte: "Solutions adaptées à votre secteur d'activité" }
           ]
         },
         {
-          titre: "Boutique en Ligne",
-          description: "Vendez vos produits en ligne en Mauritanie et à l'international avec une solution e-commerce complète et adaptée au marché local",
+          titre: "Applications E-commerce",
+          description: "Boutiques mobiles performantes pour vendre vos produits et services sur smartphones et tablettes en Mauritanie",
           icone: "U+1F6D2", // 🛒
           fonctionnalites: [
-            { texte: "Catalogue produits attractif et facile à gérer" },
-            { texte: "Paiements sécurisés adaptés au marché mauritanien" },
-            { texte: "Gestion des commandes et des stocks simplifiée" },
-            { texte: "Options de livraison pour Nouakchott et tout le pays" }
+            { texte: "Catalogues produits optimisés pour mobile" },
+            { texte: "Systèmes de paiement adaptés au marché mauritanien" },
+            { texte: "Gestion des commandes et notifications" },
+            { texte: "Solutions de livraison intégrées pour Nouakchott" }
           ]
         },
         {
-          titre: "Site Web Sur Mesure",
-          description: "Solutions personnalisées pour les besoins spécifiques de votre entreprise mauritanienne avec des fonctionnalités avancées",
-          icone: "U+2699", // ⚙️
+          titre: "Applications Services & Médias",
+          description: "Applications innovantes pour les entreprises de services, médias et startups mauritaniennes visant à transformer leur secteur",
+          icone: "U+1F4F2", // 📲
           fonctionnalites: [
-            { texte: "Fonctionnalités spécifiques à votre secteur d'activité" },
-            { texte: "Espace membres et portails clients sécurisés" },
-            { texte: "Intégration avec vos systèmes existants" },
-            { texte: "Applications web accessibles sur ordinateurs et mobiles" }
+            { texte: "Applications de services à la demande" },
+            { texte: "Plateformes médias et de contenu" },
+            { texte: "Solutions de réservation et de billetterie" },
+            { texte: "Applications sociales et communautaires" }
           ]
         }
       ],
       methodologie: [
         {
           numero: 1,
-          titre: "Découverte et analyse des besoins",
-          description: "Nous commençons par comprendre vos objectifs commerciaux, votre public cible mauritanien et vos attentes spécifiques pour votre site web.",
+          titre: "Analyse des besoins et du marché local",
+          description: "Nous étudions en profondeur votre projet, vos objectifs commerciaux et les spécificités du marché mobile mauritanien pour définir la stratégie optimale.",
           tags: [
-            { texte: "Étude de marché locale" },
-            { texte: "Analyse concurrentielle" },
-            { texte: "Définition des objectifs" }
+            { texte: "Étude utilisateurs" },
+            { texte: "Benchmark concurrentiel" },
+            { texte: "Spécifications fonctionnelles" }
           ]
         },
         {
           numero: 2,
-          titre: "Conception adaptée au contexte local",
-          description: "Nous créons une architecture de site et des maquettes visuelles qui correspondent à votre image de marque et aux attentes des utilisateurs mauritaniens.",
+          titre: "Conception UX/UI adaptée",
+          description: "Nous créons des interfaces intuitives et attrayantes, parfaitement adaptées aux habitudes des utilisateurs mauritaniens et aux contraintes locales.",
           tags: [
             { texte: "Wireframes" },
-            { texte: "Maquettes" },
-            { texte: "Expérience utilisateur locale" }
+            { texte: "Prototypes interactifs" },
+            { texte: "Design responsive" }
           ]
         },
         {
           numero: 3,
-          titre: "Développement optimisé",
-          description: "Notre équipe développe votre site avec les technologies les plus adaptées à vos besoins et aux contraintes techniques locales (bande passante, appareils).",
+          titre: "Développement technique",
+          description: "Notre équipe développe votre application avec les technologies les plus adaptées à vos besoins et optimisées pour les réseaux et appareils mauritaniens.",
           tags: [
-            { texte: "Code optimisé" },
-            { texte: "Compatibilité mobile" },
-            { texte: "Performance réseau" }
+            { texte: "React Native" },
+            { texte: "Flutter" },
+            { texte: "Développement natif" }
           ]
         },
         {
           numero: 4,
-          titre: "Tests et déploiement local",
-          description: "Nous testons rigoureusement votre site dans les conditions réelles d'utilisation en Mauritanie avant de le mettre en ligne sur un hébergement fiable.",
+          titre: "Tests et assurance qualité",
+          description: "Nous testons rigoureusement votre application sur différents appareils et dans les conditions réelles d'utilisation en Mauritanie pour garantir une expérience parfaite.",
           tags: [
-            { texte: "Tests sur réseaux locaux" },
-            { texte: "Compatibilité navigateurs" },
-            { texte: "Mise en production" }
+            { texte: "Tests fonctionnels" },
+            { texte: "Tests de performance" },
+            { texte: "Tests utilisateurs locaux" }
           ]
         },
         {
           numero: 5,
-          titre: "Suivi et maintenance",
-          description: "Après le lancement, nous assurons le bon fonctionnement de votre site depuis nos bureaux de Nouakchott et proposons des améliorations continues.",
+          titre: "Déploiement et suivi",
+          description: "Nous assurons la publication de votre application sur les stores, la formation de vos équipes, et proposons un accompagnement continu pour faire évoluer votre solution.",
           tags: [
+            { texte: "Publication App Store/Play Store" },
             { texte: "Support technique local" },
-            { texte: "Sécurité" },
-            { texte: "Évolution" }
+            { texte: "Mises à jour régulières" }
           ]
         }
       ],
       technologies: [
         {
-          nom: "React & Next.js",
-          description: "Frameworks JavaScript modernes pour des interfaces dynamiques et réactives"
+          nom: "React Native",
+          description: "Framework JavaScript pour développer des applications iOS et Android à partir d'une seule base de code"
         },
         {
-          nom: "Node.js",
-          description: "Environnement d'exécution JavaScript côté serveur pour des APIs performantes"
+          nom: "Flutter",
+          description: "Framework Google pour créer des applications mobiles natives multi-plateformes"
         },
         {
-          nom: "WordPress & WooCommerce",
-          description: "CMS et solution e-commerce personnalisables pour une gestion de contenu simplifiée"
+          nom: "Swift & Kotlin",
+          description: "Langages de programmation natifs pour les applications iOS et Android haute performance"
         },
         {
-          nom: "TailwindCSS",
-          description: "Framework CSS utilitaire pour des designs responsives personnalisés"
+          nom: "Firebase",
+          description: "Plateforme de développement mobile offrant base de données temps réel, authentification et analytics"
         },
         {
-          nom: "MongoDB & MySQL",
-          description: "Solutions de bases de données adaptées à vos besoins spécifiques"
+          nom: "API REST & GraphQL",
+          description: "Technologies d'intégration pour connecter vos applications mobiles à vos systèmes existants"
         },
         {
-          nom: "Docker & CI/CD",
-          description: "Déploiement conteneurisé et intégration continue pour une fiabilité maximale"
+          nom: "UI/UX Mobile Avancé",
+          description: "Design d'interfaces innovantes et adaptées aux spécificités du marché mauritanien"
         }
       ],
-      // Format déjà correct pour les FAQ
       faq: [
         {
-          question: "Combien coûte la création d'un site web professionnel en Mauritanie?",
+          question: "Quel est le coût de développement d'une application mobile en Mauritanie?",
           reponse: [
             {
               type: "paragraph",
               children: [
                 {
                   type: "text",
-                  text: "Les tarifs pour la création d'un site web en Mauritanie varient selon la complexité du projet et les technologies utilisées. Un site vitrine démarre à 150 000 MRU, tandis qu'une boutique en ligne ou une application web personnalisée démarre à 300 000 MRU. Nous établissons un devis détaillé après analyse de vos besoins spécifiques."
+                  text: "Le coût de développement d'une application mobile en Mauritanie varie selon sa complexité et les fonctionnalités souhaitées. Une application simple démarre autour de 300 000 MRU, tandis qu'une application complexe avec backend personnalisé peut atteindre 800 000 MRU ou plus. Nous établissons un devis détaillé et transparent après avoir analysé précisément vos besoins, avec des options adaptées à différents budgets."
                 }
               ]
             }
           ]
         },
         {
-          question: "Quelle est la différence entre un site WordPress et un développement sur mesure?",
+          question: "Quelle technologie est la plus adaptée pour mon projet d'application mobile?",
           reponse: [
             {
               type: "paragraph",
               children: [
                 {
                   type: "text",
-                  text: "WordPress est une solution idéale pour les sites nécessitant une gestion de contenu régulière par votre équipe, avec un excellent rapport qualité-prix. Le développement sur mesure offre quant à lui des fonctionnalités totalement personnalisées, des performances supérieures et une liberté totale de conception. Nous recommandons la solution la plus adaptée à vos besoins réels et à votre budget."
+                  text: "Le choix de la technologie dépend de vos objectifs, de votre budget et des spécificités de votre projet. React Native et Flutter sont idéales pour des applications multi-plateformes (iOS et Android) avec un budget maîtrisé, tout en offrant d'excellentes performances. Le développement natif (Swift pour iOS, Kotlin pour Android) est recommandé pour des applications nécessitant des performances optimales ou des fonctionnalités avancées spécifiques à chaque plateforme. Nous vous conseillons la solution la mieux adaptée à vos besoins réels et au contexte mauritanien."
                 }
               ]
             }
           ]
         },
         {
-          question: "Proposez-vous des services de maintenance et d'hébergement adaptés au marché mauritanien?",
+          question: "Combien de temps faut-il pour développer une application mobile complète?",
           reponse: [
             {
               type: "paragraph",
               children: [
                 {
                   type: "text",
-                  text: "Oui, nous proposons plusieurs formules de maintenance spécialement conçues pour les entreprises mauritaniennes, avec un support technique local en français et en arabe. Nos forfaits incluent les mises à jour de sécurité, les sauvegardes régulières, les corrections de bugs et les petites modifications de contenu. Nous offrons également des solutions d'hébergement optimisées pour garantir des performances optimales sur les réseaux mauritaniens."
+                  text: "Le délai de développement d'une application mobile varie généralement de 2 à 6 mois selon sa complexité. Une application simple peut être développée en 2-3 mois, tandis qu'une solution plus élaborée avec backend personnalisé, intégrations multiples et fonctionnalités avancées nécessitera 4 à 6 mois. Notre méthodologie agile permet de livrer rapidement des versions intermédiaires fonctionnelles pour recueillir vos retours et ajuster le développement en conséquence, assurant ainsi un résultat final parfaitement aligné avec vos attentes."
                 }
               ]
             }
           ]
         },
         {
-          question: "Comment assurez-vous la visibilité de mon site sur les moteurs de recherche en Mauritanie?",
+          question: "Comment gérez-vous la maintenance et les mises à jour de l'application après son lancement?",
           reponse: [
             {
               type: "paragraph",
               children: [
                 {
                   type: "text",
-                  text: "Nous intégrons les bonnes pratiques SEO dès la conception de votre site, avec une attention particulière au référencement local en Mauritanie. Cela inclut l'optimisation pour Google.mr, l'utilisation de mots-clés pertinents pour le marché mauritanien, le référencement local (Nouakchott et autres villes), et des contenus adaptés aux recherches locales. Nous proposons également des prestations de référencement avancées et de marketing digital adaptées au contexte mauritanien."
+                  text: "Nous proposons plusieurs formules de maintenance adaptées aux besoins des entreprises mauritaniennes, avec un support technique local. Nos forfaits incluent les mises à jour de sécurité, la compatibilité avec les nouvelles versions d'iOS et Android, les corrections de bugs et les petites améliorations. Nous assurons également un monitoring continu pour garantir la performance et la stabilité de votre application. Vous pouvez également opter pour un contrat évolutif permettant d'ajouter régulièrement de nouvelles fonctionnalités à votre application pour suivre l'évolution de vos besoins et du marché."
                 }
               ]
             }
@@ -253,9 +252,9 @@ async function injectServiceData() {
         }
       ],
       seo: {
-        metaTitle: "Création de Sites Web Professionnels à Nouakchott | SALLTECH Mauritanie",
-        metaDescription: "Agence web à Nouakchott spécialisée dans la création de sites internet professionnels et e-commerce adaptés aux entreprises mauritaniennes. Devis gratuit!",
-        keywords: "site web Mauritanie, création site internet Nouakchott, développement web Mauritanie, site e-commerce Mauritanie, agence web Nouakchott, WordPress Mauritanie, WooCommerce Nouakchott"
+        metaTitle: "Développement d'Applications Mobiles à Nouakchott | SALLTECH Mauritanie",
+        metaDescription: "Agence de développement d'applications mobiles iOS et Android à Nouakchott. Solutions sur mesure pour entreprises mauritaniennes. Devis gratuit!",
+        keywords: "applications mobiles Mauritanie, développement app Nouakchott, React Native Mauritanie, Flutter Mauritanie, applications iOS Nouakchott, applications Android Mauritanie, développeurs mobile Nouakchott"
       }
     };
     
