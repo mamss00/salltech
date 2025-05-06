@@ -365,7 +365,7 @@ function AnimatedHero() {
                   ))}
                   
                   <span className="text-white font-medium text-sm relative z-10 px-1">
-                    EXPERTISE INTERNATIONALE
+                    EXPERTISE RECONNUE
                   </span>
                 </motion.div>
                 
