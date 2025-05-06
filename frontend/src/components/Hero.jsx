@@ -144,8 +144,8 @@ function FixedHero() {
               INNOVER. CRÉER. TRANSFORMER.
             </h2>
             
-            <div className="h-[140px] mb-6 md:mb-8 relative">
-              <h1 className="text-4xl md:text-[3.5rem] font-extrabold leading-tight absolute top-0 left-0 w-full md:whitespace-nowrap">
+            <div className="h-[140px] mb-10 md:mb-16 relative">
+              <h1 className="text-4xl md:text-[3.5rem] font-extrabold leading-tight absolute top-0 left-0 w-full">
                 Pour ceux qui<br />
                 aiment <span className="gradient-text inline-block relative min-w-[280px]">
                   {text}
@@ -169,7 +169,7 @@ function FixedHero() {
           </div>
           
           {/* Colonne de droite - Pourquoi nous choisir */}
-          <div className="mt-8 md:mt-0 relative rounded-3xl overflow-hidden h-[500px] md:h-full bg-gradient-to-br from-purple-500/90 via-purple-600/80 to-pink-500/80 shadow-lg">
+          <div className="mt-16 md:mt-0 relative rounded-3xl overflow-hidden h-[500px] md:h-full bg-gradient-to-br from-purple-500/90 via-purple-600/80 to-pink-500/80 shadow-lg">
             {/* Particules scintillantes */}
             <div className="absolute inset-0 overflow-hidden">
               {[...Array(30)].map((_, i) => (
@@ -196,7 +196,7 @@ function FixedHero() {
                     : 'opacity-0 -translate-y-8'
                 }`}
               >
-                <span className="inline-block px-4 py-1.5 rounded-full bg-white/20 text-sm font-medium">
+                <span className="inline-block px-4 py-1.5 rounded-full bg-purple-800 text-white text-sm font-medium shadow-md">
                   EXPERTISE INTERNATIONALE
                 </span>
               </div>
