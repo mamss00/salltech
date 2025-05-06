@@ -268,399 +268,116 @@ export default function EnhancedServiceIntroduction({ content, features, color =
           </motion.h2>
         </motion.div>
         
-        <div className="max-w-4xl mx-auto bg-white/85 backdrop-blur-sm rounded-3xl shadow-xl overflow-hidden border border-gray-100">
-          {/* En-tête décoratif géométrique */}
-          <div className="h-1.5 bg-gradient-to-r from-blue via-purple to-red relative overflow-hidden">
-            {/* Animation de pulsation lumineuse */}
+        <motion.div
+          ref={contentRef}
+          initial={{ opacity: 0, y: 20 }}
+          animate={contentInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="p-8 md:p-12"
+        >
+          {/* Contenu riche de l'introduction simplifié et élégant */}
+          <div className="prose prose-lg max-w-none relative">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={contentInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="relative bg-white shadow-sm rounded-2xl p-8 md:p-10"
+            >
+              {renderRichText(content)}
+            </motion.div>
+          </div>
+          
+          {/* Séparateur minimal avec ligne simple */}
+          <div className="my-10 flex items-center justify-center">
             <motion.div 
-              className="absolute inset-0 bg-white/30"
-              initial={{ x: "-100%" }}
-              animate={{ x: ["100%", "-100%"] }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
+              className={`h-px w-16 bg-${color}/50`}
+              initial={{ width: 0 }}
+              animate={contentInView ? { width: '4rem' } : {}}
+              transition={{ duration: 0.8, delay: 0.7 }}
             />
           </div>
           
-          <motion.div
-            ref={contentRef}
+          {/* Section "Pourquoi choisir SALLTECH" simplifiée */}
+          {features && features.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={contentInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"
+            >
+              {features.map((feature, index) => {
+                const displayIcon = getDisplayIcon(feature.icone);
+                return (
+                  <div key={index} className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
+                    <div className={`mx-auto w-12 h-12 rounded-full bg-${color}/10 flex items-center justify-center text-${color} mb-4`}>
+                      {displayIcon ? (
+                        <span className="text-2xl">{displayIcon}</span>
+                      ) : feature.icone && !feature.icone.startsWith('U+') ? (
+                        <DynamicIcon 
+                          icon={feature.icone} 
+                          className="w-6 h-6"
+                          colorClass={`text-${color}`}
+                        />
+                      ) : (
+                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      )}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2 text-center">{feature.titre}</h3>
+                    <p className="text-gray-600 text-center">{feature.description}</p>
+                  </div>
+                );
+              })}
+            </motion.div>
+          )}
+          
+          {/* Encadré simple et élégant */}
+          <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="p-8 md:p-12"
+            transition={{ duration: 0.8, delay: 0.6 }}
+            className="bg-white rounded-2xl shadow-sm p-8 border-t-2 border-blue"
           >
-            {/* Contenu riche de l'introduction avec design plus élégant */}
-            <div className="prose prose-lg max-w-none relative">
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={contentInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="relative bg-white border border-gray-100 rounded-xl p-8 shadow-sm"
-              >
-                {/* Points graphiques aux coins */}
-                <motion.div className={`absolute top-3 left-3 w-1.5 h-1.5 rounded-full bg-${color}`} 
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity }}
+            <div className="flex flex-col md:flex-row items-center gap-6">
+              <div className="md:w-1/3 flex justify-center">
+                <img 
+                  src="/images/mauritania-map.svg" 
+                  alt="Mauritanie" 
+                  className="w-32 h-32 object-contain opacity-80"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22%233498db%22%20opacity%3D%220.2%22%2F%3E%3C%2Fsvg%3E';
+                  }}
                 />
-                <motion.div className="absolute top-3 right-3 w-1.5 h-1.5 rounded-full bg-purple" 
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                />
-                <motion.div className="absolute bottom-3 left-3 w-1.5 h-1.5 rounded-full bg-red" 
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                />
-                <motion.div className="absolute bottom-3 right-3 w-1.5 h-1.5 rounded-full bg-purple" 
-                  animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
-                />
-                
-                {/* Contenu avec effet de mise en évidence */}
-                <div className="relative overflow-hidden">
-                  {/* Effet de scan lumineux */}
-                  <motion.div 
-                    className="absolute top-0 h-full w-1/3 bg-gradient-to-r from-transparent via-blue/5 to-transparent pointer-events-none"
-                    initial={{ left: "-30%" }}
-                    animate={{ left: ["100%", "-30%"] }}
-                    transition={{
-                      duration: 5,
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      repeatDelay: 3
-                    }}
-                  />
-                  
-                  {renderRichText(content)}
-                </div>
-              </motion.div>
-            </div>
-            
-            {/* Séparateur 3D avec ombre portée */}
-            <motion.div 
-              className="my-12 relative h-0.5"
-              initial={{ opacity: 0 }}
-              animate={contentInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.8, delay: 0.7 }}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue/20 via-purple/20 to-red/20 rounded-full shadow-sm"></div>
-              <div className="absolute inset-0 -bottom-0.5 bg-gray-100/50 blur-sm rounded-full transform translate-y-0.5"></div>
-            </motion.div>
-            
-            {/* Caractéristiques principales, si disponibles */}
-            {features && features.length > 0 && (
-              <motion.div
-                ref={featuresRef}
-                initial={{ opacity: 0 }}
-                animate={featuresInView ? { opacity: 1 } : {}}
-                transition={{ duration: 0.6 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
-              >
-                {features.map((feature, index) => {
-                  // Récupérer l'icône (emoji ou icône)
-                  const displayIcon = getDisplayIcon(feature.icone);
-                  const delay = 0.1 * index;
-                  
-                  // Alternance de couleurs pour les cartes
-                  const cardColor = index % 3 === 0 ? 'blue' : index % 3 === 1 ? 'purple' : 'red';
-                
-                  return (
-                    <motion.div 
-                      key={index} 
-                      initial={{ opacity: 0, y: 30, scale: 0.9 }}
-                      animate={featuresInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-                      transition={{ 
-                        duration: 0.6, 
-                        delay: delay, 
-                        type: "spring",
-                        stiffness: 100,
-                        damping: 15
-                      }}
-                      whileHover={{ 
-                        y: -10, 
-                        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                      }}
-                      className={`bg-white p-6 rounded-xl shadow-md border border-${cardColor}/10 overflow-hidden relative group`}
-                    >
-                      {/* Fond animé subtil */}
-                      <div className="absolute inset-0 opacity-5 pointer-events-none overflow-hidden">
-                        <motion.div
-                          className={`absolute -inset-2 bg-gradient-to-br from-${cardColor}/20 to-transparent rounded-full blur-2xl`}
-                          animate={{
-                            scale: [1, 1.2, 1],
-                            opacity: [0.5, 0.8, 0.5],
-                            rotate: [0, 360]
-                          }}
-                          transition={{
-                            duration: 10,
-                            repeat: Infinity,
-                            repeatType: "mirror"
-                          }}
-                        />
-                      </div>
-                      
-                      <motion.div 
-                        className={`w-14 h-14 bg-${cardColor}/10 rounded-xl flex items-center justify-center text-${cardColor} mb-4 mx-auto relative`}
-                        initial={{ scale: 0, rotate: -20 }}
-                        animate={featuresInView ? { scale: 1, rotate: 0 } : {}}
-                        transition={{ 
-                          delay: delay + 0.2,
-                          type: "spring",
-                          stiffness: 200,
-                          damping: 15
-                        }}
-                      >
-                        {/* Effet de pulsation autour de l'icône */}
-                        <motion.span
-                          className="absolute inset-0 rounded-xl"
-                          animate={{
-                            boxShadow: [
-                              `0 0 0 0 rgba(var(--color-${cardColor}), 0)`,
-                              `0 0 0 8px rgba(var(--color-${cardColor}), 0.1)`,
-                              `0 0 0 0 rgba(var(--color-${cardColor}), 0)`,
-                            ]
-                          }}
-                          transition={{
-                            duration: 2.5,
-                            repeat: Infinity,
-                            repeatDelay: 0.5,
-                          }}
-                        />
-                        
-                        {displayIcon ? (
-                          <motion.span 
-                            className="text-3xl"
-                            animate={{
-                              scale: [1, 1.1, 1],
-                              rotate: [0, 5, 0, -5, 0]
-                            }}
-                            transition={{
-                              duration: 5,
-                              repeat: Infinity,
-                              repeatType: "mirror"
-                            }}
-                          >
-                            {displayIcon}
-                          </motion.span>
-                        ) : feature.icone && !feature.icone.startsWith('U+') ? (
-                          <DynamicIcon 
-                            icon={feature.icone} 
-                            className="w-7 h-7"
-                            colorClass={`text-${cardColor}`}
-                          />
-                        ) : (
-                          <motion.svg 
-                            className="w-7 h-7" 
-                            fill="none" 
-                            stroke="currentColor" 
-                            viewBox="0 0 24 24"
-                            animate={{
-                              scale: [1, 1.1, 1],
-                              rotate: [0, 15, 0]
-                            }}
-                            transition={{
-                              duration: 5,
-                              repeat: Infinity,
-                              repeatType: "mirror"
-                            }}
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                          </motion.svg>
-                        )}
-                      </motion.div>
-                      
-                      <motion.h3 
-                        className={`text-xl font-semibold mb-2 text-center group-hover:text-${cardColor} transition-colors duration-300`}
-                        initial={{ opacity: 0 }}
-                        animate={featuresInView ? { opacity: 1 } : {}}
-                        transition={{ delay: delay + 0.3, duration: 0.4 }}
-                      >
-                        {feature.titre}
-                      </motion.h3>
-                      
-                      <motion.div 
-                        className={`h-0.5 w-0 bg-gradient-to-r from-${cardColor} to-transparent rounded-full mx-auto mb-3 group-hover:w-24 transition-all duration-300`}
-                        initial={{ width: 0 }}
-                        animate={featuresInView ? { width: '40px' } : {}}
-                        transition={{ delay: delay + 0.4, duration: 0.4 }}
-                      />
-                      
-                      <motion.p 
-                        className="text-gray-600 text-center"
-                        initial={{ opacity: 0 }}
-                        animate={featuresInView ? { opacity: 1 } : {}}
-                        transition={{ delay: delay + 0.5, duration: 0.4 }}
-                      >
-                        {feature.description}
-                      </motion.p>
-                      
-                      {/* Points lumineux aux coins */}
-                      <motion.div 
-                        className={`absolute top-0 left-0 w-1 h-1 rounded-full bg-${cardColor}`}
-                        animate={{ opacity: [0.2, 1, 0.2] }}
-                        transition={{ duration: 2, repeat: Infinity }}
-                      />
-                      <motion.div 
-                        className={`absolute top-0 right-0 w-1 h-1 rounded-full bg-${cardColor}`}
-                        animate={{ opacity: [0.2, 1, 0.2] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: 0.5 }}
-                      />
-                      <motion.div 
-                        className={`absolute bottom-0 left-0 w-1 h-1 rounded-full bg-${cardColor}`}
-                        animate={{ opacity: [0.2, 1, 0.2] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                      />
-                      <motion.div 
-                        className={`absolute bottom-0 right-0 w-1 h-1 rounded-full bg-${cardColor}`}
-                        animate={{ opacity: [0.2, 1, 0.2] }}
-                        transition={{ duration: 2, repeat: Infinity, delay: 1.5 }}
-                      />
-                    </motion.div>
-                  );
-                })}
-              </motion.div>
-            )}
-            
-            {/* Nouveau design d'encadré avec style amélioré - plus simple */}
-            <motion.div 
-              initial={{ opacity: 0, y: 30 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.8, delay: 0.9 }}
-              className="bg-white p-1 rounded-2xl shadow-lg relative overflow-hidden"
-            >
-              {/* Bordure dégradée subtile */}
-              <div className="absolute inset-0 rounded-2xl opacity-20 pointer-events-none">
-                <div className={`h-1 w-full bg-gradient-to-r from-${color} via-purple to-red`}></div>
               </div>
               
-              {/* Contenu intérieur */}
-              <div className="bg-white rounded-xl p-8 relative z-10 border border-gray-100">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10">
-                  {/* Icône simplifiée */}
-                  <div className="md:col-span-3 flex justify-center">
-                    <motion.div 
-                      className="relative"
-                      whileHover={{
-                        scale: 1.05,
-                        transition: { duration: 0.2 }
-                      }}
-                    >
-                      {/* Cercle simple avec ombre légère */}
-                      <motion.div
-                        className={`w-20 h-20 rounded-full bg-${color}/10 flex items-center justify-center relative`}
-                        animate={{
-                          boxShadow: [
-                            `0 0 0 0 rgba(var(--color-${color}), 0)`,
-                            `0 0 0 8px rgba(var(--color-${color}), 0.05)`,
-                            `0 0 0 0 rgba(var(--color-${color}), 0)`
-                          ]
-                        }}
-                        transition={{
-                          duration: 3,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
-                      >
-                        {/* Icône */}
-                        <motion.svg 
-                          className={`w-10 h-10 text-${color}`} 
-                          viewBox="0 0 24 24" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          strokeWidth="1.5"
-                          animate={{
-                            scale: [1, 1.05, 1],
-                          }}
-                          transition={{
-                            duration: 4,
-                            repeat: Infinity,
-                            repeatType: "mirror"
-                          }}
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
-                        </motion.svg>
-                      </motion.div>
-                    </motion.div>
-                  </div>
-                  
-                  {/* Texte */}
-                  <div className="md:col-span-9">
-                    <motion.h3 
-                      className="text-xl font-bold mb-4"
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={contentInView ? { opacity: 1, x: 0 } : {}}
-                      transition={{ duration: 0.5, delay: 1 }}
-                    >
-                      <span className={`text-${color}`}>Pourquoi choisir </span>
-                      <span className="text-gray-800">SALLTECH</span>
-                      <motion.span
-                        className="ml-1 opacity-0"
-                        animate={{ opacity: [0, 1, 0] }}
-                        transition={{ duration: 1, repeat: Infinity, repeatDelay: 1 }}
-                      >
-                        _
-                      </motion.span>
-                    </motion.h3>
-                    
-                    {/* Ligne séparatrice simple */}
-                    <motion.div
-                      className={`h-0.5 w-0 bg-${color}/20 mb-5 rounded-full`}
-                      initial={{ width: 0 }}
-                      animate={contentInView ? { width: '100px' } : {}}
-                      transition={{ duration: 0.8, delay: 1.2 }}
-                    />
-                    
-                    <motion.p 
-                      className="text-gray-700 mb-4"
-                      initial={{ opacity: 0 }}
-                      animate={contentInView ? { opacity: 1 } : {}}
-                      transition={{ duration: 0.6, delay: 1.3 }}
-                    >
-                      Notre expertise technique combinée à notre connaissance approfondie du marché mauritanien nous permet 
-                      de créer des solutions parfaitement adaptées à vos besoins spécifiques et à votre contexte local.
-                    </motion.p>
-                    
-                    {/* Points clés avec icônes simples */}
-                    <motion.div 
-                      className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={contentInView ? { opacity: 1, y: 0 } : {}}
-                      transition={{ duration: 0.6, delay: 1.5 }}
-                    >
-                      <div className="flex items-center">
-                        <div className={`w-8 h-8 rounded-full bg-${color}/10 flex items-center justify-center text-${color} mr-3 flex-shrink-0`}>
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </div>
-                        <span className="text-sm text-gray-600">Solutions sur mesure</span>
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-full bg-purple/10 flex items-center justify-center text-purple mr-3 flex-shrink-0">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </div>
-                        <span className="text-sm text-gray-600">Connaissance locale</span>
-                      </div>
-                      
-                      <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-full bg-red/10 flex items-center justify-center text-red mr-3 flex-shrink-0">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                          </svg>
-                        </div>
-                        <span className="text-sm text-gray-600">Support de proximité</span>
-                      </div>
-                    </motion.div>
-                  </div>
-                </div>
+              <div className="md:w-2/3">
+                <h3 className={`text-xl font-semibold mb-3 text-${color}`}>
+                  Pourquoi choisir SALLTECH ?
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Notre expertise technique combinée à notre connaissance approfondie du marché mauritanien nous permet 
+                  de créer des solutions parfaitement adaptées à vos besoins spécifiques et à votre contexte local.
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-center">
+                    <span className={`inline-block w-4 h-4 rounded-full bg-${color} mr-2 flex-shrink-0`}></span>
+                    <span className="text-gray-700">Solutions sur mesure pour le marché mauritanien</span>
+                  </li>
+                  <li className="flex items-center">
+                    <span className="inline-block w-4 h-4 rounded-full bg-purple mr-2 flex-shrink-0"></span>
+                    <span className="text-gray-700">Équipe locale hautement qualifiée</span>
+                  </li>
+                  <li className="flex items-center">
+                    <span className="inline-block w-4 h-4 rounded-full bg-red mr-2 flex-shrink-0"></span>
+                    <span className="text-gray-700">Support et proximité garantis</span>
+                  </li>
+                </ul>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
     </section>
   );
