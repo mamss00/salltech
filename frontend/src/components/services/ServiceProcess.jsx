@@ -51,10 +51,11 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
   
   // Générer des couleurs pour le dégradé basées sur la couleur principale
   const getStepColors = (index) => {
+    // Palette de couleurs plus élégante et adoucie
     const colorMap = {
-      blue: { primary: '#3498db', secondary: '#2980b9', light: '#ebf5fa' },
-      purple: { primary: '#9b59b6', secondary: '#8e44ad', light: '#f4ecf7' },
-      red: { primary: '#e74c3c', secondary: '#c0392b', light: '#fdedec' },
+      blue: { primary: '#5b96c7', secondary: '#426f95', light: '#ebf5fa' },
+      purple: { primary: '#9c78ad', secondary: '#755585', light: '#f4ecf7' },
+      red: { primary: '#c96c61', secondary: '#9d5750', light: '#fdedec' },
     }
     
     // Choisir les couleurs en fonction de l'étape pour varier l'apparence
@@ -228,9 +229,9 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
         
         {/* Mode compact moderne avec navigation par onglets */}
         <div className="max-w-5xl mx-auto">
-          {/* Navigation des étapes */}
+          {/* Navigation des étapes - Style plus élégant */}
           <div className="mb-12 flex justify-center">
-            <div className="bg-white rounded-full shadow-lg p-1 flex space-x-1">
+            <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-md p-1.5 flex flex-wrap justify-center gap-1">
               {sortedSteps.map((step, index) => {
                 const { primary } = getStepColors(index)
                 return (
@@ -242,7 +243,7 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                     }}
                     className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300`}
                     style={{ 
-                      color: activeStep === index ? 'white' : 'rgb(75, 85, 99)',
+                      color: activeStep === index ? 'white' : 'rgb(90, 90, 90)',
                       overflow: 'hidden'
                     }}
                   >
@@ -252,32 +253,32 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                         className="absolute inset-0 rounded-full"
                         initial={false}
                         style={{ backgroundColor: primary }}
-                        transition={{ type: "spring", stiffness: 250, damping: 25 }}
+                        transition={{ type: "spring", stiffness: 200, damping: 28 }}
                       />
                     )}
                     <span className="relative z-10 flex items-center">
-                      <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs">
+                      <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-medium">
                         {step.numero}
                       </span>
-                      {step.titre.length > 15 ? step.titre.substring(0, 15) + '...' : step.titre}
+                      {step.titre.length > 12 ? step.titre.substring(0, 12) + '...' : step.titre}
                     </span>
                   </motion.button>
                 )
               })}
               <motion.button
                 onClick={() => setAutoPlayEnabled(!autoPlayEnabled)}
-                className="relative px-3 py-2 rounded-full bg-gray-100 text-gray-700 text-sm font-medium hover:bg-gray-200 transition-all duration-300"
+                className="relative px-3 py-2 rounded-full bg-gray-100/80 text-gray-700 text-sm font-medium hover:bg-gray-200/80 transition-all duration-300"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
                 {autoPlayEnabled ? (
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 ) : (
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 )}
               </motion.button>
@@ -291,7 +292,7 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
               <motion.div
                 className="h-full"
                 style={{ 
-                  backgroundColor: `rgb(${mainColorRGB})`,
+                  backgroundColor: getStepColors(activeStep).primary,
                   width: `${(activeStep / (sortedSteps.length - 1)) * 100}%`
                 }}
                 animate={{ width: `${(activeStep / (sortedSteps.length - 1)) * 100}%` }}
@@ -325,7 +326,7 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                         {/* Animation d'illustration du processus - Côté gauche */}
                         <div className="md:w-1/3 bg-gradient-to-br p-8 relative overflow-hidden"
                           style={{ 
-                            background: `linear-gradient(135deg, ${primary}, ${secondary})` 
+                            background: `linear-gradient(135deg, ${primary}DD, ${secondary}DD)` 
                           }}
                         >
                           {/* Numéro et titre */}
@@ -361,36 +362,37 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                             {/* Illustration abstraite animée */}
                             <div className="hidden md:block mt-8">
                               <svg width="100%" height="120" viewBox="0 0 200 120" fill="none">
-                                <motion.circle cx="40" cy="60" r="8" fill="white" opacity="0.8"
+                                <motion.circle cx="40" cy="60" r="8" fill="white" opacity="0.6"
                                   animate={{ 
                                     cx: [40, 60, 40], 
                                     cy: [60, 40, 60],
-                                    opacity: [0.8, 0.4, 0.8]
+                                    opacity: [0.6, 0.3, 0.6]
                                   }}
                                   transition={{ duration: 5, repeat: Infinity }}
                                 />
-                                <motion.circle cx="160" cy="60" r="6" fill="white" opacity="0.6"
+                                <motion.circle cx="160" cy="60" r="6" fill="white" opacity="0.5"
                                   animate={{ 
                                     cx: [160, 140, 160], 
                                     cy: [60, 80, 60],
-                                    opacity: [0.6, 0.3, 0.6]
+                                    opacity: [0.5, 0.2, 0.5]
                                   }}
                                   transition={{ duration: 5, repeat: Infinity }}
                                 />
                                 <motion.path 
                                   d="M40,60 Q100,20 160,60" 
                                   stroke="white" 
-                                  strokeWidth="2"
+                                  strokeWidth="1.5"
                                   strokeDasharray="5,5"
                                   initial={{ pathLength: 0 }}
                                   animate={{ pathLength: [0, 1, 0] }}
                                   transition={{ duration: 5, repeat: Infinity }}
+                                  opacity="0.6"
                                 />
                                 <motion.path 
                                   d="M40,60 Q100,100 160,60" 
                                   stroke="white" 
-                                  strokeWidth="2"
-                                  opacity="0.7"
+                                  strokeWidth="1.5"
+                                  opacity="0.5"
                                   initial={{ pathLength: 0 }}
                                   animate={{ pathLength: [0, 1, 0] }}
                                   transition={{ duration: 5, delay: 2.5, repeat: Infinity }}
@@ -488,13 +490,13 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                                   setActiveStep(prev => (prev - 1 + sortedSteps.length) % sortedSteps.length)
                                   setAutoPlayEnabled(false)
                                 }}
-                                className="flex items-center px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors duration-200"
+                                className="flex items-center px-4 py-2 rounded-lg bg-gray-50 text-gray-700 hover:bg-gray-100 transition-colors duration-200 border border-gray-200"
                                 whileHover={{ x: -5 }}
                                 whileTap={{ scale: 0.95 }}
                                 disabled={sortedSteps.length <= 1}
                               >
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                                 </svg>
                                 Précédent
                               </motion.button>
@@ -504,15 +506,18 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                                   setActiveStep(prev => (prev + 1) % sortedSteps.length)
                                   setAutoPlayEnabled(false)
                                 }}
-                                className="flex items-center px-4 py-2 rounded-lg text-white hover:shadow-lg transition-all duration-200"
-                                style={{ backgroundColor: primary }}
+                                className="flex items-center px-4 py-2 rounded-lg text-white hover:shadow-md transition-all duration-200"
+                                style={{ 
+                                  backgroundColor: primary,
+                                  boxShadow: "0 2px 10px rgba(0,0,0,0.08)"
+                                }}
                                 whileHover={{ x: 5 }}
                                 whileTap={{ scale: 0.95 }}
                                 disabled={sortedSteps.length <= 1}
                               >
                                 Suivant
                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                                 </svg>
                               </motion.button>
                             </div>
@@ -554,11 +559,14 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                 <div className="flex flex-col sm:flex-row justify-center gap-4">
                   <motion.a
                     href="#contact"
-                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium text-white shadow-lg"
-                    style={{ backgroundColor: `rgb(${mainColorRGB})` }}
+                    className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium text-white"
+                    style={{ 
+                      backgroundColor: getStepColors(0).primary,
+                      boxShadow: "0 4px 15px rgba(0,0,0,0.1)"
+                    }}
                     whileHover={{ 
-                      scale: 1.05, 
-                      boxShadow: `0 10px 25px -5px rgba(${mainColorRGB}, 0.3)` 
+                      scale: 1.03, 
+                      boxShadow: `0 8px 20px rgba(0,0,0,0.12)` 
                     }}
                     whileTap={{ scale: 0.98 }}
                   >
@@ -571,7 +579,7 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Infinity, repeatType: "mirror" }}
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                     </motion.svg>
                   </motion.a>
                   
@@ -643,10 +651,10 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
       
       {/* Effet de trame visuelle au bas de la section */}
       <div className="absolute bottom-0 left-0 w-full h-16 overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
+        <div className="absolute inset-0 opacity-3">
           <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <pattern id="bottomPattern" patternUnits="userSpaceOnUse" width="20" height="20">
-              <circle cx="10" cy="10" r="1" fill={`rgb(${mainColorRGB})`} />
+            <pattern id="bottomPattern" patternUnits="userSpaceOnUse" width="30" height="30">
+              <circle cx="15" cy="15" r="0.5" fill={`rgb(${mainColorRGB})`} />
             </pattern>
             <rect width="100%" height="100%" fill="url(#bottomPattern)" />
           </svg>
