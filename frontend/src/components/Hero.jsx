@@ -171,9 +171,10 @@ function AnimatedHero() {
   return (
     <section className="min-h-screen flex items-center pt-32 pb-16 overflow-hidden">
       <div className="container mx-auto px-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center min-h-[calc(100vh-8rem)]">
           {/* Colonne de gauche - Contenu principal */}
           <motion.div
+            className="self-center"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
