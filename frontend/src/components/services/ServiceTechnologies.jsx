@@ -83,9 +83,9 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
       'WordPress': { primary: "rgb(33, 117, 155)", secondary: "rgb(15, 90, 140)" }, // Bleu WordPress
       'Flutter': { primary: "rgb(69, 209, 253)", secondary: "rgb(66, 165, 245)" }, // Bleu Flutter
       'Swift': { primary: "rgb(252, 88, 66)", secondary: "rgb(240, 65, 45)" },     // Orange Swift
-      'Firebase': { primary: "rgb(252, 88, 66)", secondary: "rgb(240, 65, 45)" },     // Orange Firebase
+      'Firebase': { primary: "rgb(245, 131, 32)", secondary: "rgb(225, 133, 53)" },     // Orange Firebase
       'Kotlin': { primary: "rgb(143, 104, 233)", secondary: "rgb(112, 69, 214)" }, // Violet Kotlin
-      'GraphQL': { primary: "rgb(143, 104, 233)", secondary: "rgb(112, 69, 214)" }, // Violet Kotlin
+      'GraphQL': { primary: "rgb(230, 50, 170)", secondary: "rgb(223, 62, 169)" }, // Violet Kotlin
       'Ruby': { primary: "rgb(204, 52, 45)", secondary: "rgb(170, 12, 5)" },       // Rouge Ruby
       'Go': { primary: "rgb(0, 173, 216)", secondary: "rgb(0, 130, 190)" },        // Bleu Go
     };
