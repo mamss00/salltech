@@ -498,17 +498,25 @@ function renderTechCard(tech, index, getColorsForTech) {
             )}
           </div>
           
-          {/* Nom de la technologie - passage à la ligne simple */}
-          <motion.h3
-            className="text-sm font-medium text-center mb-1 min-h-[40px] p-1 flex flex-col justify-center"
-            style={{ color: 'rgba(70, 70, 70, 1)' }}
-            whileHover={{ color: primary }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: delay + 0.3, duration: 0.4 }}
+          {/* Traitement spécial pour WordPress & WooCommerce */}
+          <div
+            className="text-sm font-medium text-center mb-1 min-h-[40px] p-1 flex flex-col justify-center overflow-hidden"
+            style={{ 
+              color: 'rgba(70, 70, 70, 1)',
+              overflowWrap: 'break-word',
+              wordWrap: 'break-word',
+              hyphens: 'manual',
+              width: '100%'
+            }}
           >
-            {tech.nom || `Technologie ${index + 1}`}
-          </motion.h3>
+            {tech.nom === "WordPress & WooCommerce" ? (
+              <>
+                WordPress &<br />WooCommerce
+              </>
+            ) : (
+              tech.nom || `Technologie ${index + 1}`
+            )}
+          </div>
           
           {/* Ligne décorative */}
           <motion.div
