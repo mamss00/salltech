@@ -267,7 +267,7 @@ function AnimatedHero() {
 
               {/* Contenu avec animations séquentielles */}
               <motion.div 
-                className="p-8 relative z-10 overflow-hidden"
+                className="p-8 relative z-10"
                 variants={containerVariants}
                 initial="hidden"
                 animate={animationCompleted ? "visible" : "hidden"}
@@ -278,19 +278,17 @@ function AnimatedHero() {
               >
                 {/* Effet de brillance occasionnel sur tout le bloc */}
                 <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
                   style={{ 
                     backgroundSize: "200% 100%",
                   }}
                   animate={{
                     backgroundPosition: ["100% 0%", "-100% 0%"],
-                    opacity: [0, 0.7, 0]
                   }}
                   transition={{
                     duration: 3,
                     repeat: Infinity,
-                    repeatDelay: 5,
-                    times: [0, 0.5, 1]
+                    repeatDelay: 7,
                   }}
                 />
                 
@@ -300,44 +298,28 @@ function AnimatedHero() {
                   className="inline-block px-4 py-1.5 mb-6 rounded-full border border-white/30 shadow-md overflow-hidden relative backdrop-blur-sm"
                   whileHover={{ scale: 1.05 }}
                 >
-                  {/* Animation de gradient qui tourne - plus prononcée */}
+                  {/* Animation de gradient qui tourne */}
                   <motion.div 
                     className="absolute inset-0"
                     style={{
-                      background: "linear-gradient(45deg, rgba(52, 152, 219, 0.9), rgba(155, 89, 182, 0.9), rgba(231, 76, 60, 0.9), rgba(52, 152, 219, 0.9))",
-                      backgroundSize: "300% 300%",
+                      background: "linear-gradient(45deg, rgba(52, 152, 219, 0.9), rgba(155, 89, 182, 0.9), rgba(52, 152, 219, 0.9))",
+                      backgroundSize: "200% 200%",
                     }}
                     animate={{
                       backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
                     }}
                     transition={{
-                      duration: 5,
+                      duration: 3,
                       repeat: Infinity,
                       ease: "linear"
                     }}
                   />
                   
-                  {/* Effet de brillance périodique */}
-                  <motion.div
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
-                    animate={{
-                      x: ['-100%', '100%'],
-                      opacity: [0, 0.9, 0]
-                    }}
-                    transition={{
-                      duration: 2.5,
-                      repeat: Infinity,
-                      repeatDelay: 3,
-                      ease: "easeInOut",
-                      times: [0, 0.5, 1]
-                    }}
-                  />
-                  
                   {/* Particules lumineuses */}
-                  {[...Array(7)].map((_, i) => (
+                  {[...Array(5)].map((_, i) => (
                     <motion.div 
                       key={i}
-                      className="absolute rounded-full bg-white/80"
+                      className="absolute rounded-full bg-white/60"
                       style={{
                         width: 2 + Math.random() * 3,
                         height: 2 + Math.random() * 3,
