@@ -6,20 +6,21 @@ import { useInView } from 'react-intersection-observer'
 import DynamicIcon from '@/utils/DynamicIcon'
 import { renderRichText } from '@/utils/helpers'
 
-export default function EnhancedServiceIntroduction({ content, features, color = 'blue' }) {
-  // Référence pour l'animation au défilement
+export default function ServiceIntroduction({ content, features, color = 'blue' }) {
+  // Animation au défilement
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start end", "end start"]
   })
   
-  // Animation de la section complète lors du défilement
-  const containerOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.7, 1, 1, 0.7])
+  // Transformations basées sur le défilement
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.85, 1, 1, 0.85])
   
-  // Animation du titre et du contenu
+  // Animations à l'entrée dans le viewport
+  const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  const [featuresRef, featuresInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  const [infoRef, infoInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
   // Convertir le code Unicode en emoji si nécessaire
   const getDisplayIcon = (iconStr) => {
@@ -37,348 +38,340 @@ export default function EnhancedServiceIntroduction({ content, features, color =
   return (
     <section 
       ref={containerRef}
-      className="py-24 relative overflow-hidden"
+      className="py-20 relative overflow-hidden bg-gray-50"
     >
-      {/* Arrière-plan avec effet hexagonal et particules */}
-      <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Pattern hexagonal */}
-        <svg width="100%" height="100%" className="absolute opacity-5">
-          <defs>
-            <pattern id="hexagonPattern" width="50" height="43.4" patternUnits="userSpaceOnUse" patternTransform="scale(0.5)">
-              <path d="M25,0 L50,14.4 L50,28.8 L25,43.4 L0,28.8 L0,14.4 Z" fill="none" stroke={`var(--color-${color})`} strokeWidth="1" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#hexagonPattern)" />
+      {/* Background avec motif subtil */}
+      <div className="absolute inset-0 z-0 opacity-20">
+        <svg width="100%" height="100%">
+          <pattern 
+            id="diagonalLines" 
+            width="40" 
+            height="40" 
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45)"
+          >
+            <line 
+              x1="0" 
+              y1="0" 
+              x2="0" 
+              y2="40" 
+              stroke={`var(--color-${color})`} 
+              strokeWidth="0.5" 
+            />
+          </pattern>
+          <rect width="100%" height="100%" fill="url(#diagonalLines)" />
         </svg>
         
-        {/* Cercles dégradés */}
-        <motion.div
-          className="absolute top-40 right-20 w-96 h-96 rounded-full"
-          style={{ 
-            background: `radial-gradient(circle, rgba(var(--color-${color}), 0.05) 0%, rgba(var(--color-${color}), 0) 70%)`,
-          }}
-          animate={{
+        {/* Cercles décoratifs */}
+        <motion.div 
+          className={`absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-${color}/5 blur-3xl`}
+          animate={{ 
             scale: [1, 1.2, 1],
-            opacity: [0.5, 1, 0.5]
+            opacity: [0.1, 0.15, 0.1]
           }}
-          transition={{
+          transition={{ 
             duration: 15,
             repeat: Infinity,
-            repeatType: "mirror",
-            ease: "easeInOut"
+            repeatType: "mirror"
           }}
         />
         
-        <motion.div
-          className="absolute bottom-20 left-40 w-72 h-72 rounded-full"
-          style={{ 
-            background: `radial-gradient(circle, rgba(var(--color-purple), 0.05) 0%, rgba(var(--color-purple), 0) 70%)`,
-          }}
-          animate={{
+        <motion.div 
+          className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full bg-purple/5 blur-3xl"
+          animate={{ 
             scale: [1, 1.3, 1],
-            opacity: [0.5, 1, 0.5]
+            opacity: [0.1, 0.15, 0.1]
           }}
-          transition={{
+          transition={{ 
             duration: 12,
             repeat: Infinity,
             repeatType: "mirror",
-            ease: "easeInOut",
-            delay: 2
+            delay: 3
           }}
         />
-        
-        {/* Particules flottantes avec style plus technique */}
-        <div className="absolute inset-0">
-          {Array.from({ length: 15 }).map((_, index) => {
-            const size = index % 3 === 0 ? 6 : index % 3 === 1 ? 4 : 2;
-            const posX = Math.random() * 100;
-            const posY = Math.random() * 100;
-            const delay = Math.random() * 5;
-            const duration = Math.random() * 20 + 10;
-            
-            // Formes variées basées sur l'index
-            const shape = index % 4 === 0 ? 'rounded-none' : // carré
-                         index % 4 === 1 ? 'rounded-full' : // cercle
-                         index % 4 === 2 ? 'rounded-sm rotate-45' : // diamant
-                         'rounded-sm'; // petit carré
-            
-            return (
-              <motion.div
-                key={`particle-${index}`}
-                className={`absolute ${shape}`}
-                style={{
-                  width: size,
-                  height: size,
-                  left: `${posX}%`,
-                  top: `${posY}%`,
-                  border: index % 5 === 0 ? `1px solid var(--color-${color})` : 'none',
-                  backgroundColor: index % 3 === 0 
-                    ? `var(--color-${color})`
-                    : index % 3 === 1
-                      ? 'var(--color-purple)'
-                      : 'var(--color-red)',
-                  opacity: 0.2
-                }}
-                animate={{
-                  x: [0, Math.random() * 100 - 50, 0],
-                  y: [0, Math.random() * 100 - 50, 0],
-                  opacity: [0.1, 0.3, 0.1],
-                  rotate: index % 2 === 0 ? [0, 180, 360] : undefined
-                }}
-                transition={{
-                  duration,
-                  delay,
-                  repeat: Infinity,
-                  repeatType: "mirror",
-                  ease: "easeInOut"
-                }}
-              />
-            );
-          })}
-        </div>
       </div>
       
       <motion.div 
         className="container relative z-10"
-        style={{ opacity: containerOpacity }}
+        style={{ opacity: contentOpacity }}
       >
-        {/* En-tête stylisée */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={contentInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="mb-16"
-        >
+        <div className="max-w-4xl mx-auto">
+          {/* Titre animé */}
           <motion.div
-            className="flex items-center justify-center space-x-4 mb-8"
-            initial={{ opacity: 0 }}
-            animate={contentInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            ref={titleRef}
+            initial={{ opacity: 0, y: 30 }}
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8 }}
+            className="text-center mb-12"
           >
             <motion.div 
-              className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1" 
-              initial={{ width: 0 }}
-              animate={contentInView ? { width: "100%" } : {}}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            />
-            <motion.div 
-              className={`w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-lg border border-${color}/20 relative overflow-hidden`}
-              initial={{ scale: 0 }}
-              animate={contentInView ? { scale: 1 } : {}}
-              transition={{ 
-                type: "spring",
-                stiffness: 200,
-                damping: 20,
-                delay: 0.4
-              }}
-              whileHover={{ rotate: 5 }}
+              className="inline-block px-6 py-2 rounded-full bg-white text-sm font-medium text-gray-600 shadow-sm mb-4"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={titleInView ? { scale: 1, opacity: 1 } : {}}
+              transition={{ duration: 0.5 }}
             >
-              <motion.div
-                className={`absolute inset-0 bg-${color}/5 rounded-full`}
-                animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 0, 0.5]
+              {color === 'blue' ? 'PRÉSENTATION' : color === 'purple' ? 'INTRODUCTION' : 'DÉTAILS'}
+            </motion.div>
+            
+            <motion.h2 
+              className="text-3xl md:text-4xl font-bold mb-2"
+              initial={{ opacity: 0 }}
+              animate={titleInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <motion.span 
+                className={`text-${color}`}
+                animate={{ 
+                  textShadow: [
+                    '0 0 0px rgba(0,0,0,0)',
+                    `0 0 10px rgba(var(--color-${color}), 0.5)`,
+                    '0 0 0px rgba(0,0,0,0)'
+                  ]
                 }}
-                transition={{
+                transition={{ 
                   duration: 3,
                   repeat: Infinity,
                   repeatType: "mirror"
                 }}
-              />
-              <motion.svg 
-                className={`w-8 h-8 text-${color}`} 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2"
-                animate={{
-                  rotate: [0, 360],
-                  scale: [1, 1.2, 1]
-                }}
-                transition={{
-                  rotate: {
-                    duration: 20,
-                    repeat: Infinity,
-                    ease: "linear"
-                  },
-                  scale: {
-                    duration: 3,
-                    repeat: Infinity,
-                    repeatType: "mirror"
-                  }
-                }}
               >
-                <circle cx="12" cy="12" r="10" />
-                <path d="M12 8v4l3 3" />
-              </motion.svg>
-            </motion.div>
+                À propos
+              </motion.span>{' '}
+              du service
+            </motion.h2>
+            
             <motion.div 
-              className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"
-              initial={{ width: 0 }}
-              animate={contentInView ? { width: "100%" } : {}}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              className={`h-1 w-24 bg-${color} mx-auto rounded-full my-6`}
+              initial={{ width: 0, opacity: 0 }}
+              animate={titleInView ? { width: '6rem', opacity: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.4 }}
             />
           </motion.div>
           
-          <motion.h2
-            className="text-3xl md:text-5xl font-bold text-center"
+          {/* Contenu principal animé */}
+          <motion.div
+            ref={contentRef}
             initial={{ opacity: 0, y: 30 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ 
-              delay: 0.6,
-              duration: 0.6,
-              type: "spring",
-              stiffness: 60
-            }}
+            transition={{ duration: 0.7 }}
+            className="bg-white rounded-2xl shadow-lg overflow-hidden mb-10"
           >
-            <motion.span 
-              className={`relative z-10 inline-block`}
-            >
-              <motion.span
-                className="absolute -inset-1 z-0 opacity-20 blur-lg rounded-lg"
-                style={{ backgroundColor: `var(--color-${color})` }}
-                animate={{
-                  scale: [1, 1.1, 1],
-                  opacity: [0.1, 0.2, 0.1]
-                }}
-                transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  repeatType: "mirror"
-                }}
-              />
-              <motion.span className={`relative z-10 text-${color}`}>
-                À propos
-              </motion.span>
-            </motion.span>
-            <motion.div
-              className="w-full h-px my-6 bg-gradient-to-r from-transparent via-gray-200 to-transparent"
-              initial={{ width: 0 }}
-              animate={contentInView ? { width: "100%" } : {}}
-              transition={{ duration: 1, delay: 0.9 }}
-            />
-            <motion.p 
-              className="text-lg text-gray-600 max-w-3xl mx-auto mt-4 font-normal"
-              initial={{ opacity: 0 }}
-              animate={contentInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.6, delay: 1 }}
-            >
-              Découvrez ce que notre service peut vous apporter
-            </motion.p>
-          </motion.h2>
-        </motion.div>
-        
-        <motion.div
-          ref={contentRef}
-          initial={{ opacity: 0, y: 20 }}
-          animate={contentInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="p-8 md:p-12"
-        >
-          {/* Contenu riche de l'introduction simplifié et élégant */}
-          <div className="prose prose-lg max-w-none relative">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={contentInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="relative bg-white shadow-sm rounded-2xl p-8 md:p-10"
-            >
-              {renderRichText(content)}
-            </motion.div>
-          </div>
-          
-          {/* Séparateur minimal avec ligne simple */}
-          <div className="my-10 flex items-center justify-center">
-            <motion.div 
-              className={`h-px w-16 bg-${color}/50`}
-              initial={{ width: 0 }}
-              animate={contentInView ? { width: '4rem' } : {}}
-              transition={{ duration: 0.8, delay: 0.7 }}
-            />
-          </div>
-          
-          {/* Section "Pourquoi choisir SALLTECH" simplifiée */}
-          {features && features.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8"
-            >
-              {features.map((feature, index) => {
-                const displayIcon = getDisplayIcon(feature.icone);
-                return (
-                  <div key={index} className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition-shadow duration-300">
-                    <div className={`mx-auto w-12 h-12 rounded-full bg-${color}/10 flex items-center justify-center text-${color} mb-4`}>
-                      {displayIcon ? (
-                        <span className="text-2xl">{displayIcon}</span>
-                      ) : feature.icone && !feature.icone.startsWith('U+') ? (
-                        <DynamicIcon 
-                          icon={feature.icone} 
-                          className="w-6 h-6"
-                          colorClass={`text-${color}`}
-                        />
-                      ) : (
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                      )}
-                    </div>
-                    <h3 className="text-xl font-semibold mb-2 text-center">{feature.titre}</h3>
-                    <p className="text-gray-600 text-center">{feature.description}</p>
-                  </div>
-                );
-              })}
-            </motion.div>
-          )}
-          
-          {/* Encadré simple et élégant */}
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="bg-white rounded-2xl shadow-sm p-8 border-t-2 border-blue"
-          >
-            <div className="flex flex-col md:flex-row items-center gap-6">
-              <div className="md:w-1/3 flex justify-center">
-                <img 
-                  src="/images/mauritania-map.svg" 
-                  alt="Mauritanie" 
-                  className="w-32 h-32 object-contain opacity-80"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22100%22%20height%3D%22100%22%20viewBox%3D%220%200%20100%20100%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ccircle%20cx%3D%2250%22%20cy%3D%2250%22%20r%3D%2250%22%20fill%3D%22%233498db%22%20opacity%3D%220.2%22%2F%3E%3C%2Fsvg%3E';
-                  }}
-                />
-              </div>
+            <div className="relative">
+              {/* Barre supérieure dégradée */}
+              <div className={`h-1.5 bg-gradient-to-r from-${color} via-purple to-red w-full`}></div>
               
-              <div className="md:w-2/3">
-                <h3 className={`text-xl font-semibold mb-3 text-${color}`}>
-                  Pourquoi choisir SALLTECH ?
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Notre expertise technique combinée à notre connaissance approfondie du marché mauritanien nous permet 
-                  de créer des solutions parfaitement adaptées à vos besoins spécifiques et à votre contexte local.
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center">
-                    <span className={`inline-block w-4 h-4 rounded-full bg-${color} mr-2 flex-shrink-0`}></span>
-                    <span className="text-gray-700">Solutions sur mesure pour le marché mauritanien</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="inline-block w-4 h-4 rounded-full bg-purple mr-2 flex-shrink-0"></span>
-                    <span className="text-gray-700">Équipe locale hautement qualifiée</span>
-                  </li>
-                  <li className="flex items-center">
-                    <span className="inline-block w-4 h-4 rounded-full bg-red mr-2 flex-shrink-0"></span>
-                    <span className="text-gray-700">Support et proximité garantis</span>
-                  </li>
-                </ul>
+              {/* Contenu */}
+              <div className="p-8 lg:p-10">
+                <motion.div 
+                  className="prose prose-lg max-w-none"
+                  initial={{ opacity: 0 }}
+                  animate={contentInView ? { opacity: 1 } : {}}
+                  transition={{ duration: 0.5, delay: 0.3 }}
+                >
+                  {renderRichText(content)}
+                </motion.div>
               </div>
             </div>
+            
+            {/* Section Pourquoi choisir SALLTECH */}
+            <motion.div
+              ref={infoRef}
+              initial={{ opacity: 0 }}
+              animate={infoInView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="bg-gray-50 border-t border-gray-100 p-8 lg:p-10"
+            >
+              <div className="flex flex-col md:flex-row md:items-center">
+                {/* Icône animée */}
+                <motion.div 
+                  className="mb-6 md:mb-0 md:mr-10"
+                  initial={{ scale: 0 }}
+                  animate={infoInView ? { scale: 1 } : {}}
+                  transition={{ 
+                    type: "spring", 
+                    stiffness: 260, 
+                    damping: 20, 
+                    delay: 0.4 
+                  }}
+                >
+                  <motion.div 
+                    className={`w-16 h-16 rounded-xl bg-gradient-to-br from-${color} to-purple flex items-center justify-center text-white shadow-md relative overflow-hidden`}
+                    whileHover={{ scale: 1.05 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                  >
+                    {/* Effet de surbrillance */}
+                    <motion.div
+                      className="absolute inset-0 bg-white opacity-0"
+                      animate={{ 
+                        opacity: [0, 0.3, 0],
+                        x: ['-100%', '100%'] 
+                      }}
+                      transition={{ 
+                        duration: 1.5, 
+                        repeat: Infinity, 
+                        repeatDelay: 3 
+                      }}
+                    />
+                    
+                    <svg className="w-8 h-8 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                    </svg>
+                  </motion.div>
+                </motion.div>
+                
+                {/* Texte */}
+                <div>
+                  <motion.h3 
+                    className={`text-xl font-bold mb-3 text-${color}`}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={infoInView ? { opacity: 1, x: 0 } : {}}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                  >
+                    Pourquoi choisir SALLTECH ?
+                  </motion.h3>
+                  
+                  <motion.p 
+                    className="text-gray-700 mb-6"
+                    initial={{ opacity: 0 }}
+                    animate={infoInView ? { opacity: 1 } : {}}
+                    transition={{ duration: 0.5, delay: 0.6 }}
+                  >
+                    Notre expertise technique combinée à notre connaissance approfondie du marché mauritanien nous permet 
+                    de créer des solutions parfaitement adaptées à vos besoins spécifiques et à votre contexte local.
+                  </motion.p>
+                  
+                  {/* Points clés */}
+                  <motion.div 
+                    className="grid grid-cols-1 md:grid-cols-3 gap-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={infoInView ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.5, delay: 0.7 }}
+                  >
+                    <motion.div 
+                      className="flex items-start"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <motion.div 
+                        className={`mr-3 w-6 h-6 rounded-full bg-${color}/10 flex items-center justify-center text-${color} flex-shrink-0 mt-0.5`}
+                        whileHover={{ scale: 1.2, backgroundColor: `var(--color-${color})`, color: 'white' }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      </motion.div>
+                      <span className="text-gray-700">Solutions sur mesure</span>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="flex items-start"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <motion.div 
+                        className="mr-3 w-6 h-6 rounded-full bg-purple/10 flex items-center justify-center text-purple flex-shrink-0 mt-0.5"
+                        whileHover={{ scale: 1.2, backgroundColor: 'var(--color-purple)', color: 'white' }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      </motion.div>
+                      <span className="text-gray-700">Connaissance locale</span>
+                    </motion.div>
+                    
+                    <motion.div 
+                      className="flex items-start"
+                      whileHover={{ x: 5 }}
+                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                    >
+                      <motion.div 
+                        className="mr-3 w-6 h-6 rounded-full bg-red/10 flex items-center justify-center text-red flex-shrink-0 mt-0.5"
+                        whileHover={{ scale: 1.2, backgroundColor: 'var(--color-red)', color: 'white' }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                      </motion.div>
+                      <span className="text-gray-700">Support de proximité</span>
+                    </motion.div>
+                  </motion.div>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
-        </motion.div>
+          
+          {/* Caractéristiques avec animations */}
+          {features && features.length > 0 && (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {features.map((feature, index) => {
+                const displayIcon = getDisplayIcon(feature.icone);
+                
+                return (
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={contentInView ? { 
+                      opacity: 1, 
+                      y: 0,
+                      transition: { 
+                        delay: 0.2 + (index * 0.1),
+                        duration: 0.6,
+                        type: "spring",
+                        stiffness: 100,
+                        damping: 15
+                      }
+                    } : {}}
+                    whileHover={{ 
+                      y: -10,
+                      transition: { type: "spring", stiffness: 400, damping: 15 }
+                    }}
+                    className="bg-white rounded-xl shadow-md overflow-hidden"
+                  >
+                    <div className="p-6">
+                      <motion.div 
+                        className={`w-12 h-12 rounded-lg bg-${color}/10 flex items-center justify-center text-${color} mb-4 mx-auto`}
+                        whileHover={{ 
+                          scale: 1.1, 
+                          rotate: 5,
+                          backgroundColor: `var(--color-${color})`,
+                          color: 'white'
+                        }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                      >
+                        {displayIcon ? (
+                          <span className="text-2xl">{displayIcon}</span>
+                        ) : feature.icone && !feature.icone.startsWith('U+') ? (
+                          <DynamicIcon 
+                            icon={feature.icone} 
+                            className="w-6 h-6"
+                            colorClass={`text-current`}
+                          />
+                        ) : (
+                          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                          </svg>
+                        )}
+                      </motion.div>
+                      
+                      <h3 className="text-xl font-bold mb-2 text-center">{feature.titre}</h3>
+                      
+                      <motion.div 
+                        className={`h-0.5 w-12 bg-${color}/40 mx-auto mb-3`}
+                        whileHover={{ width: '50%' }}
+                        transition={{ duration: 0.3 }}
+                      />
+                      
+                      <p className="text-gray-600 text-center">{feature.description}</p>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </motion.div>
     </section>
-  );
+  )
 }
