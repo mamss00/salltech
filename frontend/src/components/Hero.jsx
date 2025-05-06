@@ -162,7 +162,7 @@ function AnimatedHero() {
               INNOVER. CRÉER. TRANSFORMER.
             </motion.h2>
             
-            <div className="mb-6 relative">
+            <div className="mb-10 relative">
               <motion.h1 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -247,6 +247,23 @@ function AnimatedHero() {
                   />
                 ))}
               </div>
+              
+              {/* Animation de gradient sur tout le conteneur */}
+              <motion.div 
+                className="absolute inset-0"
+                style={{ 
+                  background: "linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1), rgba(52, 152, 219, 0.1))",
+                  backgroundSize: "400% 400%",
+                }}
+                animate={{
+                  backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
+                }}
+                transition={{
+                  duration: 15,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
 
               {/* Contenu avec animations séquentielles */}
               <motion.div 
@@ -254,7 +271,27 @@ function AnimatedHero() {
                 variants={containerVariants}
                 initial="hidden"
                 animate={animationCompleted ? "visible" : "hidden"}
+                whileHover={{ 
+                  boxShadow: "0 0 30px rgba(52, 152, 219, 0.2) inset",
+                  transition: { duration: 0.5 }
+                }}
               >
+                {/* Effet de brillance occasionnel sur tout le bloc */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  style={{ 
+                    backgroundSize: "200% 100%",
+                  }}
+                  animate={{
+                    backgroundPosition: ["100% 0%", "-100% 0%"],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    repeatDelay: 7,
+                  }}
+                />
+                
                 {/* Badge d'expertise - avec animation */}
                 <motion.div
                   variants={itemVariants}
