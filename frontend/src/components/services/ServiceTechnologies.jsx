@@ -356,11 +356,9 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           </motion.p>
         </motion.div>
         
-        {/* Conteneur de technologies avec défilement infiniment smooth */}
+        {/* Conteneur de technologies avec défilement continu sans pause au survol */}
         <div 
           className="overflow-hidden mx-auto"
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
           ref={techGridRef}
         >
           <motion.div
@@ -369,7 +367,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
             transition={{ duration: 0.8 }}
             className="pb-4"
           >
-            {/* Défilement basé sur CSS Animations pour une fluidité maximale */}
+            {/* Défilement basé sur CSS Animations sans pause au survol */}
             <div className="tech-carousel-container relative">
               <style jsx>{`
                 @keyframes scroll {
@@ -378,12 +376,8 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
                 }
                 
                 .tech-scroll {
-                  animation: scroll ${scrollSpeed} linear infinite;
+                  animation: scroll 40s linear infinite;
                   will-change: transform;
-                }
-                
-                .tech-scroll:hover {
-                  animation-play-state: paused;
                 }
               `}</style>
               
@@ -504,32 +498,18 @@ function renderTechCard(tech, index, getColorsForTech) {
             )}
           </div>
           
-          {/* Nom de la technologie - avec césure et retour à la ligne forcés */}
+          {/* Nom de la technologie - avec affichage sur 2 lignes */}
           <motion.h3
-            className="text-sm font-medium text-center transition-colors duration-300 mb-1"
+            className="text-sm font-medium text-center transition-colors duration-300 mb-1 min-h-[40px] flex items-center justify-center"
             style={{ color: 'rgba(70, 70, 70, 1)' }}
             whileHover={{ color: primary }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: delay + 0.3, duration: 0.4 }}
           >
-            {/* Forcer le retour à la ligne en insérant des balises br si nécessaire */}
-            {tech.nom && tech.nom.length > 10 ? 
-              tech.nom.split(' ').reduce((acc, word, i, arr) => {
-                // Si on a déjà cumulé plus de la moitié des mots et qu'on n'est pas encore à la fin
-                if (acc.length > tech.nom.length / 2 && i < arr.length - 1 && !acc.includes('<br/>')) {
-                  return acc + ' <br/>' + word;
-                }
-                return i === 0 ? word : acc + ' ' + word;
-              }, '') 
-              .split('<br/>').map((part, i) => (
-                <React.Fragment key={i}>
-                  {i > 0 && <br />}
-                  {part}
-                </React.Fragment>
-              ))
-              : tech.nom || `Technologie ${index + 1}`
-            }
+            <span className="line-clamp-2 px-1">
+              {tech.nom || `Technologie ${index + 1}`}
+            </span>
           </motion.h3>
           
           {/* Ligne décorative */}
