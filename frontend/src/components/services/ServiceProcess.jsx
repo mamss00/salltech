@@ -229,25 +229,26 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
         
         {/* Mode compact moderne avec navigation par onglets */}
         <div className="max-w-5xl mx-auto">
-          {/* Navigation des étapes repensée - sans barre de progression superposée */}
+          {/* Navigation des étapes repensée - plus élégante et compacte */}
           <div className="mb-12">
-            <div className="mb-1 flex justify-between items-center">
-              <div className="text-sm text-gray-500 font-medium">Progression</div>
-              <div className="text-sm text-gray-500 font-medium">
-                Étape {activeStep + 1} / {sortedSteps.length}
+            <div className="max-w-md mx-auto">
+              <div className="flex justify-between items-center text-xs text-gray-500 font-medium mb-1 px-2">
+                <span>Progression</span>
+                <span>Étape {activeStep + 1} / {sortedSteps.length}</span>
               </div>
-            </div>
-            {/* Ligne de progression intégrée */}
-            <div className="h-1.5 w-full bg-gray-200 mb-6">
-              <motion.div
-                className="h-full"
-                style={{ 
-                  backgroundColor: getStepColors(activeStep).primary,
-                  width: `${((activeStep) / (sortedSteps.length - 1)) * 100}%`
-                }}
-                animate={{ width: `${((activeStep) / (sortedSteps.length - 1)) * 100}%` }}
-                transition={{ duration: 0.4 }}
-              />
+              
+              {/* Ligne de progression intégrée */}
+              <div className="h-1 w-full bg-gray-100 mb-4 rounded-full">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ 
+                    backgroundColor: getStepColors(activeStep).primary,
+                    width: `${((activeStep) / (sortedSteps.length - 1)) * 100}%`
+                  }}
+                  animate={{ width: `${((activeStep) / (sortedSteps.length - 1)) * 100}%` }}
+                  transition={{ duration: 0.4 }}
+                />
+              </div>
             </div>
             
             {/* Navigation des étapes */}
