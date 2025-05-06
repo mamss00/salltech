@@ -5,15 +5,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CTAButton from '@/components/CTAButton';
 
 function AnimatedHero() {
-  // Animation pour le composant de droite
-  const [animationCompleted, setAnimationCompleted] = useState(false);
-  
   // Pour l'effet de typing
   const [text, setText] = useState('');
   const [isTyping, setIsTyping] = useState(true);
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [charIndex, setCharIndex] = useState(0);
-
+  
+  // Pour les animations de contenu
+  const [isClient, setIsClient] = useState(false);
+  
   // Pour le défilement vertical des points clés
   const [currentKey, setCurrentKey] = useState(0);
   const intervalRef = useRef(null);
@@ -60,8 +60,15 @@ function AnimatedHero() {
     "le professionnalisme"
   ];
   
+  // Important: hydration mismatch fix
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  
   // Effet de typing
   useEffect(() => {
+    if (!isClient) return;
+    
     const typingSpeed = 100;
     const deleteSpeed = 50;
     const delayBeforeDelete = 2000;
@@ -95,20 +102,12 @@ function AnimatedHero() {
     }
     
     return () => clearTimeout(timer);
-  }, [charIndex, isTyping, phraseIndex, phrases]);
-
-  // Animation séquentielle pour le panneau de droite
-  useEffect(() => {
-    // Marquer l'animation comme terminée après un délai
-    const timer = setTimeout(() => {
-      setAnimationCompleted(true);
-    }, 2500);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  }, [charIndex, isTyping, phraseIndex, phrases, isClient]);
   
   // Défilement automatique des points clés
   useEffect(() => {
+    if (!isClient) return;
+    
     intervalRef.current = setInterval(() => {
       setCurrentKey(prev => (prev + 1) % keyPoints.length);
     }, 4000);
@@ -116,32 +115,12 @@ function AnimatedHero() {
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [isClient]);
 
-  // Variants pour les animations Framer Motion
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
-  };
-  
-  const itemVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring",
-        stiffness: 100,
-        damping: 10
-      }
-    }
-  };
+  // Ne pas rendre les animations avant le côté client pour éviter les problèmes d'hydratation
+  if (!isClient) {
+    return <div className="min-h-screen flex items-center pt-32 pb-16"></div>;
+  }
 
   return (
     <section className="min-h-screen flex items-center pt-32 pb-16 overflow-hidden">
@@ -201,7 +180,7 @@ function AnimatedHero() {
             </motion.div>
           </motion.div>
           
-          {/* Colonne de droite - Carte d'expertise avec animations complexes */}
+          {/* Colonne de droite - Carte d'expertise */}
           <div className="relative">
             <motion.div 
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
@@ -248,16 +227,13 @@ function AnimatedHero() {
                 ))}
               </div>
 
-              {/* Contenu avec animations séquentielles */}
-              <motion.div 
-                className="p-8 relative z-10"
-                variants={containerVariants}
-                initial="hidden"
-                animate={animationCompleted ? "visible" : "hidden"}
-              >
-                {/* Badge d'expertise - contraste GARANTI */}
+              {/* Contenu */}
+              <div className="p-8 relative z-10">
+                {/* Badge d'expertise - avec fond foncé pour contraste */}
                 <motion.div
-                  variants={itemVariants}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 }}
                   className="inline-block px-4 py-1.5 mb-6 rounded-full bg-indigo-900 backdrop-blur-sm border border-white/20 shadow-sm"
                 >
                   <span className="text-white font-medium text-sm">
@@ -266,22 +242,23 @@ function AnimatedHero() {
                 </motion.div>
                 
                 <motion.h2 
-                  variants={itemVariants}
-                  className="text-2xl md:text-3xl font-bold mb-6"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="text-2xl md:text-3xl font-bold mb-6 text-white"
                 >
                   Pourquoi nous choisir
                 </motion.h2>
                 
                 <motion.div 
-                  variants={itemVariants}
+                  initial={{ width: 0 }}
+                  animate={{ width: "6rem" }}
+                  transition={{ duration: 0.6, delay: 0.4 }}
                   className="h-1 w-24 bg-white/40 mb-8"
                 />
                 
                 {/* Points clés avec animations */}
-                <motion.div 
-                  variants={itemVariants}
-                  className="mb-8 min-h-[120px]"
-                >
+                <div className="mb-8 min-h-[120px]">
                   <AnimatePresence mode="wait">
                     {keyPoints.map((point, index) => (
                       currentKey === index && (
@@ -305,13 +282,10 @@ function AnimatedHero() {
                       )
                     ))}
                   </AnimatePresence>
-                </motion.div>
+                </div>
                 
                 {/* Points indicateurs */}
-                <motion.div 
-                  variants={itemVariants}
-                  className="flex space-x-2 mb-8"
-                >
+                <div className="flex space-x-2 mb-8">
                   {keyPoints.map((_, index) => (
                     <button
                       key={index}
@@ -328,11 +302,14 @@ function AnimatedHero() {
                       aria-label={`Point ${index + 1}`}
                     />
                   ))}
-                </motion.div>
+                </div>
                 
                 {/* Liste des projets avec animation */}
-                <motion.div variants={itemVariants}>
+                <div>
                   <motion.p
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: 0.5 }}
                     className="text-sm text-white mb-4 font-medium"
                   >
                     Projets sur lesquels nos experts ont travaillé :
@@ -350,7 +327,7 @@ function AnimatedHero() {
                         animate={{ 
                           opacity: 1, 
                           scale: 1,
-                          transition: { delay: 1.5 + index * 0.1 }
+                          transition: { delay: 0.6 + index * 0.1 }
                         }}
                       >
                         <div className="w-6 h-6 rounded-full bg-indigo-900 flex items-center justify-center mr-2 text-xs font-bold border border-white/20 text-white">
@@ -360,8 +337,8 @@ function AnimatedHero() {
                       </motion.div>
                     ))}
                   </div>
-                </motion.div>
-              </motion.div>
+                </div>
+              </div>
             </motion.div>
             
             {/* Éléments décoratifs en arrière-plan */}
