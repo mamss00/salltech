@@ -21,6 +21,11 @@ function AnimatedHero() {
   // Points clés qui défileront
   const keyPoints = [
     {
+      icon: '🏠',
+      title: 'Confiance des leaders',
+      description: 'L’agence d’Amelle Bacar & Esma Kane, leader du marché immobilier en Mauritanie, a choisi notre expertise pour ses projets digitaux.'
+    },    
+    {
       icon: '🌍',
       title: 'Expertise internationale',
       description: 'Nos experts disposent d’une solide expérience sur des projets à dimension internationale, en Europe, en Afrique et ailleurs.'
@@ -39,11 +44,6 @@ function AnimatedHero() {
       icon: '🍽️',
       title: 'Success story : AWA Event',
       description: 'AWA Event, 3× champion de streetfood en Allemagne et 2ᵉ meilleur d’Europe, nous a confié la création de sa plateforme e-commerce (site & app).'
-    },
-    {
-      icon: '🏠',
-      title: 'Confiance des leaders',
-      description: 'L’agence d’Amelle Bacar & Esma Kane, leader du marché immobilier en Mauritanie, a choisi notre expertise pour ses projets digitaux.'
     }
   ];
   
