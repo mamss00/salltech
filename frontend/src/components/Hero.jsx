@@ -59,20 +59,16 @@ function AnimatedHero() {
       logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Air_France_Logo.svg'
     },
     { 
-      name: 'LVMH', 
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/7/74/LVMH_Logo.svg' 
-    },
-    { 
       name: 'SAP', 
       logo: 'https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg'
     },
     { 
       name: 'HDI', 
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/HDI_logo.svg'
+      logo: 'https://www.hdi.de/assets/img/hdi_logo.svg'
     },
     { 
       name: 'Nordex', 
-      logo: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Nordex_Group_Logo.svg'
+      logo: 'https://www.mb-folienservice.de/wp-content/uploads/2023/04/nordex_logo.png'
     },
     { 
       name: 'DSAA', 
