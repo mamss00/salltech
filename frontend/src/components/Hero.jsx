@@ -267,7 +267,7 @@ function AnimatedHero() {
 
               {/* Contenu avec animations séquentielles */}
               <motion.div 
-                className="p-8 relative z-10"
+                className="p-8 relative z-10 overflow-hidden"
                 variants={containerVariants}
                 initial="hidden"
                 animate={animationCompleted ? "visible" : "hidden"}
@@ -276,19 +276,19 @@ function AnimatedHero() {
                   transition: { duration: 0.5 }
                 }}
               >
-                {/* Effet de brillance occasionnel sur tout le bloc */}
+                {/* Effet de brillance global sur tout le contenu */}
                 <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                  style={{ 
-                    backgroundSize: "200% 100%",
-                  }}
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12"
                   animate={{
-                    backgroundPosition: ["100% 0%", "-100% 0%"],
+                    x: ['-100%', '100%'],
+                    opacity: [0, 0.7, 0]
                   }}
                   transition={{
                     duration: 3,
                     repeat: Infinity,
-                    repeatDelay: 7,
+                    repeatDelay: 5,
+                    times: [0, 0.5, 1],
+                    ease: "easeInOut"
                   }}
                 />
                 
@@ -298,28 +298,44 @@ function AnimatedHero() {
                   className="inline-block px-4 py-1.5 mb-6 rounded-full border border-white/30 shadow-md overflow-hidden relative backdrop-blur-sm"
                   whileHover={{ scale: 1.05 }}
                 >
-                  {/* Animation de gradient qui tourne */}
+                  {/* Animation de gradient qui tourne - plus prononcée */}
                   <motion.div 
                     className="absolute inset-0"
                     style={{
-                      background: "linear-gradient(45deg, rgba(52, 152, 219, 0.9), rgba(155, 89, 182, 0.9), rgba(52, 152, 219, 0.9))",
-                      backgroundSize: "200% 200%",
+                      background: "linear-gradient(45deg, rgba(52, 152, 219, 0.9), rgba(155, 89, 182, 0.9), rgba(231, 76, 60, 0.9), rgba(52, 152, 219, 0.9))",
+                      backgroundSize: "300% 300%",
                     }}
                     animate={{
                       backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
                     }}
                     transition={{
-                      duration: 3,
+                      duration: 5,
                       repeat: Infinity,
                       ease: "linear"
                     }}
                   />
                   
+                  {/* Effet de brillance périodique */}
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12"
+                    animate={{
+                      x: ['-100%', '100%'],
+                      opacity: [0, 0.9, 0]
+                    }}
+                    transition={{
+                      duration: 2,
+                      repeat: Infinity,
+                      repeatDelay: 3,
+                      ease: "easeInOut",
+                      times: [0, 0.5, 1]
+                    }}
+                  />
+                  
                   {/* Particules lumineuses */}
-                  {[...Array(5)].map((_, i) => (
+                  {[...Array(7)].map((_, i) => (
                     <motion.div 
                       key={i}
-                      className="absolute rounded-full bg-white/60"
+                      className="absolute rounded-full bg-white/80"
                       style={{
                         width: 2 + Math.random() * 3,
                         height: 2 + Math.random() * 3,
@@ -346,21 +362,44 @@ function AnimatedHero() {
                 
                 <motion.h2 
                   variants={itemVariants}
-                  className="text-2xl md:text-3xl font-bold mb-6"
+                  className="text-2xl md:text-3xl font-bold mb-6 relative z-10"
                 >
-                  Pourquoi nous choisir
+                  <span className="relative">
+                    Pourquoi nous choisir
+                    <motion.div 
+                      className="absolute -bottom-1 left-0 h-0.5 bg-white/40"
+                      initial={{ width: 0 }}
+                      animate={{ width: "100%" }}
+                      transition={{ 
+                        duration: 1,
+                        delay: 0.5,
+                        ease: "easeOut"
+                      }}
+                    />
+                  </span>
                 </motion.h2>
-                
-                <motion.div 
-                  variants={itemVariants}
-                  className="h-1 w-24 bg-white/60 mb-8"
-                />
                 
                 {/* Points clés avec animations */}
                 <motion.div 
                   variants={itemVariants}
-                  className="mb-8 min-h-[120px]"
+                  className="mb-8 min-h-[120px] relative"
                 >
+                  {/* Effet de brillance qui traverse les points clés */}
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-12"
+                    animate={{
+                      x: ['-100%', '100%'],
+                      opacity: [0, 0.6, 0]
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      repeatDelay: 7,
+                      times: [0, 0.5, 1],
+                      ease: "easeInOut"
+                    }}
+                  />
+                  
                   <AnimatePresence mode="wait">
                     {keyPoints.map((point, index) => (
                       currentKey === index && (
@@ -389,7 +428,7 @@ function AnimatedHero() {
                 {/* Points indicateurs */}
                 <motion.div 
                   variants={itemVariants}
-                  className="flex space-x-2 mb-8"
+                  className="flex space-x-2 mb-8 relative z-10"
                 >
                   {keyPoints.map((_, index) => (
                     <button
@@ -410,17 +449,33 @@ function AnimatedHero() {
                 </motion.div>
                 
                 {/* Liste des projets avec animation - contraste amélioré */}
-                <motion.div variants={itemVariants}>
+                <motion.div variants={itemVariants} className="relative">
+                  {/* Effet de brillance qui traverse la section projets */}
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -skew-x-12"
+                    animate={{
+                      x: ['-100%', '100%'],
+                      opacity: [0, 0.6, 0]
+                    }}
+                    transition={{
+                      duration: 2.5,
+                      repeat: Infinity,
+                      repeatDelay: 9,
+                      times: [0, 0.5, 1],
+                      ease: "easeInOut"
+                    }}
+                  />
+                  
                   <motion.p
-                    className="text-sm text-white mb-4 font-medium"
+                    className="text-sm text-white mb-4 font-medium relative z-10"
                   >
                     Projets sur lesquels nos experts ont travaillé :
                   </motion.p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 relative z-10">
                     {expertProjects.map((project, index) => (
                       <motion.div 
                         key={index}
-                        className="bg-blue-900/80 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center border border-white/30"
+                        className="bg-blue-900/80 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center border border-white/30 overflow-hidden"
                         whileHover={{ 
                           scale: 1.05, 
                           backgroundColor: "rgba(30, 64, 175, 0.9)"
@@ -432,10 +487,26 @@ function AnimatedHero() {
                           transition: { delay: 1.5 + index * 0.1 }
                         }}
                       >
-                        <div className="w-6 h-6 rounded-full bg-white text-blue-900 flex items-center justify-center mr-2 text-xs font-bold shadow-md">
+                        {/* Effet de brillance individuel par projet */}
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                          animate={{
+                            x: ['-100%', '100%'],
+                            opacity: [0, 0.7, 0]
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            repeatDelay: 5 + index * 1.2,
+                            times: [0, 0.5, 1],
+                            ease: "easeInOut"
+                          }}
+                        />
+                        
+                        <div className="w-6 h-6 rounded-full bg-white text-blue-900 flex items-center justify-center mr-2 text-xs font-bold shadow-md relative z-10">
                           {project.logo}
                         </div>
-                        <span className="text-white font-medium">{project.name}</span>
+                        <span className="text-white font-medium relative z-10">{project.name}</span>
                       </motion.div>
                     ))}
                   </div>
