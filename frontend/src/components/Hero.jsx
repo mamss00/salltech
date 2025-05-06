@@ -136,7 +136,7 @@ function AnimatedHero() {
   useEffect(() => {
     intervalRef.current = setInterval(() => {
       setCurrentKey(prev => (prev + 1) % keyPoints.length);
-    }, 4000);
+    }, 6000);
     
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
