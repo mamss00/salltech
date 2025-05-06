@@ -23,9 +23,9 @@ function WhyChooseUs() {
 
   return (
     <div className="absolute right-0 top-0 bottom-0 w-1/2 h-full overflow-hidden md:flex items-center justify-center hidden">
-      {/* Fond avec animation gradient */}
+      {/* Fond avec overlay plus léger */}
       <div 
-        className="absolute inset-0 bg-gradient-to-br from-blue/80 to-purple/80 mix-blend-multiply z-10"
+        className="absolute inset-0 bg-gradient-to-br from-blue/60 to-purple/60 mix-blend-multiply z-10"
         style={{
           animation: 'gradientShift 15s ease infinite',
         }}
@@ -33,11 +33,11 @@ function WhyChooseUs() {
       
       {/* Éléments flottants décoratifs */}
       <div 
-        className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue/30 rounded-full blur-xl opacity-30"
+        className="absolute top-1/4 right-1/4 w-32 h-32 bg-blue/20 rounded-full blur-xl opacity-30"
         style={{ animation: 'float1 8s ease-in-out infinite' }}
       ></div>
       <div 
-        className="absolute bottom-1/4 left-1/4 w-24 h-24 bg-purple/30 rounded-full blur-xl opacity-30"
+        className="absolute bottom-1/4 left-1/4 w-24 h-24 bg-purple/20 rounded-full blur-xl opacity-30"
         style={{ animation: 'float2 12s ease-in-out infinite' }}
       ></div>
       
@@ -45,7 +45,7 @@ function WhyChooseUs() {
       <div className="relative z-20 p-8 text-white w-full max-w-xl">
         {/* Badge */}
         <div 
-          className={`inline-block px-4 py-1 rounded-full bg-white/20 backdrop-blur-sm text-sm font-medium mb-6 transition-all duration-500 ${
+          className={`inline-block px-4 py-1 rounded-full bg-white/30 backdrop-blur-sm text-sm font-medium mb-6 transition-all duration-500 ${
             animationStage >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
           }`}
         >
@@ -63,7 +63,7 @@ function WhyChooseUs() {
         
         {/* Ligne décorative animée */}
         <div 
-          className={`h-1 bg-white/40 mb-6 transition-all duration-700 ease-out ${
+          className={`h-1 bg-white/60 mb-6 transition-all duration-700 ease-out ${
             animationStage >= 3 ? 'w-20 opacity-100' : 'w-0 opacity-0'
           }`}
         ></div>
@@ -99,12 +99,12 @@ function WhyChooseUs() {
               }`}
               style={{ transitionDelay: `${index * 150}ms` }}
             >
-              <span className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 hover:bg-white/40 transition-colors duration-300">
+              <span className="w-6 h-6 bg-white/30 rounded-full flex items-center justify-center mr-3 mt-1 flex-shrink-0 hover:bg-white/50 transition-colors duration-300">
                 <span className="text-lg">{item.icon}</span>
               </span>
               <span>
                 <strong className="block text-lg">{item.title}</strong>
-                <span className="text-white/90">{item.description}</span>
+                <span className="text-white">{item.description}</span>
               </span>
             </li>
           ))}
@@ -114,12 +114,12 @@ function WhyChooseUs() {
         <div className={`transition-all duration-500 ${
           animationStage >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
         }`}>
-          <p className="text-sm text-white/70 mb-3">Projets sur lesquels nos experts ont travaillé :</p>
+          <p className="text-sm text-white mb-3">Projets sur lesquels nos experts ont travaillé :</p>
           <div className="flex flex-wrap gap-2">
             {expertProjects.map((name, index) => (
               <div 
                 key={index} 
-                className="bg-white/10 p-2 rounded-lg hover:bg-white/30 transition-all duration-300 hover:-translate-y-1"
+                className="bg-white/30 p-2 rounded-lg hover:bg-white/50 transition-all duration-300 hover:-translate-y-1"
                 style={{ transitionDelay: `${index * 100}ms` }}
               >
                 <div className="text-white font-bold px-2 py-1">{name}</div>
