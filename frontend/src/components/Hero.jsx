@@ -51,11 +51,11 @@ function AnimatedHero() {
     { name: 'HDI', logo: 'H' }
   ];
   
-  // Phrases encore plus courtes pour l'effet de typing
+  // Phrases plus courtes pour l'effet de typing
   const phrases = [
-    "les sites web",
-    "les apps",
-    "la rigueur",
+    "les beaux sites",
+    "les apps mobiles",
+    "le travail propre",
     "l'excellence", 
     "la qualité"
   ];
@@ -162,7 +162,7 @@ function AnimatedHero() {
               INNOVER. CRÉER. TRANSFORMER.
             </motion.h2>
             
-            <div className="mb-6 relative">
+            <div className="h-[180px] mb-12 relative">
               <motion.h1 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -170,7 +170,7 @@ function AnimatedHero() {
                 className="text-4xl md:text-5xl font-extrabold leading-tight"
               >
                 Pour ceux qui<br />
-                aiment <span className="gradient-text relative inline-block min-w-[160px] md:min-w-[200px]">
+                aiment <span className="gradient-text relative inline-block min-w-[200px] md:min-w-[250px]">
                   {text}
                   <span className={`absolute -right-2 ${isTyping ? 'animate-blink' : ''}`}>|</span>
                 </span>
@@ -255,54 +255,12 @@ function AnimatedHero() {
                 initial="hidden"
                 animate={animationCompleted ? "visible" : "hidden"}
               >
-                {/* Badge d'expertise - avec animation */}
+                {/* Badge d'expertise - avec contraste amélioré */}
                 <motion.div
                   variants={itemVariants}
-                  className="inline-block px-4 py-1.5 mb-6 rounded-full border border-white/30 shadow-md overflow-hidden relative"
-                  whileHover={{ scale: 1.05 }}
+                  className="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-900 backdrop-blur-sm border border-white/30 shadow-md"
                 >
-                  {/* Animation de gradient qui tourne */}
-                  <motion.div 
-                    className="absolute inset-0"
-                    style={{
-                      background: "linear-gradient(45deg, rgba(52, 152, 219, 0.9), rgba(155, 89, 182, 0.9), rgba(52, 152, 219, 0.9))",
-                      backgroundSize: "200% 200%",
-                    }}
-                    animate={{
-                      backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "linear"
-                    }}
-                  />
-                  
-                  {/* Particules lumineuses */}
-                  {[...Array(5)].map((_, i) => (
-                    <motion.div 
-                      key={i}
-                      className="absolute rounded-full bg-white/60"
-                      style={{
-                        width: 2 + Math.random() * 3,
-                        height: 2 + Math.random() * 3,
-                        top: Math.random() * 100 + "%",
-                        left: Math.random() * 100 + "%",
-                      }}
-                      animate={{
-                        opacity: [0, 1, 0],
-                        scale: [0, 1, 0],
-                      }}
-                      transition={{
-                        duration: 1.5 + Math.random() * 2,
-                        repeat: Infinity,
-                        delay: Math.random() * 2,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  ))}
-                  
-                  <span className="text-white font-medium text-sm relative z-10 px-1">
+                  <span className="text-white font-medium text-sm">
                     EXPERTISE INTERNATIONALE
                   </span>
                 </motion.div>
