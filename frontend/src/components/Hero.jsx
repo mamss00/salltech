@@ -1,19 +1,95 @@
 'use client'
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import CTAButton from '@/components/CTAButton';
 
 function EnhancedHero() {
   // Animation pour le composant de droite
   const [animationStage, setAnimationStage] = useState(0);
   
+  // Pour l'effet de typing
+  const [text, setText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  const [phraseIndex, setPhraseIndex] = useState(0);
+  const [charIndex, setCharIndex] = useState(0);
+
+  // Pour le défilement vertical des points clés
+  const [currentKey, setCurrentKey] = useState(0);
+  const intervalRef = useRef(null);
+  
+  // Phrases pour l'effet de typing
+  const phrases = [
+    "les beaux sites",
+    "les apps élégantes",
+    "le travail propre",
+    "l'excellence", 
+    "le professionnalisme"
+  ];
+  
+  // Effet de typing
   useEffect(() => {
-    // Animation séquentielle
+    const typingSpeed = 100;
+    const deleteSpeed = 50;
+    const delayBeforeDelete = 2000;
+    const delayBeforeNewPhrase = 500;
+    
+    const timer = setTimeout(() => {
+      const currentPhrase = phrases[phraseIndex];
+      
+      // Typing ou deleting
+      if (isTyping) {
+        setText(currentPhrase.substring(0, charIndex + 1));
+        setCharIndex(prev => prev + 1);
+        
+        // Si on a fini de taper toute la phrase
+        if (charIndex === currentPhrase.length) {
+          setIsTyping(false);
+          return;
+        }
+      } else {
+        setText(currentPhrase.substring(0, charIndex - 1));
+        setCharIndex(prev => prev - 1);
+        
+        // Si on a fini de supprimer toute la phrase
+        if (charIndex === 0) {
+          setIsTyping(true);
+          setPhraseIndex((prev) => (prev + 1) % phrases.length);
+          return;
+        }
+      }
+      
+      // Définir la vitesse en fonction de l'état
+      const speed = isTyping 
+        ? Math.random() * 30 + 80 // Variation naturelle pour le typing
+        : charIndex === currentPhrase.length 
+          ? delayBeforeDelete // Pause avant de commencer à supprimer
+          : charIndex === 0 
+            ? delayBeforeNewPhrase // Pause avant de taper la nouvelle phrase
+            : deleteSpeed; // Vitesse normale de suppression
+      
+    }, isTyping ? 100 : 50);
+    
+    return () => clearTimeout(timer);
+  }, [charIndex, isTyping, phraseIndex, phrases]);
+
+  // Animation séquentielle pour le panneau de droite
+  useEffect(() => {
     setTimeout(() => setAnimationStage(1), 300);
     setTimeout(() => setAnimationStage(2), 600);
     setTimeout(() => setAnimationStage(3), 900);
     setTimeout(() => setAnimationStage(4), 1200);
     setTimeout(() => setAnimationStage(5), 1800);
+  }, []);
+  
+  // Défilement automatique des points clés
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      setCurrentKey(prev => (prev + 1) % 4);
+    }, 4000);
+    
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
   
   // Experts Projects avec logos
@@ -25,8 +101,32 @@ function EnhancedHero() {
     { name: 'HDI', logo: 'H' }
   ];
 
+  // Points clés qui défileront
+  const keyPoints = [
+    {
+      icon: '🌍',
+      title: 'Expertise internationale',
+      description: 'Tous nos experts ont une expérience significative à l\'international'
+    },
+    {
+      icon: '🏆',
+      title: 'Experts de calibre international',
+      description: 'Nos experts ont travaillé sur des projets prestigieux pour BMW, Air France, LVMH, SAP et HDI'
+    },
+    {
+      icon: '🏢',
+      title: 'Leaders locaux',
+      description: 'La plus grande agence immobilière du pays nous a fait confiance'
+    },
+    {
+      icon: '🚀',
+      title: '50% de clients internationaux',
+      description: 'Notre expertise s\'étend au-delà des frontières mauritaniennes'
+    }
+  ];
+
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-40 pb-16">
+    <section id="home" className="relative min-h-[90vh] flex items-center overflow-hidden pt-36 pb-8">
       {/* Arrière-plan avec effets parallaxes */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <div className="absolute top-0 right-0 w-1/2 h-1/2 bg-blue/5 rounded-full blur-[100px] transform -translate-x-1/4 animate-float-slow"></div>
@@ -41,11 +141,12 @@ function EnhancedHero() {
             INNOVER. CRÉÉR. TRANSFORMER.
           </h2>
           
-          <div className="relative mb-8">
-            <h1 className="text-4xl md:text-[3.5rem] font-extrabold leading-tight">
+          <div className="h-[140px] mb-6 relative">
+            <h1 className="text-4xl md:text-[3.5rem] font-extrabold leading-tight absolute top-0 left-0 w-full">
               Pour ceux qui<br />
-              aiment <span className="gradient-text bg-gradient-text bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">
-                le travail propre
+              aiment <span className="gradient-text inline-block relative min-w-[280px]">
+                {text}
+                <span className={`absolute -right-2 ${isTyping ? 'animate-blink' : ''}`}>|</span>
               </span>
             </h1>
           </div>
@@ -65,7 +166,7 @@ function EnhancedHero() {
         </div>
         
         {/* Colonne de droite - Pourquoi nous choisir */}
-        <div className="relative h-full min-h-[600px] flex items-center justify-center overflow-hidden p-4">
+        <div className="relative h-full min-h-[500px] flex items-center justify-center overflow-hidden p-4">
           {/* Background avec effet de verre */}
           <div className="absolute inset-0 bg-gradient-to-br from-blue/40 to-purple/40 rounded-2xl backdrop-blur-md shadow-2xl border border-white/10"></div>
           
@@ -84,10 +185,10 @@ function EnhancedHero() {
           </div>
           
           {/* Container du contenu principal */}
-          <div className="relative z-20 p-8 text-white w-full max-w-xl">
+          <div className="relative z-20 p-6 md:p-8 text-white w-full max-w-xl">
             {/* Badge supérieur avec beaucoup d'espace */}
             <div 
-              className={`inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-blue/40 to-purple/40 backdrop-blur-md text-sm font-medium mb-8 shadow-lg border border-white/20 transition-all duration-500 ${
+              className={`inline-block px-4 py-1.5 rounded-full bg-gradient-to-r from-blue/40 to-purple/40 backdrop-blur-md text-sm font-medium mb-6 shadow-lg border border-white/20 transition-all duration-500 ${
                 animationStage >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
               }`}
             >
@@ -96,7 +197,7 @@ function EnhancedHero() {
             
             {/* Titre avec animation */}
             <h2 
-              className={`text-3xl font-bold mb-6 transition-all duration-500 ${
+              className={`text-3xl font-bold mb-4 transition-all duration-500 ${
                 animationStage >= 2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
               }`}
             >
@@ -105,41 +206,23 @@ function EnhancedHero() {
             
             {/* Ligne décorative animée */}
             <div 
-              className={`h-1 bg-gradient-to-r from-white/80 to-white/20 rounded-full mb-8 transition-all duration-700 ease-out ${
+              className={`h-1 bg-gradient-to-r from-white/80 to-white/20 rounded-full mb-6 transition-all duration-700 ease-out ${
                 animationStage >= 3 ? 'w-32 opacity-100' : 'w-0 opacity-0'
               }`}
             ></div>
             
-            {/* Points clés avec animation */}
-            <ul className="space-y-6 mb-10">
-              {[
-                {
-                  icon: '🌍',
-                  title: 'Expertise internationale',
-                  description: 'Tous nos experts ont une expérience significative à l\'international'
-                },
-                {
-                  icon: '🏆',
-                  title: 'Experts de calibre international',
-                  description: 'Nos experts ont travaillé sur des projets prestigieux pour BMW, Air France, LVMH, SAP et HDI'
-                },
-                {
-                  icon: '🏢',
-                  title: 'Leaders locaux',
-                  description: 'La plus grande agence immobilière du pays nous a fait confiance'
-                },
-                {
-                  icon: '🚀',
-                  title: '50% de clients internationaux',
-                  description: 'Notre expertise s\'étend au-delà des frontières mauritaniennes'
-                }
-              ].map((item, index) => (
-                <li 
+            {/* Points clés avec défilement vertical */}
+            <div className={`h-[160px] overflow-hidden relative mb-6 ${
+              animationStage >= 4 ? 'opacity-100' : 'opacity-0'
+            }`}>
+              {keyPoints.map((item, index) => (
+                <div 
                   key={index}
-                  className={`flex items-start transition-all duration-500 ${
-                    animationStage >= 4 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'
+                  className={`flex items-start absolute w-full transition-all duration-700 ease-out ${
+                    currentKey === index 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-16'
                   }`}
-                  style={{ transitionDelay: `${index * 150}ms` }}
                 >
                   <span className="w-10 h-10 bg-gradient-to-br from-white/30 to-white/10 rounded-full flex items-center justify-center mr-4 mt-1 flex-shrink-0 hover:from-white/40 hover:to-white/20 transition-all duration-300 shadow-md">
                     <span className="text-xl">{item.icon}</span>
@@ -148,28 +231,49 @@ function EnhancedHero() {
                     <strong className="block text-xl font-semibold mb-1">{item.title}</strong>
                     <span className="text-white/90">{item.description}</span>
                   </span>
-                </li>
+                </div>
               ))}
-            </ul>
+              
+              {/* Points indicateurs */}
+              <div className="absolute bottom-0 left-0 right-0 flex justify-center space-x-2 mt-4">
+                {keyPoints.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setCurrentKey(index);
+                      // Réinitialiser le timer de défilement
+                      if (intervalRef.current) clearInterval(intervalRef.current);
+                      intervalRef.current = setInterval(() => {
+                        setCurrentKey(prev => (prev + 1) % 4);
+                      }, 4000);
+                    }}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      currentKey === index ? 'bg-white scale-125' : 'bg-white/40'
+                    }`}
+                    aria-label={`Point ${index + 1}`}
+                  />
+                ))}
+              </div>
+            </div>
             
             {/* Projets avec logos */}
             <div className={`transition-all duration-500 ${
               animationStage >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}>
               <p className="text-sm text-white/90 mb-4 font-medium">Projets sur lesquels nos experts ont travaillé :</p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2">
                 {expertProjects.map((project, index) => (
                   <div 
                     key={index} 
-                    className="bg-gradient-to-br from-white/30 to-white/10 p-3 rounded-xl hover:from-white/40 hover:to-white/20 shadow-lg transition-all duration-300 hover:-translate-y-1 group border border-white/10"
+                    className="bg-gradient-to-br from-white/30 to-white/10 rounded-xl hover:from-white/40 hover:to-white/20 shadow-lg transition-all duration-300 hover:-translate-y-1 group border border-white/10"
                     style={{ transitionDelay: `${index * 100}ms` }}
                   >
-                    <div className="flex items-center">
+                    <div className="flex items-center p-2">
                       {/* Logo stylisé */}
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue/40 to-purple/40 flex items-center justify-center mr-3 shadow-md overflow-hidden group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-white font-bold">{project.logo}</span>
+                      <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue/40 to-purple/40 flex items-center justify-center mr-2 shadow-md overflow-hidden group-hover:scale-110 transition-transform duration-300">
+                        <span className="text-white font-bold text-xs">{project.logo}</span>
                       </div>
-                      <div className="text-white font-semibold">{project.name}</div>
+                      <div className="text-white font-semibold text-sm">{project.name}</div>
                     </div>
                   </div>
                 ))}
@@ -202,6 +306,11 @@ function EnhancedHero() {
           50% { opacity: 0.7; transform: scale(1.1); }
         }
         
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
+        
         .animate-float-slow {
           animation: float-slow 20s ease-in-out infinite;
         }
@@ -212,6 +321,10 @@ function EnhancedHero() {
         
         .animate-pulse-slow {
           animation: pulse-slow 15s ease-in-out infinite;
+        }
+        
+        .animate-blink {
+          animation: blink 1s infinite;
         }
         
         .delay-1000 {
