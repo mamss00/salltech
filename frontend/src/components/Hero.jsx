@@ -2,7 +2,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import CTAButton from '@/components/CTAButton';
 
-function ProperSpacingHero() {
+function FixedHero() {
   // Animation pour le composant de droite
   const [animationStage, setAnimationStage] = useState(0);
   
@@ -15,6 +15,39 @@ function ProperSpacingHero() {
   // Pour le défilement vertical des points clés
   const [currentKey, setCurrentKey] = useState(0);
   const intervalRef = useRef(null);
+  
+  // Points clés qui défileront - AJOUT DE CETTE DÉFINITION QUI MANQUAIT
+  const keyPoints = [
+    {
+      icon: '🌍',
+      title: 'Expertise internationale',
+      description: 'Tous nos experts ont une expérience significative à l\'international'
+    },
+    {
+      icon: '🏆',
+      title: 'Experts de calibre international',
+      description: 'Nos experts ont travaillé sur des projets prestigieux pour BMW, Air France, LVMH, SAP et HDI'
+    },
+    {
+      icon: '🏢',
+      title: 'Leaders locaux',
+      description: 'La plus grande agence immobilière du pays nous a fait confiance'
+    },
+    {
+      icon: '🚀',
+      title: '50% de clients internationaux',
+      description: 'Notre expertise s\'étend au-delà des frontières mauritaniennes'
+    }
+  ];
+  
+  // Experts Projects avec logos
+  const expertProjects = [
+    { name: 'BMW', logo: 'M' },
+    { name: 'Air France', logo: 'AF' },
+    { name: 'LVMH', logo: 'LV' },
+    { name: 'SAP', logo: 'S' },
+    { name: 'HDI', logo: 'H' }
+  ];
   
   // Phrases pour l'effet de typing
   const phrases = [
@@ -159,7 +192,7 @@ function ProperSpacingHero() {
               ></div>
               
               {/* Point clé actuel */}
-              <div className={`flex-grow transition-all duration-500 ${
+              <div className={`flex-grow relative transition-all duration-500 ${
                 animationStage >= 4 ? 'opacity-100' : 'opacity-0'
               }`}>
                 {keyPoints.map((item, index) => (
@@ -226,9 +259,14 @@ function ProperSpacingHero() {
           0%, 100% { opacity: 0.2; transform: scale(1); }
           50% { opacity: 0.8; transform: scale(1.5); }
         }
+        
+        @keyframes blink {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0; }
+        }
       `}</style>
     </section>
   );
 }
 
-export default ProperSpacingHero;
+export default FixedHero;
