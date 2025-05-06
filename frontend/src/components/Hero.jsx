@@ -74,7 +74,7 @@ const Hero = () => {
       </div>
       
       {/* Hero Image */}
-      <WhyChooseUsSimple />
+      <WhyChooseUsS />
       
       {/* Floating Shapes */}
       <div className="absolute inset-0 overflow-hidden z-0">
