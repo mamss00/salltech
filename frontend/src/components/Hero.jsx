@@ -293,12 +293,12 @@ function AnimatedHero() {
                           transition={{ duration: 0.4 }}
                         >
                           <div className="flex items-start">
-                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-4 flex-shrink-0 border border-white/20">
+                            <div className="w-10 h-10 rounded-full bg-indigo-800 flex items-center justify-center mr-4 flex-shrink-0 border border-white/20">
                               <span className="text-lg">{point.icon}</span>
                             </div>
                             <div>
-                              <h3 className="text-xl font-bold mb-2">{point.title}</h3>
-                              <p className="text-white/90">{point.description}</p>
+                              <h3 className="text-xl font-bold mb-2 text-white">{point.title}</h3>
+                              <p className="text-white">{point.description}</p>
                             </div>
                           </div>
                         </motion.div>
@@ -333,7 +333,7 @@ function AnimatedHero() {
                 {/* Liste des projets avec animation */}
                 <motion.div variants={itemVariants}>
                   <motion.p
-                    className="text-sm text-white/90 mb-4 font-medium"
+                    className="text-sm text-white mb-4 font-medium"
                   >
                     Projets sur lesquels nos experts ont travaillé :
                   </motion.p>
@@ -341,10 +341,10 @@ function AnimatedHero() {
                     {expertProjects.map((project, index) => (
                       <motion.div 
                         key={index}
-                        className="bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center border border-white/20"
+                        className="bg-indigo-800 px-3 py-2 rounded-lg flex items-center border border-white/20"
                         whileHover={{ 
                           scale: 1.05, 
-                          backgroundColor: "rgba(255, 255, 255, 0.2)"
+                          backgroundColor: "#4338ca"
                         }}
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ 
@@ -353,10 +353,10 @@ function AnimatedHero() {
                           transition: { delay: 1.5 + index * 0.1 }
                         }}
                       >
-                        <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-bold border border-white/10">
+                        <div className="w-6 h-6 rounded-full bg-indigo-900 flex items-center justify-center mr-2 text-xs font-bold border border-white/20 text-white">
                           {project.logo}
                         </div>
-                        <span>{project.name}</span>
+                        <span className="text-white">{project.name}</span>
                       </motion.div>
                     ))}
                   </div>
