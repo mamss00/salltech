@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { motion } from 'framer-motion'
 import { useTypingEffect, useAnimateOnScroll } from '@/utils/animations'
 import CTAButton from '@/components/CTAButton'
+import WhyChooseUs from '@/components/WhyChooseUs';
 
 const Hero = () => {
   const phrases = [
@@ -73,16 +74,7 @@ const Hero = () => {
       </div>
       
       {/* Hero Image */}
-      <div className="absolute right-0 top-0 bottom-0 w-full md:w-1/2 h-full z-0 opacity-25 md:opacity-100">
-        <Image
-          src="/images/technology.jpg"
-          alt="Image d'accueil"
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-      </div>
+      <WhyChooseUsSimple />
       
       {/* Floating Shapes */}
       <div className="absolute inset-0 overflow-hidden z-0">
