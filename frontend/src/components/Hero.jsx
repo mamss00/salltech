@@ -68,7 +68,7 @@ function AnimatedHero() {
     },
     { 
       name: 'Nordex', 
-      logo: 'https://www.mb-folienservice.de/wp-content/uploads/2023/04/nordex_logo.png'
+      logo: 'https://companieslogo.com/img/orig/NDX1.F-b8878605.svg'
     },
     { 
       name: 'DSAA', 
