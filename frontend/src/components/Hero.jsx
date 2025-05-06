@@ -1,10 +1,12 @@
 'use client'
+
 import React, { useEffect, useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import CTAButton from '@/components/CTAButton';
 
-function FixedHero() {
+function AnimatedHero() {
   // Animation pour le composant de droite
-  const [animationStage, setAnimationStage] = useState(0);
+  const [animationCompleted, setAnimationCompleted] = useState(false);
   
   // Pour l'effet de typing
   const [text, setText] = useState('');
@@ -16,7 +18,7 @@ function FixedHero() {
   const [currentKey, setCurrentKey] = useState(0);
   const intervalRef = useRef(null);
   
-  // Points clés qui défileront - AJOUT DE CETTE DÉFINITION QUI MANQUAIT
+  // Points clés qui défileront
   const keyPoints = [
     {
       icon: '🌍',
@@ -65,49 +67,50 @@ function FixedHero() {
     const delayBeforeDelete = 2000;
     const delayBeforeNewPhrase = 500;
     
-    const timer = setTimeout(() => {
-      const currentPhrase = phrases[phraseIndex];
-      
-      // Typing ou deleting
-      if (isTyping) {
-        setText(currentPhrase.substring(0, charIndex + 1));
-        setCharIndex(prev => prev + 1);
-        
-        // Si on a fini de taper toute la phrase
-        if (charIndex === currentPhrase.length) {
-          setIsTyping(false);
-          return;
-        }
+    let timer;
+    
+    if (isTyping) {
+      if (charIndex < phrases[phraseIndex].length) {
+        timer = setTimeout(() => {
+          setText(phrases[phraseIndex].substring(0, charIndex + 1));
+          setCharIndex(prev => prev + 1);
+        }, typingSpeed);
       } else {
-        setText(currentPhrase.substring(0, charIndex - 1));
-        setCharIndex(prev => prev - 1);
-        
-        // Si on a fini de supprimer toute la phrase
-        if (charIndex === 0) {
+        timer = setTimeout(() => {
+          setIsTyping(false);
+        }, delayBeforeDelete);
+      }
+    } else {
+      if (charIndex > 0) {
+        timer = setTimeout(() => {
+          setText(phrases[phraseIndex].substring(0, charIndex - 1));
+          setCharIndex(prev => prev - 1);
+        }, deleteSpeed);
+      } else {
+        timer = setTimeout(() => {
           setIsTyping(true);
           setPhraseIndex((prev) => (prev + 1) % phrases.length);
-          return;
-        }
+        }, delayBeforeNewPhrase);
       }
-      
-    }, isTyping ? 100 : 50);
+    }
     
     return () => clearTimeout(timer);
   }, [charIndex, isTyping, phraseIndex, phrases]);
 
   // Animation séquentielle pour le panneau de droite
   useEffect(() => {
-    setTimeout(() => setAnimationStage(1), 300);
-    setTimeout(() => setAnimationStage(2), 600);
-    setTimeout(() => setAnimationStage(3), 900);
-    setTimeout(() => setAnimationStage(4), 1200);
-    setTimeout(() => setAnimationStage(5), 1800);
+    // Marquer l'animation comme terminée après un délai
+    const timer = setTimeout(() => {
+      setAnimationCompleted(true);
+    }, 2500);
+    
+    return () => clearTimeout(timer);
   }, []);
   
   // Défilement automatique des points clés
   useEffect(() => {
     intervalRef.current = setInterval(() => {
-      setCurrentKey(prev => (prev + 1) % 4);
+      setCurrentKey(prev => (prev + 1) % keyPoints.length);
     }, 4000);
     
     return () => {
@@ -115,158 +118,282 @@ function FixedHero() {
     };
   }, []);
 
+  // Variants pour les animations Framer Motion
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.2
+      }
+    }
+  };
+  
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 100,
+        damping: 10
+      }
+    }
+  };
+
   return (
-    <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-32 pb-16">
+    <section className="min-h-screen flex items-center pt-32 pb-16 overflow-hidden">
       <div className="container mx-auto px-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           {/* Colonne de gauche - Contenu principal */}
-          <div className="md:pr-8">
-            <h2 className="text-blue text-lg font-semibold tracking-wider uppercase mb-6">
-              INNOVER. CRÉÉR. TRANSFORMER.
-            </h2>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
+            <motion.h2 
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-blue text-lg font-semibold tracking-wider uppercase mb-6"
+            >
+              INNOVER. CRÉER. TRANSFORMER.
+            </motion.h2>
             
-            <div className="h-[140px] mb-6 md:mb-8 relative">
-              <h1 className="text-4xl md:text-[3.5rem] font-extrabold leading-tight absolute top-0 left-0 w-full md:whitespace-nowrap">
+            <div className="h-[180px] mb-12 relative">
+              <motion.h1 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="text-4xl md:text-5xl font-extrabold leading-tight"
+              >
                 Pour ceux qui<br />
-                aiment <span className="gradient-text inline-block relative min-w-[280px]">
+                aiment <span className="gradient-text relative inline-block min-w-[280px]">
                   {text}
                   <span className={`absolute -right-2 ${isTyping ? 'animate-blink' : ''}`}>|</span>
                 </span>
-              </h1>
+              </motion.h1>
             </div>
             
-            <div className="mt-20 md:mt-0">
-              <p className="text-lg md:text-[1.25rem] text-gray-600 max-w-[520px] leading-[1.7] mb-8">
-                Startup innovante à Nouakchott, nous développons des solutions digitales sur mesure pour accompagner les entreprises mauritaniennes dans leur transformation numérique.
-              </p>
-            </div>
-            
-            <CTAButton 
-              href="#services" 
-              className="md:text-left text-center md:self-start inline-flex items-center py-[14px] px-[34px] text-[1.05rem]"
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="text-lg text-gray-600 max-w-xl leading-relaxed mb-10"
             >
-              Découvrir nos services
-            </CTAButton>
-          </div>
-          
-          {/* Colonne de droite - Pourquoi nous choisir */}
-          <div className="relative rounded-3xl overflow-hidden h-full bg-gradient-to-br from-purple-400/80 via-purple-500/70 to-pink-400/70">
-            {/* Particules scintillantes */}
-            <div className="absolute inset-0 overflow-hidden">
-              {[...Array(30)].map((_, i) => (
-                <div 
-                  key={i}
-                  className="absolute w-1 h-1 rounded-full bg-white/60"
-                  style={{
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 100}%`,
-                    opacity: 0.4 + Math.random() * 0.4,
-                    animation: `twinkle ${2 + Math.random() * 4}s infinite ${Math.random() * 5}s`
-                  }}
-                ></div>
-              ))}
-            </div>
+              Startup innovante à Nouakchott, nous développons des solutions digitales sur mesure 
+              pour accompagner les entreprises mauritaniennes dans leur transformation numérique.
+            </motion.p>
             
-            {/* Contenu */}
-            <div className="relative z-10 p-8 md:p-10 text-white h-full flex flex-col">
-              <div 
-                className={`inline-block px-4 py-1.5 rounded-full bg-white/20 text-sm font-medium self-start mb-6 transition-all duration-500 ${
-                  animationStage >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
-                }`}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1 }}
+            >
+              <CTAButton 
+                href="#services" 
+                className="inline-flex items-center text-lg"
               >
-                EXPERTISE INTERNATIONALE
-              </div>
-              
-              <h2 
-                className={`text-3xl font-bold mb-4 transition-all duration-500 ${
-                  animationStage >= 2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
-                }`}
-              >
-                Pourquoi nous choisir
-              </h2>
-              
-              <div 
-                className={`h-1 w-32 bg-white/50 mb-8 transition-all duration-700 ease-out ${
-                  animationStage >= 3 ? 'opacity-100' : 'opacity-0 scale-x-0 origin-left'
-                }`}
-              ></div>
-              
-              {/* Point clé actuel */}
-              <div className={`flex-grow relative transition-all duration-500 ${
-                animationStage >= 4 ? 'opacity-100' : 'opacity-0'
-              }`}>
-                {keyPoints.map((item, index) => (
-                  <div 
-                    key={index}
-                    className={`transition-all duration-500 absolute ${
-                      currentKey === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                    }`}
-                  >
-                    <div className="flex items-start">
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3 mt-1">
-                        <span className="text-lg">{item.icon}</span>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                        <p className="text-white/90">{item.description}</p>
-                      </div>
-                    </div>
-                  </div>
+                Découvrir nos services
+              </CTAButton>
+            </motion.div>
+          </motion.div>
+          
+          {/* Colonne de droite - Carte d'expertise avec animations complexes */}
+          <div className="relative">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ 
+                duration: 0.8, 
+                delay: 0.3,
+                type: "spring",
+                stiffness: 100
+              }}
+              className="bg-gradient-to-br from-blue-600 via-purple-600 to-purple-700 rounded-xl shadow-xl overflow-hidden text-white relative z-10"
+            >
+              {/* Particules d'arrière-plan */}
+              <div className="absolute inset-0 overflow-hidden">
+                {[...Array(20)].map((_, i) => (
+                  <motion.div 
+                    key={i}
+                    className="absolute w-1 h-1 rounded-full bg-white/40"
+                    initial={{
+                      x: Math.random() * 100 + "%",
+                      y: Math.random() * 100 + "%",
+                      opacity: 0.2 + Math.random() * 0.3
+                    }}
+                    animate={{
+                      x: [
+                        Math.random() * 100 + "%", 
+                        Math.random() * 100 + "%",
+                        Math.random() * 100 + "%"
+                      ],
+                      y: [
+                        Math.random() * 100 + "%", 
+                        Math.random() * 100 + "%",
+                        Math.random() * 100 + "%"
+                      ],
+                      opacity: [0.2, 0.5, 0.2],
+                      scale: [1, 1.5, 1]
+                    }}
+                    transition={{
+                      duration: 5 + Math.random() * 10,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                  />
                 ))}
+              </div>
+
+              {/* Contenu avec animations séquentielles */}
+              <motion.div 
+                className="p-8 relative z-10"
+                variants={containerVariants}
+                initial="hidden"
+                animate={animationCompleted ? "visible" : "hidden"}
+              >
+                {/* Badge d'expertise - contraste GARANTI */}
+                <motion.div
+                  variants={itemVariants}
+                  className="inline-block px-4 py-1.5 mb-6 rounded-full bg-indigo-900 backdrop-blur-sm border border-white/20 shadow-sm"
+                >
+                  <span className="text-white font-medium text-sm">
+                    EXPERTISE INTERNATIONALE
+                  </span>
+                </motion.div>
+                
+                <motion.h2 
+                  variants={itemVariants}
+                  className="text-2xl md:text-3xl font-bold mb-6"
+                >
+                  Pourquoi nous choisir
+                </motion.h2>
+                
+                <motion.div 
+                  variants={itemVariants}
+                  className="h-1 w-24 bg-white/40 mb-8"
+                />
+                
+                {/* Points clés avec animations */}
+                <motion.div 
+                  variants={itemVariants}
+                  className="mb-8 min-h-[120px]"
+                >
+                  <AnimatePresence mode="wait">
+                    {keyPoints.map((point, index) => (
+                      currentKey === index && (
+                        <motion.div
+                          key={index}
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -20 }}
+                          transition={{ duration: 0.4 }}
+                        >
+                          <div className="flex items-start">
+                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-4 flex-shrink-0 border border-white/20">
+                              <span className="text-lg">{point.icon}</span>
+                            </div>
+                            <div>
+                              <h3 className="text-xl font-bold mb-2">{point.title}</h3>
+                              <p className="text-white/90">{point.description}</p>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
                 
                 {/* Points indicateurs */}
-                <div className="flex space-x-2 mt-8">
+                <motion.div 
+                  variants={itemVariants}
+                  className="flex space-x-2 mb-8"
+                >
                   {keyPoints.map((_, index) => (
                     <button
                       key={index}
-                      onClick={() => setCurrentKey(index)}
-                      className={`w-2 h-2 rounded-full ${
-                        currentKey === index ? 'bg-white' : 'bg-white/30'
+                      onClick={() => {
+                        setCurrentKey(index);
+                        if (intervalRef.current) clearInterval(intervalRef.current);
+                        intervalRef.current = setInterval(() => {
+                          setCurrentKey(prev => (prev + 1) % keyPoints.length);
+                        }, 4000);
+                      }}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                        currentKey === index ? 'bg-white scale-125' : 'bg-white/30'
                       }`}
                       aria-label={`Point ${index + 1}`}
                     />
                   ))}
-                </div>
-              </div>
-              
-              {/* Projets */}
-              <div className={`mt-auto transition-all duration-500 ${
-                animationStage >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-              }`}>
-                <p className="text-sm text-white/90 mb-4">Projets sur lesquels nos experts ont travaillé :</p>
-                <div className="flex flex-wrap gap-2">
-                  {expertProjects.map((project, index) => (
-                    <div 
-                      key={index} 
-                      className="bg-white/20 px-3 py-2 rounded-lg flex items-center"
-                    >
-                      <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-bold">
-                        {project.logo}
-                      </div>
-                      <span>{project.name}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+                </motion.div>
+                
+                {/* Liste des projets avec animation */}
+                <motion.div variants={itemVariants}>
+                  <motion.p
+                    className="text-sm text-white/90 mb-4 font-medium"
+                  >
+                    Projets sur lesquels nos experts ont travaillé :
+                  </motion.p>
+                  <div className="flex flex-wrap gap-2">
+                    {expertProjects.map((project, index) => (
+                      <motion.div 
+                        key={index}
+                        className="bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center border border-white/20"
+                        whileHover={{ 
+                          scale: 1.05, 
+                          backgroundColor: "rgba(255, 255, 255, 0.2)"
+                        }}
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ 
+                          opacity: 1, 
+                          scale: 1,
+                          transition: { delay: 1.5 + index * 0.1 }
+                        }}
+                      >
+                        <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-bold border border-white/10">
+                          {project.logo}
+                        </div>
+                        <span>{project.name}</span>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              </motion.div>
+            </motion.div>
+            
+            {/* Éléments décoratifs en arrière-plan */}
+            <motion.div
+              className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-500/20 blur-xl"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 0.6, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.2 }}
+            />
+            <motion.div
+              className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-purple-500/20 blur-xl"
+              initial={{ opacity: 0, scale: 0.5 }}
+              animate={{ opacity: 0.6, scale: 1 }}
+              transition={{ duration: 1.2, delay: 0.4 }}
+            />
           </div>
         </div>
       </div>
       
       {/* Styles pour les animations */}
       <style jsx>{`
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.2; transform: scale(1); }
-          50% { opacity: 0.8; transform: scale(1.5); }
-        }
-        
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
+        }
+        
+        .animate-blink {
+          animation: blink 1s infinite;
         }
       `}</style>
     </section>
   );
 }
 
-export default FixedHero;
+export default AnimatedHero;
