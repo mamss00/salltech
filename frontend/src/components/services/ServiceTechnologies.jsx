@@ -316,7 +316,7 @@ function renderTechCard(tech, index, getColorsForTech) {
           delay
         }
       }}
-      className="w-44 mx-3 inline-block" // Réduit de 56 à 44 pour des cartes plus étroites
+      className="w-44 mx-2 inline-block" // Réduit de 56 à 44 pour des cartes plus étroites
     >
       <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 relative group hover:shadow-md">
         {/* Ligne décorative */}
@@ -387,14 +387,14 @@ function renderTechCard(tech, index, getColorsForTech) {
           
           {/* Nom de la technologie - permettre 2 lignes */}
           <motion.h3
-            className="text-sm font-medium text-center transition-colors duration-300 h-10 flex items-center"
+            className="text-sm font-medium text-center transition-colors duration-300 h-10 w-full"
             style={{ color: 'rgba(70, 70, 70, 1)' }}
             whileHover={{ color: primary }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: delay + 0.3, duration: 0.4 }}
           >
-            <span className="line-clamp-2">{tech.nom || `Technologie ${index + 1}`}</span>
+            <span className="line-clamp-2 block break-words hyphens-auto">{tech.nom || `Technologie ${index + 1}`}</span>
           </motion.h3>
           
           {/* Ligne décorative */}
@@ -422,7 +422,7 @@ function renderTechCard(tech, index, getColorsForTech) {
           {/* Description avec effet de défilement */}
           {tech.description && (
             <motion.div
-              className="text-xs text-gray-500 text-center h-14 overflow-hidden relative"
+              className="text-xs text-gray-500 text-center h-16 overflow-hidden relative"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: delay + 0.4, duration: 0.4 }}
@@ -444,11 +444,11 @@ function renderTechCard(tech, index, getColorsForTech) {
                     }
                   }}
                 >
-                  {tech.description}
+                  <p className="break-words whitespace-normal px-1">{tech.description}</p>
                 </motion.div>
               ) : (
                 // Pas d'animation si le texte est court
-                <div>{tech.description}</div>
+                <div className="break-words whitespace-normal px-1">{tech.description}</div>
               )}
             </motion.div>
           )}
