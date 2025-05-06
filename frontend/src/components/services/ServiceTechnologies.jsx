@@ -498,18 +498,16 @@ function renderTechCard(tech, index, getColorsForTech) {
             )}
           </div>
           
-          {/* Nom de la technologie - avec affichage sur 2 lignes */}
+          {/* Nom de la technologie - passage à la ligne simple */}
           <motion.h3
-            className="text-sm font-medium text-center transition-colors duration-300 mb-1 min-h-[40px] flex items-center justify-center"
+            className="text-sm font-medium text-center mb-1 min-h-[40px] p-1 flex flex-col justify-center"
             style={{ color: 'rgba(70, 70, 70, 1)' }}
             whileHover={{ color: primary }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: delay + 0.3, duration: 0.4 }}
           >
-            <span className="line-clamp-2 px-1">
-              {tech.nom || `Technologie ${index + 1}`}
-            </span>
+            {tech.nom || `Technologie ${index + 1}`}
           </motion.h3>
           
           {/* Ligne décorative */}
