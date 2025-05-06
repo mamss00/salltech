@@ -567,7 +567,7 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
                   Découvrez comment notre méthodologie peut vous aider à atteindre vos objectifs.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row justify-center gap-4">
+                <div className="flex flex-wrap justify-center gap-4">
                   <motion.a
                     href="#contact"
                     className="inline-flex items-center justify-center px-6 py-3 rounded-xl font-medium text-white"
