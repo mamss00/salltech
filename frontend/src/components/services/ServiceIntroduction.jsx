@@ -156,18 +156,90 @@ export default function ServiceIntroduction({ content, features, color = 'blue' 
             className="bg-white rounded-2xl shadow-lg overflow-hidden mb-10"
           >
             <div className="relative">
-              {/* Barre supérieure dégradée */}
-              <div className={`h-1.5 bg-gradient-to-r from-${color} via-purple to-red w-full`}></div>
+              {/* Barre supérieure fine et subtile */}
+              <div className={`h-0.5 bg-${color}/30 w-full`}></div>
               
-              {/* Contenu */}
-              <div className="p-8 lg:p-10">
+              {/* Contenu avec animation subtile */}
+              <div className="p-8 lg:p-10 relative overflow-hidden">
+                {/* Effet de dégradé animé sur le côté */}
+                <motion.div 
+                  className="absolute top-0 bottom-0 w-24 bg-gradient-to-r from-transparent via-blue/5 to-transparent"
+                  initial={{ opacity: 0, left: "-100%" }}
+                  animate={{ opacity: 1, left: ["100%", "-100%"] }}
+                  transition={{ 
+                    duration: 10, 
+                    ease: "easeInOut", 
+                    repeat: Infinity,
+                    repeatDelay: 5
+                  }}
+                />
+                
                 <motion.div 
                   className="prose prose-lg max-w-none"
                   initial={{ opacity: 0 }}
                   animate={contentInView ? { opacity: 1 } : {}}
                   transition={{ duration: 0.5, delay: 0.3 }}
                 >
-                  {renderRichText(content)}
+                  {/* Effet de surlignage aléatoire sur les paragraphes */}
+                  <div className="relative">
+                    {renderRichText(content)}
+                    
+                    {/* Points lumineux animés dans les coins */}
+                    <motion.div 
+                      className={`absolute top-2 left-2 w-1 h-1 rounded-full bg-${color}/70`}
+                      animate={{ 
+                        opacity: [0.4, 0.8, 0.4],
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        repeatType: "mirror"
+                      }}
+                    />
+                    
+                    <motion.div 
+                      className="absolute top-2 right-2 w-1 h-1 rounded-full bg-purple/70"
+                      animate={{ 
+                        opacity: [0.4, 0.8, 0.4],
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        delay: 1
+                      }}
+                    />
+                    
+                    <motion.div 
+                      className="absolute bottom-2 left-2 w-1 h-1 rounded-full bg-red/70"
+                      animate={{ 
+                        opacity: [0.4, 0.8, 0.4],
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        delay: 2
+                      }}
+                    />
+                    
+                    <motion.div 
+                      className="absolute bottom-2 right-2 w-1 h-1 rounded-full bg-purple/70"
+                      animate={{ 
+                        opacity: [0.4, 0.8, 0.4],
+                        scale: [1, 1.2, 1]
+                      }}
+                      transition={{
+                        duration: 4,
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        delay: 3
+                      }}
+                    />
+                  </div>
                 </motion.div>
               </div>
             </div>
