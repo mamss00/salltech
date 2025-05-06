@@ -16,7 +16,7 @@ function FixedHero() {
   const [currentKey, setCurrentKey] = useState(0);
   const intervalRef = useRef(null);
   
-  // Points clés qui défileront - AJOUT DE CETTE DÉFINITION QUI MANQUAIT
+  // Points clés qui défileront
   const keyPoints = [
     {
       icon: '🌍',
@@ -76,6 +76,9 @@ function FixedHero() {
         // Si on a fini de taper toute la phrase
         if (charIndex === currentPhrase.length) {
           setIsTyping(false);
+          setTimeout(() => {
+            setIsTyping(false);
+          }, delayBeforeDelete);
           return;
         }
       } else {
@@ -86,28 +89,44 @@ function FixedHero() {
         if (charIndex === 0) {
           setIsTyping(true);
           setPhraseIndex((prev) => (prev + 1) % phrases.length);
+          setTimeout(() => {
+            setIsTyping(true);
+          }, delayBeforeNewPhrase);
           return;
         }
       }
       
-    }, isTyping ? 100 : 50);
+    }, isTyping ? typingSpeed : deleteSpeed);
     
     return () => clearTimeout(timer);
   }, [charIndex, isTyping, phraseIndex, phrases]);
 
   // Animation séquentielle pour le panneau de droite
   useEffect(() => {
-    setTimeout(() => setAnimationStage(1), 300);
-    setTimeout(() => setAnimationStage(2), 600);
-    setTimeout(() => setAnimationStage(3), 900);
-    setTimeout(() => setAnimationStage(4), 1200);
-    setTimeout(() => setAnimationStage(5), 1800);
+    // Réinitialiser l'animation au montage
+    setAnimationStage(0);
+    
+    // Séquence d'animation progressive
+    const stage1 = setTimeout(() => setAnimationStage(1), 500); 
+    const stage2 = setTimeout(() => setAnimationStage(2), 800);
+    const stage3 = setTimeout(() => setAnimationStage(3), 1100);
+    const stage4 = setTimeout(() => setAnimationStage(4), 1400);
+    const stage5 = setTimeout(() => setAnimationStage(5), 1700);
+    
+    // Nettoyage
+    return () => {
+      clearTimeout(stage1);
+      clearTimeout(stage2);
+      clearTimeout(stage3);
+      clearTimeout(stage4);
+      clearTimeout(stage5);
+    };
   }, []);
   
   // Défilement automatique des points clés
   useEffect(() => {
     intervalRef.current = setInterval(() => {
-      setCurrentKey(prev => (prev + 1) % 4);
+      setCurrentKey(prev => (prev + 1) % keyPoints.length);
     }, 4000);
     
     return () => {
@@ -121,8 +140,8 @@ function FixedHero() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Colonne de gauche - Contenu principal */}
           <div className="md:pr-8">
-            <h2 className="text-blue text-lg font-semibold tracking-wider uppercase mb-6">
-              INNOVER. CRÉÉR. TRANSFORMER.
+            <h2 className="text-blue text-lg font-semibold tracking-wider uppercase mb-6 animate-fade-in">
+              INNOVER. CRÉER. TRANSFORMER.
             </h2>
             
             <div className="h-[140px] mb-6 md:mb-8 relative">
@@ -150,7 +169,7 @@ function FixedHero() {
           </div>
           
           {/* Colonne de droite - Pourquoi nous choisir */}
-          <div className="relative rounded-3xl overflow-hidden h-full bg-gradient-to-br from-purple-400/80 via-purple-500/70 to-pink-400/70">
+          <div className="mt-8 md:mt-0 relative rounded-3xl overflow-hidden h-[500px] md:h-full bg-gradient-to-br from-purple-500/90 via-purple-600/80 to-pink-500/80 shadow-lg">
             {/* Particules scintillantes */}
             <div className="absolute inset-0 overflow-hidden">
               {[...Array(30)].map((_, i) => (
@@ -169,58 +188,82 @@ function FixedHero() {
             
             {/* Contenu */}
             <div className="relative z-10 p-8 md:p-10 text-white h-full flex flex-col">
+              {/* Badge d'expertise */}
               <div 
-                className={`inline-block px-4 py-1.5 rounded-full bg-white/20 text-sm font-medium self-start mb-6 transition-all duration-500 ${
-                  animationStage >= 1 ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'
+                className={`transform transition-all duration-700 ease-out ${
+                  animationStage >= 1 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 -translate-y-8'
                 }`}
               >
-                EXPERTISE INTERNATIONALE
+                <span className="inline-block px-4 py-1.5 rounded-full bg-white/20 text-sm font-medium">
+                  EXPERTISE INTERNATIONALE
+                </span>
               </div>
               
+              {/* Titre principal */}
               <h2 
-                className={`text-3xl font-bold mb-4 transition-all duration-500 ${
-                  animationStage >= 2 ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
+                className={`text-3xl font-bold mt-4 mb-4 transform transition-all duration-700 ease-out ${
+                  animationStage >= 2 
+                    ? 'opacity-100 translate-x-0' 
+                    : 'opacity-0 -translate-x-8'
                 }`}
               >
                 Pourquoi nous choisir
               </h2>
               
+              {/* Ligne décorative */}
               <div 
-                className={`h-1 w-32 bg-white/50 mb-8 transition-all duration-700 ease-out ${
-                  animationStage >= 3 ? 'opacity-100' : 'opacity-0 scale-x-0 origin-left'
+                className={`h-1 w-32 bg-white/50 mb-8 transform transition-all duration-700 ease-out ${
+                  animationStage >= 3 
+                    ? 'opacity-100 scale-x-100 origin-left' 
+                    : 'opacity-0 scale-x-0 origin-left'
                 }`}
               ></div>
               
-              {/* Point clé actuel */}
-              <div className={`flex-grow relative transition-all duration-500 ${
-                animationStage >= 4 ? 'opacity-100' : 'opacity-0'
-              }`}>
-                {keyPoints.map((item, index) => (
-                  <div 
-                    key={index}
-                    className={`transition-all duration-500 absolute ${
-                      currentKey === index ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-                    }`}
-                  >
-                    <div className="flex items-start">
-                      <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center mr-3 mt-1">
-                        <span className="text-lg">{item.icon}</span>
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                        <p className="text-white/90">{item.description}</p>
+              {/* Points clés */}
+              <div 
+                className={`flex-grow transition-all duration-700 ease-out ${
+                  animationStage >= 4 ? 'opacity-100' : 'opacity-0'
+                }`}
+              >
+                <div className="relative h-32"> {/* Hauteur fixe pour contenir les points qui défilent */}
+                  {keyPoints.map((item, index) => (
+                    <div 
+                      key={index}
+                      className={`absolute top-0 left-0 right-0 transition-all duration-500 ${
+                        currentKey === index 
+                          ? 'opacity-100 translate-y-0' 
+                          : 'opacity-0 translate-y-8 pointer-events-none'
+                      }`}
+                    >
+                      <div className="flex items-start">
+                        <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-4 flex-shrink-0">
+                          <span className="text-lg">{item.icon}</span>
+                        </div>
+                        <div>
+                          <h3 className="text-xl font-bold mb-2">{item.title}</h3>
+                          <p className="text-white/90">{item.description}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
                 
                 {/* Points indicateurs */}
-                <div className="flex space-x-2 mt-8">
+                <div className="flex space-x-2 mt-6">
                   {keyPoints.map((_, index) => (
                     <button
                       key={index}
-                      onClick={() => setCurrentKey(index)}
-                      className={`w-2 h-2 rounded-full ${
+                      onClick={() => {
+                        setCurrentKey(index);
+                        // Réinitialiser le timer quand l'utilisateur clique
+                        if (intervalRef.current) clearInterval(intervalRef.current);
+                        intervalRef.current = setInterval(() => {
+                          setCurrentKey(prev => (prev + 1) % keyPoints.length);
+                        }, 4000);
+                      }}
+                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
                         currentKey === index ? 'bg-white' : 'bg-white/30'
                       }`}
                       aria-label={`Point ${index + 1}`}
@@ -229,16 +272,20 @@ function FixedHero() {
                 </div>
               </div>
               
-              {/* Projets */}
-              <div className={`mt-auto transition-all duration-500 ${
-                animationStage >= 5 ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-              }`}>
+              {/* Section des projets */}
+              <div 
+                className={`mt-auto transition-all duration-700 ease-out ${
+                  animationStage >= 5 
+                    ? 'opacity-100 translate-y-0' 
+                    : 'opacity-0 translate-y-8'
+                }`}
+              >
                 <p className="text-sm text-white/90 mb-4">Projets sur lesquels nos experts ont travaillé :</p>
                 <div className="flex flex-wrap gap-2">
                   {expertProjects.map((project, index) => (
                     <div 
                       key={index} 
-                      className="bg-white/20 px-3 py-2 rounded-lg flex items-center"
+                      className="bg-white/20 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center transition-all duration-300 hover:bg-white/30"
                     >
                       <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-bold">
                         {project.logo}
@@ -263,6 +310,15 @@ function FixedHero() {
         @keyframes blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0; }
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 1s ease-out forwards;
         }
       `}</style>
     </section>
