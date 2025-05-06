@@ -229,76 +229,86 @@ export default function SuperEnhancedServiceProcess({ steps, color = 'blue' }) {
         
         {/* Mode compact moderne avec navigation par onglets */}
         <div className="max-w-5xl mx-auto">
-          {/* Navigation des étapes - Style plus élégant */}
-          <div className="mb-12 flex justify-center">
-            <div className="bg-white/90 backdrop-blur-sm rounded-full shadow-md p-1.5 flex flex-wrap justify-center gap-1">
-              {sortedSteps.map((step, index) => {
-                const { primary } = getStepColors(index)
-                return (
-                  <motion.button
-                    key={index}
-                    onClick={() => {
-                      setActiveStep(index)
-                      setAutoPlayEnabled(false)
-                    }}
-                    className={`relative px-4 py-2 rounded-full text-sm font-medium transition-all duration-300`}
-                    style={{ 
-                      color: activeStep === index ? 'white' : 'rgb(90, 90, 90)',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    {activeStep === index && (
-                      <motion.div
-                        layoutId="activeTab"
-                        className="absolute inset-0 rounded-full"
-                        initial={false}
-                        style={{ backgroundColor: primary }}
-                        transition={{ type: "spring", stiffness: 200, damping: 28 }}
-                      />
-                    )}
-                    <span className="relative z-10 flex items-center">
-                      <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-medium">
-                        {step.numero}
+          {/* Navigation des étapes repensée - sans barre de progression superposée */}
+          <div className="mb-12">
+            <div className="mb-1 flex justify-between items-center">
+              <div className="text-sm text-gray-500 font-medium">Progression</div>
+              <div className="text-sm text-gray-500 font-medium">
+                Étape {activeStep + 1} / {sortedSteps.length}
+              </div>
+            </div>
+            {/* Ligne de progression intégrée */}
+            <div className="h-1.5 w-full bg-gray-200 mb-6">
+              <motion.div
+                className="h-full"
+                style={{ 
+                  backgroundColor: getStepColors(activeStep).primary,
+                  width: `${((activeStep) / (sortedSteps.length - 1)) * 100}%`
+                }}
+                animate={{ width: `${((activeStep) / (sortedSteps.length - 1)) * 100}%` }}
+                transition={{ duration: 0.4 }}
+              />
+            </div>
+            
+            {/* Navigation des étapes */}
+            <div className="flex justify-center">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-1.5 flex flex-wrap justify-center gap-1">
+                {sortedSteps.map((step, index) => {
+                  const { primary } = getStepColors(index)
+                  return (
+                    <motion.button
+                      key={index}
+                      onClick={() => {
+                        setActiveStep(index)
+                        setAutoPlayEnabled(false)
+                      }}
+                      className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300`}
+                      style={{ 
+                        color: activeStep === index ? 'white' : 'rgb(90, 90, 90)',
+                        overflow: 'hidden'
+                      }}
+                    >
+                      {activeStep === index && (
+                        <motion.div
+                          layoutId="activeTab"
+                          className="absolute inset-0 rounded-lg"
+                          initial={false}
+                          style={{ backgroundColor: primary }}
+                          transition={{ type: "spring", stiffness: 200, damping: 28 }}
+                        />
+                      )}
+                      <span className="relative z-10 flex items-center">
+                        <span className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-medium">
+                          {step.numero}
+                        </span>
+                        {step.titre.length > 12 ? step.titre.substring(0, 12) + '...' : step.titre}
                       </span>
-                      {step.titre.length > 12 ? step.titre.substring(0, 12) + '...' : step.titre}
-                    </span>
-                  </motion.button>
-                )
-              })}
-              <motion.button
-                onClick={() => setAutoPlayEnabled(!autoPlayEnabled)}
-                className="relative px-3 py-2 rounded-full bg-gray-100/80 text-gray-700 text-sm font-medium hover:bg-gray-200/80 transition-all duration-300"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                {autoPlayEnabled ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                )}
-              </motion.button>
+                    </motion.button>
+                  )
+                })}
+                <motion.button
+                  onClick={() => setAutoPlayEnabled(!autoPlayEnabled)}
+                  className="relative px-3 py-2 rounded-lg bg-gray-100/80 text-gray-700 text-sm font-medium hover:bg-gray-200/80 transition-all duration-300"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {autoPlayEnabled ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  )}
+                </motion.button>
+              </div>
             </div>
           </div>
           
           {/* Conteneur principal */}
           <div className="relative">
-            {/* Indicateur de progression - Ligne connectant les étapes */}
-            <div className="absolute top-0 left-0 w-full h-1 bg-gray-200 rounded-full overflow-hidden">
-              <motion.div
-                className="h-full"
-                style={{ 
-                  backgroundColor: getStepColors(activeStep).primary,
-                  width: `${(activeStep / (sortedSteps.length - 1)) * 100}%`
-                }}
-                animate={{ width: `${(activeStep / (sortedSteps.length - 1)) * 100}%` }}
-                transition={{ duration: 0.4 }}
-              />
-            </div>
             
             {/* Affichage des étapes - Animation de transition */}
             <div className="mt-8">
