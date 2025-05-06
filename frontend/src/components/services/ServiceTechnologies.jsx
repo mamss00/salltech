@@ -108,9 +108,9 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
       ref={containerRef}
       className="py-20 relative overflow-hidden bg-gray-50"
     >
-      {/* Arrière-plan technique subtil */}
+      {/* Arrière-plan technique amélioré avec plus d'éléments décoratifs */}
       <div className="absolute inset-0 overflow-hidden z-0 opacity-50">
-        {/* Motif de circuits adouci */}
+        {/* Grille de circuits avancée */}
         <svg width="100%" height="100%" className="absolute opacity-5" viewBox="0 0 800 800">
           <pattern id="circuitPattern" patternUnits="userSpaceOnUse" width="150" height="150">
             <path d="M 0 75 L 150 75 M 75 0 L 75 150" stroke={`var(--color-${color})`} strokeWidth="0.4" fill="none" />
@@ -123,8 +123,83 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           <rect width="100%" height="100%" fill="url(#circuitPattern)" />
         </svg>
         
+        {/* Lignes élégantes de code/circuit qui se dessinent */}
+        <motion.svg 
+          className="absolute inset-0 w-full h-full opacity-5" 
+          viewBox="0 0 800 600"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.05 }}
+          transition={{ duration: 2 }}
+        >
+          <motion.path
+            d="M 50,150 C 100,50 200,150 250,200 C 300,250 400,150 450,100 L 600,100 C 650,100 700,150 750,200"
+            stroke={`var(--color-${color})`}
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 4 }}
+          />
+          <motion.path
+            d="M 100,300 L 200,300 C 250,300 250,350 300,350 L 500,350 C 550,350 550,300 600,300 L 700,300"
+            stroke="var(--color-purple)"
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 7, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 3, delay: 2 }}
+          />
+          <motion.path
+            d="M 200,450 L 300,450 C 350,450 350,400 400,400 L 450,400 C 500,400 500,450 550,450 L 650,450"
+            stroke="var(--color-red)"
+            strokeWidth="1"
+            fill="none"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 6, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 5, delay: 1 }}
+          />
+          
+          {/* Cercles des connecteurs de circuits */}
+          {[
+            { cx: 50, cy: 150, color: "var(--color-blue)" },
+            { cx: 250, cy: 200, color: "var(--color-blue)" },
+            { cx: 450, cy: 100, color: "var(--color-blue)" },
+            { cx: 600, cy: 100, color: "var(--color-blue)" },
+            { cx: 750, cy: 200, color: "var(--color-blue)" },
+            { cx: 100, cy: 300, color: "var(--color-purple)" },
+            { cx: 200, cy: 300, color: "var(--color-purple)" },
+            { cx: 300, cy: 350, color: "var(--color-purple)" },
+            { cx: 500, cy: 350, color: "var(--color-purple)" },
+            { cx: 600, cy: 300, color: "var(--color-purple)" },
+            { cx: 700, cy: 300, color: "var(--color-purple)" },
+            { cx: 200, cy: 450, color: "var(--color-red)" },
+            { cx: 300, cy: 450, color: "var(--color-red)" },
+            { cx: 400, cy: 400, color: "var(--color-red)" },
+            { cx: 450, cy: 400, color: "var(--color-red)" },
+            { cx: 550, cy: 450, color: "var(--color-red)" },
+            { cx: 650, cy: 450, color: "var(--color-red)" },
+          ].map((node, i) => (
+            <motion.circle
+              key={`node-${i}`}
+              cx={node.cx}
+              cy={node.cy}
+              r="4"
+              fill={node.color}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ 
+                duration: 0.5, 
+                delay: 0.05 * i + 1,
+                repeat: Infinity,
+                repeatType: "reverse",
+                repeatDelay: 15
+              }}
+            />
+          ))}
+        </motion.svg>
+        
         {/* Points décoratifs techno */}
-        {Array.from({ length: 25 }).map((_, i) => (
+        {Array.from({ length: 40 }).map((_, i) => (
           <motion.div
             key={`dot-${i}`}
             className="absolute w-1 h-1 rounded-full"
@@ -151,7 +226,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           />
         ))}
         
-        {/* Formes adoucies */}
+        {/* "Nuages" de technologie */}
         <motion.div 
           className={`absolute top-10 right-10 w-96 h-96 rounded-full bg-gradient-to-bl from-${color}/5 to-transparent opacity-40 blur-3xl`}
           animate={{
@@ -176,6 +251,50 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
             repeat: Infinity,
             repeatType: "mirror",
             delay: 2
+          }}
+        />
+        
+        {/* Formes géométriques tech */}
+        <motion.div
+          className="absolute right-1/4 top-1/3 w-24 h-24 border border-blue/20 rounded-lg opacity-20"
+          animate={{
+            rotate: [0, 45, 0],
+            scale: [1, 1.1, 1],
+            opacity: [0.1, 0.3, 0.1]
+          }}
+          transition={{
+            duration: 20,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        <motion.div
+          className="absolute left-1/3 bottom-1/4 w-16 h-16 border border-purple/20 rounded-full opacity-20"
+          animate={{
+            rotate: [0, 360],
+            scale: [1, 0.8, 1],
+            opacity: [0.2, 0.4, 0.2]
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        
+        <motion.div
+          className="absolute left-1/4 top-1/4 w-20 h-20 border border-red/20 rotate-45 opacity-20"
+          animate={{
+            rotate: [45, 90, 45],
+            scale: [1, 1.2, 1],
+            opacity: [0.1, 0.2, 0.1]
+          }}
+          transition={{
+            duration: 18,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 5
           }}
         />
       </div>
@@ -385,16 +504,32 @@ function renderTechCard(tech, index, getColorsForTech) {
             )}
           </div>
           
-          {/* Nom de la technologie - permettre 2 lignes */}
+          {/* Nom de la technologie - avec césure et retour à la ligne forcés */}
           <motion.h3
-            className="text-sm font-medium text-center transition-colors duration-300 h-10 w-full"
+            className="text-sm font-medium text-center transition-colors duration-300 mb-1"
             style={{ color: 'rgba(70, 70, 70, 1)' }}
             whileHover={{ color: primary }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: delay + 0.3, duration: 0.4 }}
           >
-            <span className="line-clamp-2 block break-words hyphens-auto">{tech.nom || `Technologie ${index + 1}`}</span>
+            {/* Forcer le retour à la ligne en insérant des balises br si nécessaire */}
+            {tech.nom && tech.nom.length > 10 ? 
+              tech.nom.split(' ').reduce((acc, word, i, arr) => {
+                // Si on a déjà cumulé plus de la moitié des mots et qu'on n'est pas encore à la fin
+                if (acc.length > tech.nom.length / 2 && i < arr.length - 1 && !acc.includes('<br/>')) {
+                  return acc + ' <br/>' + word;
+                }
+                return i === 0 ? word : acc + ' ' + word;
+              }, '') 
+              .split('<br/>').map((part, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <br />}
+                  {part}
+                </React.Fragment>
+              ))
+              : tech.nom || `Technologie ${index + 1}`
+            }
           </motion.h3>
           
           {/* Ligne décorative */}
@@ -419,7 +554,7 @@ function renderTechCard(tech, index, getColorsForTech) {
             }}
           />
           
-          {/* Description avec effet de défilement */}
+          {/* Description avec défilement plus lent */}
           {tech.description && (
             <motion.div
               className="text-xs text-gray-500 text-center h-16 overflow-hidden relative"
@@ -428,7 +563,7 @@ function renderTechCard(tech, index, getColorsForTech) {
               transition={{ delay: delay + 0.4, duration: 0.4 }}
             >
               {tech.description.length > 40 ? (
-                // Animation de défilement si le texte est long
+                // Animation de défilement si le texte est long, mais plus lent
                 <motion.div
                   initial={{ y: 0 }}
                   animate={{ 
@@ -436,10 +571,10 @@ function renderTechCard(tech, index, getColorsForTech) {
                   }}
                   transition={{
                     y: {
-                      duration: 10,
-                      times: [0, 0.4, 1],
+                      duration: 20, // Durée augmentée de 10 à 20 secondes
+                      times: [0, 0.45, 1],
                       repeat: Infinity,
-                      repeatDelay: 3,
+                      repeatDelay: 5, // Pause plus longue
                       ease: "easeInOut"
                     }
                   }}
