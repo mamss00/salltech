@@ -284,7 +284,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
         </div>
       </motion.div>
     </section>
-  )
+  );
 }
 
 // Fonction pour rendre les cartes de technologie
@@ -316,7 +316,7 @@ function renderTechCard(tech, index, getColorsForTech) {
           delay
         }
       }}
-      className="w-56 mx-3 inline-block"
+      className="w-44 mx-3 inline-block" // Réduit de 56 à 44 pour des cartes plus étroites
     >
       <div className="bg-white rounded-lg h-full shadow-sm overflow-hidden border border-gray-100 transition-all duration-300 relative group hover:shadow-md">
         {/* Ligne décorative */}
@@ -338,36 +338,10 @@ function renderTechCard(tech, index, getColorsForTech) {
           />
         </div>
         
-        {/* Points lumineux aux coins - effet tech */}
-        <motion.div 
-          className="absolute top-0 left-0 w-1 h-1 rounded-full"
-          style={{ backgroundColor: primary }}
-          animate={{ opacity: [0.2, 0.8, 0.2] }}
-          transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 % 1 }}
-        />
-        <motion.div 
-          className="absolute top-0 right-0 w-1 h-1 rounded-full"
-          style={{ backgroundColor: secondary }}
-          animate={{ opacity: [0.2, 0.8, 0.2] }}
-          transition={{ duration: 2, repeat: Infinity, delay: (index * 0.2 + 0.5) % 1 }}
-        />
-        <motion.div 
-          className="absolute bottom-0 left-0 w-1 h-1 rounded-full"
-          style={{ backgroundColor: secondary }}
-          animate={{ opacity: [0.2, 0.8, 0.2] }}
-          transition={{ duration: 2, repeat: Infinity, delay: (index * 0.2 + 1) % 1 }}
-        />
-        <motion.div 
-          className="absolute bottom-0 right-0 w-1 h-1 rounded-full"
-          style={{ backgroundColor: primary }}
-          animate={{ opacity: [0.2, 0.8, 0.2] }}
-          transition={{ duration: 2, repeat: Infinity, delay: (index * 0.2 + 1.5) % 1 }}
-        />
-        </div>
-        
-        <div className="p-5 flex flex-col items-center">
+        {/* Contenu de la carte */}
+        <div className="p-4 flex flex-col items-center">
           {/* Logo ou initial */}
-          <div className="relative w-16 h-16 flex items-center justify-center mb-4 overflow-hidden">
+          <div className="relative w-12 h-12 flex items-center justify-center mb-3 overflow-hidden">
             {logoUrl ? (
               <motion.div
                 className="w-full h-full flex items-center justify-center"
@@ -383,14 +357,14 @@ function renderTechCard(tech, index, getColorsForTech) {
                 <Image
                   src={logoUrl}
                   alt={tech.nom || `Technologie ${index + 1}`}
-                  width={64}
-                  height={64}
+                  width={48}
+                  height={48}
                   className="object-contain max-w-full max-h-full"
                 />
               </motion.div>
             ) : (
               <motion.div
-                className="flex items-center justify-center w-10 h-10 rounded-full"
+                className="flex items-center justify-center w-8 h-8 rounded-full"
                 style={{ backgroundColor: `${primary}15` }}
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
@@ -403,7 +377,7 @@ function renderTechCard(tech, index, getColorsForTech) {
               >
                 <motion.span
                   style={{ color: primary }}
-                  className="text-lg font-semibold"
+                  className="text-base font-semibold"
                 >
                   {tech.nom?.charAt(0) || '?'}
                 </motion.span>
@@ -411,16 +385,16 @@ function renderTechCard(tech, index, getColorsForTech) {
             )}
           </div>
           
-          {/* Nom de la technologie */}
+          {/* Nom de la technologie - permettre 2 lignes */}
           <motion.h3
-            className="text-base font-medium text-center transition-colors duration-300"
+            className="text-sm font-medium text-center transition-colors duration-300 h-10 flex items-center"
             style={{ color: 'rgba(70, 70, 70, 1)' }}
             whileHover={{ color: primary }}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: delay + 0.3, duration: 0.4 }}
           >
-            {tech.nom || `Technologie ${index + 1}`}
+            <span className="line-clamp-2">{tech.nom || `Technologie ${index + 1}`}</span>
           </motion.h3>
           
           {/* Ligne décorative */}
@@ -432,7 +406,7 @@ function renderTechCard(tech, index, getColorsForTech) {
             }}
             initial={{ width: 0 }}
             animate={{ 
-              width: '40px',
+              width: '32px',
               backgroundPosition: ["0% 0%", "100% 0%"]
             }}
             transition={{ 
@@ -448,7 +422,7 @@ function renderTechCard(tech, index, getColorsForTech) {
           {/* Description avec effet de défilement */}
           {tech.description && (
             <motion.div
-              className="text-xs text-gray-500 text-center h-16 overflow-hidden relative"
+              className="text-xs text-gray-500 text-center h-14 overflow-hidden relative"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: delay + 0.4, duration: 0.4 }}
@@ -479,6 +453,32 @@ function renderTechCard(tech, index, getColorsForTech) {
             </motion.div>
           )}
         </div>
+        
+        {/* Points lumineux aux coins - effet tech */}
+        <motion.div 
+          className="absolute top-0 left-0 w-1 h-1 rounded-full"
+          style={{ backgroundColor: primary }}
+          animate={{ opacity: [0.2, 0.8, 0.2] }}
+          transition={{ duration: 2, repeat: Infinity, delay: index * 0.2 % 1 }}
+        />
+        <motion.div 
+          className="absolute top-0 right-0 w-1 h-1 rounded-full"
+          style={{ backgroundColor: secondary }}
+          animate={{ opacity: [0.2, 0.8, 0.2] }}
+          transition={{ duration: 2, repeat: Infinity, delay: (index * 0.2 + 0.5) % 1 }}
+        />
+        <motion.div 
+          className="absolute bottom-0 left-0 w-1 h-1 rounded-full"
+          style={{ backgroundColor: secondary }}
+          animate={{ opacity: [0.2, 0.8, 0.2] }}
+          transition={{ duration: 2, repeat: Infinity, delay: (index * 0.2 + 1) % 1 }}
+        />
+        <motion.div 
+          className="absolute bottom-0 right-0 w-1 h-1 rounded-full"
+          style={{ backgroundColor: primary }}
+          animate={{ opacity: [0.2, 0.8, 0.2] }}
+          transition={{ duration: 2, repeat: Infinity, delay: (index * 0.2 + 1.5) % 1 }}
+        />
       </div>
     </motion.div>
   );
