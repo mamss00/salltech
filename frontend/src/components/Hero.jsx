@@ -31,27 +31,50 @@ function AnimatedHero() {
       description: 'Nos experts ont travaillé sur des projets prestigieux pour de grandes entreprises'
     },
     {
-      icon: '🏢',
-      title: 'Leaders locaux',
-      description: 'La plus grande agence immobilière du pays nous a fait confiance'
+      icon: '🎓',
+      title: 'Plus de 15 certifications tech',
+      description: 'Notre équipe cumule plus de 15 certifications technologiques reconnues'
     },
     {
-      icon: '🚀',
-      title: 'Présence internationale',
-      description: 'Notre expertise s\'étend au-delà des frontières mauritaniennes'
+      icon: '🍽️',
+      title: '3x champion de streetfood',
+      description: 'AWA Event nous a choisi comme partenaire tech, 2ème meilleur streetfood européen'
     }
   ];
   
   // Experts Projects avec logos
   const expertProjects = [
-    { name: 'BMW', logo: 'M' },
-    { name: 'Air France', logo: 'AF' },
-    { name: 'LVMH', logo: 'LV' },
-    { name: 'SAP', logo: 'S' },
-    { name: 'HDI', logo: 'H' }
+    { 
+      name: 'BMW', 
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/BMW.svg'
+    },
+    { 
+      name: 'Air France', 
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/4/44/Air_France_Logo.svg'
+    },
+    { 
+      name: 'LVMH', 
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/7/74/LVMH_Logo.svg' 
+    },
+    { 
+      name: 'SAP', 
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/5/59/SAP_2011_logo.svg'
+    },
+    { 
+      name: 'HDI', 
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/d/d1/HDI_logo.svg'
+    },
+    { 
+      name: 'Nordex', 
+      logo: 'https://upload.wikimedia.org/wikipedia/commons/5/56/Nordex_Group_Logo.svg'
+    },
+    { 
+      name: 'DSAA', 
+      logo: 'https://www.dsaa.eu/wp-content/uploads/DSAA-Logo-mitClaim-rgb.svg'
+    }
   ];
   
-  // Phrases encore plus courtes pour l'effet de typing
+  // Phrases plus courtes pour l'effet de typing
   const phrases = [
     "les sites web",
     "les apps",
@@ -432,8 +455,12 @@ function AnimatedHero() {
                           transition: { delay: 1.5 + index * 0.1 }
                         }}
                       >
-                        <div className="w-6 h-6 rounded-full bg-white text-blue-900 flex items-center justify-center mr-2 text-xs font-bold shadow-md">
-                          {project.logo}
+                        <div className="w-8 h-8 rounded-full bg-white flex items-center justify-center mr-2 overflow-hidden">
+                          <img 
+                            src={project.logo} 
+                            alt={`Logo ${project.name}`}
+                            className="w-6 h-6 object-contain"
+                          />
                         </div>
                         <span className="text-white font-medium">{project.name}</span>
                       </motion.div>
