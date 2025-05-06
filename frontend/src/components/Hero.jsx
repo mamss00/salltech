@@ -23,24 +23,30 @@ function AnimatedHero() {
     {
       icon: '🌍',
       title: 'Expertise internationale',
-      description: 'Tous nos experts ont une expérience significative à l\'international'
+      description: 'Nos experts disposent d’une solide expérience sur des projets à dimension internationale, en Europe, en Afrique et ailleurs.'
     },
     {
       icon: '🏆',
-      title: 'Expertise reconnue',
-      description: 'Nos experts ont travaillé sur des projets prestigieux pour de grandes entreprises'
+      title: 'Références de prestige',
+      description: 'Nous avons accompagné des grandes entreprises sur des projets innovants à fort impact.'
     },
     {
       icon: '🎓',
-      title: 'Plus de 15 certifications tech',
-      description: 'Notre équipe cumule plus de 15 certifications technologiques reconnues'
+      title: 'Compétences certifiées',
+      description: 'Notre équipe cumule plus de 15 certifications technologiques reconnues mondialement.'
     },
     {
       icon: '🍽️',
-      title: '3x champion de streetfood',
-      description: 'AWA Event nous a choisi comme partenaire tech, 2ème meilleur streetfood européen'
+      title: 'Success story : AWA Event',
+      description: 'AWA Event, 3× champion de streetfood en Allemagne et 2ᵉ meilleur d’Europe, nous a confié la création de sa plateforme e-commerce (site & app).'
+    },
+    {
+      icon: '🏠',
+      title: 'Confiance des leaders',
+      description: 'L’agence d’Amelle Bacar & Esma Kane, leader du marché immobilier en Mauritanie, a choisi notre expertise pour ses projets digitaux.'
     }
   ];
+  
   
   // Experts Projects avec logos
   const expertProjects = [
