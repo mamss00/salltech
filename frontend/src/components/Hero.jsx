@@ -27,8 +27,8 @@ function AnimatedHero() {
     },
     {
       icon: '🏆',
-      title: 'Experts de calibre international',
-      description: 'Nos experts ont travaillé sur des projets prestigieux pour BMW, Air France, LVMH, SAP et HDI'
+      title: 'Expertise reconnue',
+      description: 'Nos experts ont travaillé sur des projets prestigieux pour de grandes entreprises'
     },
     {
       icon: '🏢',
@@ -37,7 +37,7 @@ function AnimatedHero() {
     },
     {
       icon: '🚀',
-      title: '50% de clients internationaux',
+      title: 'Présence internationale',
       description: 'Notre expertise s\'étend au-delà des frontières mauritaniennes'
     }
   ];
@@ -51,13 +51,13 @@ function AnimatedHero() {
     { name: 'HDI', logo: 'H' }
   ];
   
-  // Phrases pour l'effet de typing
+  // Phrases plus courtes pour l'effet de typing
   const phrases = [
     "les beaux sites",
-    "les apps élégantes",
+    "les apps mobiles",
     "le travail propre",
     "l'excellence", 
-    "le professionnalisme"
+    "la qualité"
   ];
   
   // Effet de typing
@@ -170,7 +170,7 @@ function AnimatedHero() {
                 className="text-4xl md:text-5xl font-extrabold leading-tight"
               >
                 Pour ceux qui<br />
-                aiment <span className="gradient-text relative inline-block min-w-[280px]">
+                aiment <span className="gradient-text relative inline-block min-w-[200px] md:min-w-[250px]">
                   {text}
                   <span className={`absolute -right-2 ${isTyping ? 'animate-blink' : ''}`}>|</span>
                 </span>
@@ -212,7 +212,7 @@ function AnimatedHero() {
                 type: "spring",
                 stiffness: 100
               }}
-              className="bg-gradient-to-br from-blue-600 via-purple-600 to-purple-700 rounded-xl shadow-xl overflow-hidden text-white relative z-10"
+              className="bg-gradient-to-br from-blue to-purple rounded-xl shadow-xl overflow-hidden text-white relative z-10"
             >
               {/* Particules d'arrière-plan */}
               <div className="absolute inset-0 overflow-hidden">
@@ -255,10 +255,10 @@ function AnimatedHero() {
                 initial="hidden"
                 animate={animationCompleted ? "visible" : "hidden"}
               >
-                {/* Badge d'expertise - contraste GARANTI */}
+                {/* Badge d'expertise - avec contraste amélioré */}
                 <motion.div
                   variants={itemVariants}
-                  className="inline-block px-4 py-1.5 mb-6 rounded-full bg-indigo-900 backdrop-blur-sm border border-white/20 shadow-sm"
+                  className="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-900 backdrop-blur-sm border border-white/30 shadow-md"
                 >
                   <span className="text-white font-medium text-sm">
                     EXPERTISE INTERNATIONALE
@@ -274,7 +274,7 @@ function AnimatedHero() {
                 
                 <motion.div 
                   variants={itemVariants}
-                  className="h-1 w-24 bg-white/40 mb-8"
+                  className="h-1 w-24 bg-white/60 mb-8"
                 />
                 
                 {/* Points clés avec animations */}
@@ -293,12 +293,12 @@ function AnimatedHero() {
                           transition={{ duration: 0.4 }}
                         >
                           <div className="flex items-start">
-                            <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center mr-4 flex-shrink-0 border border-white/20">
+                            <div className="w-10 h-10 rounded-full bg-blue-800 flex items-center justify-center mr-4 flex-shrink-0 border border-white/30">
                               <span className="text-lg">{point.icon}</span>
                             </div>
                             <div>
                               <h3 className="text-xl font-bold mb-2">{point.title}</h3>
-                              <p className="text-white/90">{point.description}</p>
+                              <p className="text-white">{point.description}</p>
                             </div>
                           </div>
                         </motion.div>
@@ -330,10 +330,10 @@ function AnimatedHero() {
                   ))}
                 </motion.div>
                 
-                {/* Liste des projets avec animation */}
+                {/* Liste des projets avec animation - contraste amélioré */}
                 <motion.div variants={itemVariants}>
                   <motion.p
-                    className="text-sm text-white/90 mb-4 font-medium"
+                    className="text-sm text-white mb-4 font-medium"
                   >
                     Projets sur lesquels nos experts ont travaillé :
                   </motion.p>
@@ -341,10 +341,10 @@ function AnimatedHero() {
                     {expertProjects.map((project, index) => (
                       <motion.div 
                         key={index}
-                        className="bg-white/10 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center border border-white/20"
+                        className="bg-blue-900/80 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center border border-white/30"
                         whileHover={{ 
                           scale: 1.05, 
-                          backgroundColor: "rgba(255, 255, 255, 0.2)"
+                          backgroundColor: "rgba(30, 64, 175, 0.9)"
                         }}
                         initial={{ opacity: 0, scale: 0.8 }}
                         animate={{ 
@@ -353,10 +353,10 @@ function AnimatedHero() {
                           transition: { delay: 1.5 + index * 0.1 }
                         }}
                       >
-                        <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center mr-2 text-xs font-bold border border-white/10">
+                        <div className="w-6 h-6 rounded-full bg-white text-blue-900 flex items-center justify-center mr-2 text-xs font-bold shadow-md">
                           {project.logo}
                         </div>
-                        <span>{project.name}</span>
+                        <span className="text-white font-medium">{project.name}</span>
                       </motion.div>
                     ))}
                   </div>
@@ -366,13 +366,13 @@ function AnimatedHero() {
             
             {/* Éléments décoratifs en arrière-plan */}
             <motion.div
-              className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue-500/20 blur-xl"
+              className="absolute -top-10 -right-10 w-40 h-40 rounded-full bg-blue/20 blur-xl"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 0.6, scale: 1 }}
               transition={{ duration: 1.2, delay: 0.2 }}
             />
             <motion.div
-              className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-purple-500/20 blur-xl"
+              className="absolute -bottom-10 -left-10 w-32 h-32 rounded-full bg-purple/20 blur-xl"
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 0.6, scale: 1 }}
               transition={{ duration: 1.2, delay: 0.4 }}
