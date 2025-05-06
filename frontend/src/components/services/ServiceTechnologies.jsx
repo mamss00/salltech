@@ -25,7 +25,6 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
   
   // États pour le défilement
   const [isHovered, setIsHovered] = useState(false)
-  const [isPaused, setIsPaused] = useState(false)
   
   // Technologies par défaut
   const defaultTechs = [
@@ -47,13 +46,13 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
   
   // Effet pour le défilement automatique
   useEffect(() => {
-    if (allTechnologies.length <= 6 || isPaused || isHovered || !scrollContainerRef.current) return;
+    if (allTechnologies.length <= 6 || isHovered || !scrollContainerRef.current) return;
     
     let animationFrameId;
     let scrollPos = 0;
     const totalWidth = scrollContainerRef.current.scrollWidth;
     const containerWidth = scrollContainerRef.current.clientWidth;
-    const scrollStep = 0.3; // Vitesse de défilement (pixels par frame)
+    const scrollStep = 0.4; // Vitesse de défilement (pixels par frame)
     
     const scroll = () => {
       if (!scrollContainerRef.current) return;
@@ -76,7 +75,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [allTechnologies.length, isPaused, isHovered]);
+  }, [allTechnologies.length, isHovered]);
   
   // Définir les couleurs en fonction de la technologie (adoucies)
   const getColorsForTech = (techName) => {
@@ -238,30 +237,6 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           </motion.p>
         </motion.div>
         
-        {/* Contrôles de défilement */}
-        <div className="flex justify-center mb-6">
-          <button 
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${isPaused ? 'bg-gray-200 text-gray-800' : 'bg-gray-100 text-gray-600'}`}
-            onClick={() => setIsPaused(!isPaused)}
-          >
-            {isPaused ? (
-              <span className="flex items-center">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
-                </svg>
-                Reprendre le défilement
-              </span>
-            ) : (
-              <span className="flex items-center">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                Mettre en pause
-              </span>
-            )}
-          </button>
-        </div>
-        
         {/* Conteneur de technologies avec défilement continu */}
         <div 
           className="overflow-hidden"
@@ -279,6 +254,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
               ref={scrollContainerRef}
               className="flex overflow-x-auto scrollbar-hide pb-4 pt-2 px-2 -mx-2"
               style={{ scrollBehavior: 'smooth' }}
+            >
             >
               {displayTechnologies.map((tech, index) => {
                 // Récupérer l'URL du logo
