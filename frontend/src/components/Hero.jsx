@@ -51,11 +51,11 @@ function AnimatedHero() {
     { name: 'HDI', logo: 'H' }
   ];
   
-  // Phrases plus courtes pour l'effet de typing
+  // Phrases encore plus courtes pour l'effet de typing
   const phrases = [
-    "les beaux sites",
-    "les apps mobiles",
-    "le travail propre",
+    "les sites web",
+    "les apps",
+    "la rigueur",
     "l'excellence", 
     "la qualité"
   ];
@@ -162,7 +162,7 @@ function AnimatedHero() {
               INNOVER. CRÉER. TRANSFORMER.
             </motion.h2>
             
-            <div className="h-[180px] mb-12 relative">
+            <div className="mb-10 relative">
               <motion.h1 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -170,7 +170,7 @@ function AnimatedHero() {
                 className="text-4xl md:text-5xl font-extrabold leading-tight"
               >
                 Pour ceux qui<br />
-                aiment <span className="gradient-text relative inline-block min-w-[200px] md:min-w-[250px]">
+                aiment <span className="gradient-text relative inline-block min-w-[160px] md:min-w-[200px]">
                   {text}
                   <span className={`absolute -right-2 ${isTyping ? 'animate-blink' : ''}`}>|</span>
                 </span>
@@ -212,7 +212,7 @@ function AnimatedHero() {
                 type: "spring",
                 stiffness: 100
               }}
-              className="bg-gradient-to-br from-blue to-purple rounded-xl shadow-xl overflow-hidden text-white relative z-10"
+              className="bg-gradient-to-br from-blue to-purple rounded-xl shadow-xl overflow-hidden text-white relative z-10 backdrop-blur-sm"
             >
               {/* Particules d'arrière-plan */}
               <div className="absolute inset-0 overflow-hidden">
@@ -247,6 +247,23 @@ function AnimatedHero() {
                   />
                 ))}
               </div>
+              
+              {/* Animation de gradient sur tout le conteneur */}
+              <motion.div 
+                className="absolute inset-0"
+                style={{ 
+                  background: "linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1), rgba(52, 152, 219, 0.1))",
+                  backgroundSize: "400% 400%",
+                }}
+                animate={{
+                  backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
+                }}
+                transition={{
+                  duration: 15,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
 
               {/* Contenu avec animations séquentielles */}
               <motion.div 
@@ -254,13 +271,75 @@ function AnimatedHero() {
                 variants={containerVariants}
                 initial="hidden"
                 animate={animationCompleted ? "visible" : "hidden"}
+                whileHover={{ 
+                  boxShadow: "0 0 30px rgba(52, 152, 219, 0.2) inset",
+                  transition: { duration: 0.5 }
+                }}
               >
-                {/* Badge d'expertise - avec contraste amélioré */}
+                {/* Effet de brillance occasionnel sur tout le bloc */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                  style={{ 
+                    backgroundSize: "200% 100%",
+                  }}
+                  animate={{
+                    backgroundPosition: ["100% 0%", "-100% 0%"],
+                  }}
+                  transition={{
+                    duration: 3,
+                    repeat: Infinity,
+                    repeatDelay: 7,
+                  }}
+                />
+                
+                {/* Badge d'expertise - avec animation */}
                 <motion.div
                   variants={itemVariants}
-                  className="inline-block px-4 py-1.5 mb-6 rounded-full bg-blue-900 backdrop-blur-sm border border-white/30 shadow-md"
+                  className="inline-block px-4 py-1.5 mb-6 rounded-full border border-white/30 shadow-md overflow-hidden relative backdrop-blur-sm"
+                  whileHover={{ scale: 1.05 }}
                 >
-                  <span className="text-white font-medium text-sm">
+                  {/* Animation de gradient qui tourne */}
+                  <motion.div 
+                    className="absolute inset-0"
+                    style={{
+                      background: "linear-gradient(45deg, rgba(52, 152, 219, 0.9), rgba(155, 89, 182, 0.9), rgba(52, 152, 219, 0.9))",
+                      backgroundSize: "200% 200%",
+                    }}
+                    animate={{
+                      backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"]
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "linear"
+                    }}
+                  />
+                  
+                  {/* Particules lumineuses */}
+                  {[...Array(5)].map((_, i) => (
+                    <motion.div 
+                      key={i}
+                      className="absolute rounded-full bg-white/60"
+                      style={{
+                        width: 2 + Math.random() * 3,
+                        height: 2 + Math.random() * 3,
+                        top: Math.random() * 100 + "%",
+                        left: Math.random() * 100 + "%",
+                      }}
+                      animate={{
+                        opacity: [0, 1, 0],
+                        scale: [0, 1, 0],
+                      }}
+                      transition={{
+                        duration: 1.5 + Math.random() * 2,
+                        repeat: Infinity,
+                        delay: Math.random() * 2,
+                        ease: "easeInOut"
+                      }}
+                    />
+                  ))}
+                  
+                  <span className="text-white font-medium text-sm relative z-10 px-1">
                     EXPERTISE INTERNATIONALE
                   </span>
                 </motion.div>
