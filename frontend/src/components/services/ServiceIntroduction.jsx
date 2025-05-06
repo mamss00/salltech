@@ -156,8 +156,8 @@ export default function ServiceIntroduction({ content, features, color = 'blue' 
             className="bg-white rounded-2xl shadow-lg overflow-hidden mb-10"
           >
             <div className="relative">
-              {/* Barre supérieure fine et subtile */}
-              <div className={`h-0.5 bg-${color}/30 w-full`}></div>
+              {/* Barre supérieure subtile mais visible */}
+              <div className={`h-1 bg-gradient-to-r from-${color}/30 to-purple/20 w-full`}></div>
               
               {/* Contenu avec animation subtile */}
               <div className="p-8 lg:p-10 relative overflow-hidden">
