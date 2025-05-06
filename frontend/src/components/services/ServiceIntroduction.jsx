@@ -522,40 +522,22 @@ export default function EnhancedServiceIntroduction({ content, features, color =
               </motion.div>
             )}
             
-            {/* Nouveau design d'encadré avec style techno */}
+            {/* Nouveau design d'encadré avec style amélioré - plus simple */}
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
               animate={contentInView ? { opacity: 1, y: 0 } : {}}
               transition={{ duration: 0.8, delay: 0.9 }}
-              className="backdrop-blur-sm p-1 rounded-2xl shadow-lg relative overflow-hidden"
-              style={{
-                background: `linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.9) 100%)`,
-              }}
+              className="bg-white p-1 rounded-2xl shadow-lg relative overflow-hidden"
             >
-              {/* Bordure dégradée animée */}
-              <motion.div
-                className="absolute inset-0 rounded-2xl opacity-30 pointer-events-none overflow-hidden"
-                style={{ background: `linear-gradient(90deg, var(--color-${color}), var(--color-purple), var(--color-red), var(--color-${color}))`, backgroundSize: '400% 100%' }}
-                animate={{ backgroundPosition: ['0% center', '100% center', '0% center'] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              />
+              {/* Bordure dégradée subtile */}
+              <div className="absolute inset-0 rounded-2xl opacity-20 pointer-events-none">
+                <div className={`h-1 w-full bg-gradient-to-r from-${color} via-purple to-red`}></div>
+              </div>
               
               {/* Contenu intérieur */}
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl p-8 relative z-10">
-                {/* Motif de circuit imprimé */}
-                <svg className="absolute inset-0 w-full h-full opacity-5" viewBox="0 0 200 200">
-                  <pattern id="circuitPattern" patternUnits="userSpaceOnUse" width="40" height="40">
-                    <rect width="40" height="40" fill="none" />
-                    <path d="M10,0 L10,30 L30,30" stroke={`var(--color-${color})`} strokeWidth="0.5" fill="none" />
-                    <circle cx="30" cy="30" r="2" stroke={`var(--color-${color})`} strokeWidth="0.5" fill="none" />
-                    <circle cx="10" cy="30" r="2" stroke={`var(--color-${color})`} strokeWidth="0.5" fill="none" />
-                    <circle cx="10" cy="10" r="2" stroke={`var(--color-${color})`} strokeWidth="0.5" fill="none" />
-                  </pattern>
-                  <rect width="100%" height="100%" fill="url(#circuitPattern)" />
-                </svg>
-              
+              <div className="bg-white rounded-xl p-8 relative z-10 border border-gray-100">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8 relative z-10">
-                  {/* Icône animée */}
+                  {/* Icône simplifiée */}
                   <div className="md:col-span-3 flex justify-center">
                     <motion.div 
                       className="relative"
@@ -564,122 +546,56 @@ export default function EnhancedServiceIntroduction({ content, features, color =
                         transition: { duration: 0.2 }
                       }}
                     >
-                      {/* Cercles d'énergie pulsants */}
+                      {/* Cercle simple avec ombre légère */}
                       <motion.div
-                        className="absolute inset-0 rounded-full"
+                        className={`w-20 h-20 rounded-full bg-${color}/10 flex items-center justify-center relative`}
                         animate={{
                           boxShadow: [
-                            `0 0 0 4px rgba(var(--color-${color}), 0.1)`,
-                            `0 0 0 12px rgba(var(--color-${color}), 0)`,
+                            `0 0 0 0 rgba(var(--color-${color}), 0)`,
+                            `0 0 0 8px rgba(var(--color-${color}), 0.05)`,
+                            `0 0 0 0 rgba(var(--color-${color}), 0)`
                           ]
                         }}
                         transition={{
-                          duration: 2,
+                          duration: 3,
                           repeat: Infinity,
-                          ease: "easeOut"
+                          ease: "easeInOut"
                         }}
-                      />
-                      
-                      <motion.div
-                        className="absolute inset-0 rounded-full"
-                        animate={{
-                          boxShadow: [
-                            `0 0 0 8px rgba(var(--color-purple), 0.05)`,
-                            `0 0 0 20px rgba(var(--color-purple), 0)`,
-                          ]
-                        }}
-                        transition={{
-                          duration: 2.5,
-                          repeat: Infinity,
-                          ease: "easeOut",
-                          delay: 0.5
-                        }}
-                      />
-                      
-                      {/* Conteneur hexagonal */}
-                      <div className="relative">
-                        <svg width="105" height="120" viewBox="0 0 105 120" className="relative z-10">
-                          <defs>
-                            <linearGradient id="hexGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                              <stop offset="0%" stopColor={`var(--color-${color})`} />
-                              <stop offset="100%" stopColor="var(--color-purple)" />
-                            </linearGradient>
-                          </defs>
-                          <path 
-                            d="M52.5,5 L97.5,30 L97.5,90 L52.5,115 L7.5,90 L7.5,30 Z" 
-                            stroke="url(#hexGradient)" 
-                            strokeWidth="2" 
-                            fill="white"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        
-                        {/* Icône au centre */}
-                        <motion.div
-                          className="absolute inset-0 flex items-center justify-center"
+                      >
+                        {/* Icône */}
+                        <motion.svg 
+                          className={`w-10 h-10 text-${color}`} 
+                          viewBox="0 0 24 24" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          strokeWidth="1.5"
                           animate={{
                             scale: [1, 1.05, 1],
-                            rotate: [0, 5, 0, -5, 0]
                           }}
                           transition={{
-                            duration: 6,
+                            duration: 4,
                             repeat: Infinity,
                             repeatType: "mirror"
                           }}
                         >
-                          <svg className={`w-12 h-12 text-${color}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-                          </svg>
-                        </motion.div>
-                        
-                        {/* Point lumineux qui tourne autour de l'hexagone */}
-                        <motion.div
-                          className={`absolute w-2 h-2 rounded-full bg-${color} shadow-lg shadow-${color}/30 z-20`}
-                          style={{ 
-                            top: '50%',
-                            left: '50%',
-                            marginLeft: '45px',
-                            marginTop: '-1px'
-                          }}
-                          animate={{
-                            rotate: [0, 360]
-                          }}
-                          transition={{
-                            duration: 8,
-                            repeat: Infinity,
-                            ease: "linear"
-                          }}
-                          transformOrigin="center center"
-                        />
-                      </div>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+                        </motion.svg>
+                      </motion.div>
                     </motion.div>
                   </div>
                   
                   {/* Texte */}
                   <div className="md:col-span-9">
                     <motion.h3 
-                      className="text-xl font-bold mb-4 flex items-center"
+                      className="text-xl font-bold mb-4"
                       initial={{ opacity: 0, x: -20 }}
                       animate={contentInView ? { opacity: 1, x: 0 } : {}}
                       transition={{ duration: 0.5, delay: 1 }}
                     >
-                      <span className={`text-${color}`}>Pourquoi choisir</span>
-                      <motion.span 
-                        className="ml-2 relative"
-                        animate={{
-                          color: [`var(--color-${color})`, "var(--color-purple)", "var(--color-red)", `var(--color-${color})`]
-                        }}
-                        transition={{
-                          duration: 8,
-                          repeat: Infinity,
-                          ease: "linear"
-                        }}
-                      >
-                        SALLTECH
-                      </motion.span>
+                      <span className={`text-${color}`}>Pourquoi choisir </span>
+                      <span className="text-gray-800">SALLTECH</span>
                       <motion.span
-                        className="ml-1"
+                        className="ml-1 opacity-0"
                         animate={{ opacity: [0, 1, 0] }}
                         transition={{ duration: 1, repeat: Infinity, repeatDelay: 1 }}
                       >
@@ -687,26 +603,13 @@ export default function EnhancedServiceIntroduction({ content, features, color =
                       </motion.span>
                     </motion.h3>
                     
-                    {/* Ligne séparatrice techno */}
+                    {/* Ligne séparatrice simple */}
                     <motion.div
-                      className="relative h-0.5 mb-5 overflow-hidden"
+                      className={`h-0.5 w-0 bg-${color}/20 mb-5 rounded-full`}
                       initial={{ width: 0 }}
-                      animate={contentInView ? { width: '100%' } : {}}
+                      animate={contentInView ? { width: '100px' } : {}}
                       transition={{ duration: 0.8, delay: 1.2 }}
-                    >
-                      <div className={`absolute inset-0 bg-gradient-to-r from-${color} to-transparent`}></div>
-                      
-                      {/* Effet de scan */}
-                      <motion.div
-                        className="absolute top-0 bottom-0 w-20 bg-white/50"
-                        animate={{ x: ['-100%', '400%'] }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          repeatDelay: 3
-                        }}
-                      />
-                    </motion.div>
+                    />
                     
                     <motion.p 
                       className="text-gray-700 mb-4"
@@ -718,38 +621,38 @@ export default function EnhancedServiceIntroduction({ content, features, color =
                       de créer des solutions parfaitement adaptées à vos besoins spécifiques et à votre contexte local.
                     </motion.p>
                     
-                    {/* Points clés avec icônes */}
+                    {/* Points clés avec icônes simples */}
                     <motion.div 
-                      className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5"
+                      className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-5"
                       initial={{ opacity: 0, y: 20 }}
                       animate={contentInView ? { opacity: 1, y: 0 } : {}}
                       transition={{ duration: 0.6, delay: 1.5 }}
                     >
                       <div className="flex items-center">
-                        <div className={`w-8 h-8 rounded-lg bg-${color}/10 flex items-center justify-center text-${color} mr-2 flex-shrink-0`}>
+                        <div className={`w-8 h-8 rounded-full bg-${color}/10 flex items-center justify-center text-${color} mr-3 flex-shrink-0`}>
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                           </svg>
                         </div>
-                        <span className="text-sm">Solutions sur mesure</span>
+                        <span className="text-sm text-gray-600">Solutions sur mesure</span>
                       </div>
                       
                       <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-lg bg-purple/10 flex items-center justify-center text-purple mr-2 flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-purple/10 flex items-center justify-center text-purple mr-3 flex-shrink-0">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                           </svg>
                         </div>
-                        <span className="text-sm">Connaissance locale</span>
+                        <span className="text-sm text-gray-600">Connaissance locale</span>
                       </div>
                       
                       <div className="flex items-center">
-                        <div className="w-8 h-8 rounded-lg bg-red/10 flex items-center justify-center text-red mr-2 flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-red/10 flex items-center justify-center text-red mr-3 flex-shrink-0">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                           </svg>
                         </div>
-                        <span className="text-sm">Support de proximité</span>
+                        <span className="text-sm text-gray-600">Support de proximité</span>
                       </div>
                     </motion.div>
                   </div>
