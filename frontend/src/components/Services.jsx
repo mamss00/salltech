@@ -531,9 +531,6 @@ const EnhancedServices = () => {
                   )
                 })}
               </motion.div>
-            )}
-                      
-        )}
         
         {/* Voir tous les services - Bouton flottant */}
         {!isLoading && !error && services.length > 0 && (
