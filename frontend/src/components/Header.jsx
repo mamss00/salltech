@@ -20,8 +20,8 @@ export default function Header() {
 
   return (
     <header 
-      className={`fixed w-full z-50 transition-all duration-300 ${
-        scrolled ? 'py-4 shadow-md bg-white/80 backdrop-blur-md' : 'py-6 md:py-8 bg-white/50 backdrop-blur-xl'
+      className={`fixed w-full z-50 bg-salltech-light/80 backdrop-blur-lg transition-all duration-300 ${
+        scrolled ? 'py-4 shadow-md' : 'py-6 md:py-8'
       }`}
     >
       <div className="container mx-auto px-5 flex justify-between items-center">
@@ -67,7 +67,7 @@ export default function Header() {
         </button>
         
         {/* Menu mobile */}
-        <div className={`fixed inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center transition-transform duration-300 ease-in-out ${
+        <div className={`fixed inset-0 bg-light z-40 flex flex-col items-center justify-center transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <nav className="flex flex-col items-center">
