@@ -1,12 +1,13 @@
-'use client'
+'use client';
 
-import { useState, useEffect } from 'react'
-import SallTechLogo from './SallTechLogo'
-import CTAButton from './CTAButton'
+import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import SallTechLogo from './SallTechLogo';
+import CTAButton from './CTAButton';
 
 export default function Header() {
-  const [scrolled, setScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   useEffect(() => {
     // Header fixe au défilement
@@ -14,8 +15,12 @@ export default function Header() {
       const header = document.querySelector('header');
       if (header) {
         if (window.scrollY > 50) {
+          header.style.padding = '15px 0';
+          header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
           setScrolled(true);
         } else {
+          header.style.padding = '30px 0';
+          header.style.boxShadow = 'none';
           setScrolled(false);
         }
       }
@@ -26,24 +31,27 @@ export default function Header() {
   }, []);
 
   return (
-    <header className={`fixed w-full z-50 bg-white/10 backdrop-blur-lg transition-all duration-300 ${
-      scrolled ? 'py-3 shadow-md' : 'py-6 md:py-8'
-    }`}>
+    <header className="fixed w-full z-50 bg-salltech-light/95 backdrop-blur-md transition-all duration-300" style={{ padding: '30px 0' }}>
       <div className="container mx-auto px-5 flex justify-between items-center">
-        <a href="#home" className="z-50">
+        <div className="z-10">
           <SallTechLogo />
-        </a>
+        </div>
         
-        {/* Navigation desktop */}
+        {/* Effet de lumière/halo - Élément absolu positionné */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
+          <div className="absolute -top-20 -right-20 w-96 h-96 bg-blue/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-purple/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-red/10 rounded-full blur-3xl opacity-60"></div>
+        </div>
+        
         <nav className="hidden md:block">
           <ul className="flex space-x-10">
-            <li><a href="#home" className="header-link text-lg font-medium">Accueil</a></li>
-            <li><a href="#services" className="header-link text-lg font-medium">Services</a></li>
-            <li><a href="#portfolio" className="header-link text-lg font-medium">Portfolio</a></li>
+            <li><Link href="#home" className="header-link text-lg font-medium">Accueil</Link></li>
+            <li><Link href="#services" className="header-link text-lg font-medium">Services</Link></li>
+            <li><Link href="#portfolio" className="header-link text-lg font-medium">Portfolio</Link></li>
           </ul>
         </nav>
         
-        {/* CTA Button - Desktop only */}
         <CTAButton 
           href="#contact" 
           headerStyle={true}
@@ -121,5 +129,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }
