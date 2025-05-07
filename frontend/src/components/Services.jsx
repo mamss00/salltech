@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { getServices, titreToSlug } from '@/utils/api'
 import Link from 'next/link'
@@ -18,6 +18,7 @@ const EnhancedServices = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
   const [hoveredCard, setHoveredCard] = useState(null)
+  const [appear, setAppear] = useState(false)
 
   // Animation au scroll pour l'ensemble de la section
   const { scrollYProgress } = useScroll({
@@ -26,6 +27,17 @@ const EnhancedServices = () => {
   })
 
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.5, 1, 1, 0.5])
+
+  // Déclencher l'animation de séquence après le chargement
+  useEffect(() => {
+    if (servicesInView && !isLoading && !error) {
+      // Délai avant de déclencher la séquence d'animation
+      const timer = setTimeout(() => {
+        setAppear(true)
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [servicesInView, isLoading, error])
 
   // Chargement des services
   useEffect(() => {
@@ -66,25 +78,103 @@ const EnhancedServices = () => {
     visible: {
       opacity: 1,
       transition: { 
-        staggerChildren: 0.1,
-        delayChildren: 0.2
+        staggerChildren: 0.15,
+        delayChildren: 0.3,
+        when: "beforeChildren",
+        ease: "easeOut"
       }
     }
   }
 
   // Variants d'animation pour les cartes
   const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
-    visible: {
+    hidden: { 
+      y: 80,
+      opacity: 0,
+      scale: 0.9,
+      rotateZ: -2
+    },
+    visible: (i) => ({
       y: 0,
       opacity: 1,
+      scale: 1,
+      rotateZ: 0,
       transition: { 
         type: "spring",
-        stiffness: 100,
-        damping: 20,
-        duration: 0.6 
+        stiffness: 80,
+        damping: 15,
+        mass: 0.8,
+        duration: 0.7,
+        delay: i * 0.1
       }
-    }
+    })
+  }
+
+  // Variants pour les éléments internes des cartes
+  const iconVariants = {
+    hidden: { scale: 0, opacity: 0, rotateY: 90 },
+    visible: (i) => ({ 
+      scale: 1, 
+      opacity: 1, 
+      rotateY: 0,
+      transition: { 
+        type: "spring", 
+        delay: 0.1 + (i * 0.05),
+        duration: 0.6 
+      } 
+    })
+  }
+
+  const titleVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: (i) => ({ 
+      opacity: 1, 
+      x: 0,
+      transition: { 
+        type: "spring", 
+        delay: 0.2 + (i * 0.05),
+        duration: 0.5 
+      } 
+    })
+  }
+
+  const lineVariants = {
+    hidden: { width: "0%", opacity: 0 },
+    visible: (i) => ({ 
+      width: "40px", 
+      opacity: 1,
+      transition: { 
+        type: "spring", 
+        delay: 0.3 + (i * 0.05),
+        duration: 0.5 
+      } 
+    })
+  }
+
+  const descriptionVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({ 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring", 
+        delay: 0.4 + (i * 0.05),
+        duration: 0.5 
+      } 
+    })
+  }
+
+  const linkVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: (i) => ({ 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring", 
+        delay: 0.5 + (i * 0.05),
+        duration: 0.5 
+      } 
+    })
   }
 
   // Obtenir la classe de couleur en fonction de l'index
@@ -205,12 +295,12 @@ const EnhancedServices = () => {
         className="container relative z-10"
         style={{ opacity: sectionOpacity }}
       >
-        {/* Titre avec animation améliorée */}
+        {/* Séquence d'animation du titre */}
         <div className="text-center relative">
           <motion.div
             className="inline-block mb-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, y: -10, scale: 0.9 }}
+            animate={titleInView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.5 }}
           >
             <motion.span 
@@ -294,137 +384,157 @@ const EnhancedServices = () => {
             <p className="text-gray-600">{error}</p>
           </motion.div>
         ) : (
-          <motion.div
-            ref={servicesRef}
-            variants={containerVariants}
-            initial="hidden"
-            animate={servicesInView ? 'visible' : 'hidden'}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            {services.map((service, index) => {
-              const color = service.Couleur || getColorByIndex(index)
-              const emoji = unicodeToEmoji(service.Emoji)
-              const textColor = color.includes('blue') ? 'text-blue' : color.includes('purple') ? 'text-purple' : color.includes('red') ? 'text-red' : 'text-blue'
-              const slug = service.slug || titreToSlug(service.Titre)
-              const isHovered = hoveredCard === service.id
+          <AnimatePresence>
+            {appear && (
+              <motion.div
+                ref={servicesRef}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+              >
+                {services.map((service, index) => {
+                  const color = service.Couleur || getColorByIndex(index)
+                  const emoji = unicodeToEmoji(service.Emoji)
+                  const textColor = color.includes('blue') ? 'text-blue' : color.includes('purple') ? 'text-purple' : color.includes('red') ? 'text-red' : 'text-blue'
+                  const slug = service.slug || titreToSlug(service.Titre)
+                  const isHovered = hoveredCard === service.id
 
-              return (
-                <motion.div
-                  key={service.id}
-                  variants={itemVariants}
-                  className="group h-full"
-                  onMouseEnter={() => setHoveredCard(service.id)}
-                  onMouseLeave={() => setHoveredCard(null)}
-                >
-                  <motion.div 
-                    className={`bg-gradient-to-br ${color} backdrop-blur-sm rounded-2xl shadow-md 
-                    transition-all duration-500 h-full flex flex-col p-8 relative overflow-hidden`}
-                    whileHover={{ 
-                      y: -10, 
-                      boxShadow: '0 20px 30px rgba(0, 0, 0, 0.1)',
-                      scale: 1.02
-                    }}
-                  >
-                    {/* Effet de surbrillance au survol */}
-                    <motion.div 
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                      style={{ 
-                        backgroundSize: "200% 100%",
-                        opacity: 0
-                      }}
-                      animate={isHovered ? {
-                        backgroundPosition: ["100% 0%", "-100% 0%"],
-                        opacity: 1
-                      } : {}}
-                      transition={{
-                        duration: 1.5
-                      }}
-                    />
-                    
-                    {/* Icône avec animation */}
-                    <motion.div 
-                      className="text-4xl mb-6 relative"
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                  return (
+                    <motion.div
+                      key={service.id}
+                      custom={index} // Utiliser custom pour le délai séquentiel
+                      variants={itemVariants}
+                      className="group h-full"
+                      onMouseEnter={() => setHoveredCard(service.id)}
+                      onMouseLeave={() => setHoveredCard(null)}
+                      initial="hidden"
+                      animate="visible"
                     >
-                      {/* Cercle décoratif derrière l'icône */}
                       <motion.div 
-                        className={`absolute inset-0 w-16 h-16 opacity-20 rounded-full ${textColor.replace('text-', 'bg-')}`}
-                        animate={isHovered ? {
-                          scale: [1, 1.2, 1],
-                        } : {}}
-                        transition={{ duration: 1.5, repeat: isHovered ? Infinity : 0 }}
-                      />
-                      
-                      <motion.span 
-                        className={`text-5xl ${textColor} relative z-10 inline-block`}
-                        animate={isHovered ? {
-                          rotate: [0, 5, 0, -5, 0],
-                          scale: [1, 1.1, 1]
-                        } : {}}
-                        transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
+                        className={`bg-gradient-to-br ${color} backdrop-blur-sm rounded-2xl shadow-md 
+                        transition-all duration-500 h-full flex flex-col p-8 relative overflow-hidden`}
+                        whileHover={{ 
+                          y: -10, 
+                          boxShadow: '0 20px 30px rgba(0, 0, 0, 0.1)',
+                          scale: 1.02
+                        }}
                       >
-                        {emoji}
-                      </motion.span>
-                    </motion.div>
-                    
-                    {/* Titre et description */}
-                    <motion.h3 
-                      className={`text-2xl font-bold mb-4 transition-colors duration-300 group-hover:${textColor}`}
-                    >
-                      {service.Titre}
-                    </motion.h3>
-                    
-                    <motion.div 
-                      className="h-0.5 w-10 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 transition-all duration-500 group-hover:w-20"
-                    />
-                    
-                    <motion.p 
-                      className="text-gray-600 mb-6 flex-grow"
-                    >
-                      {extractTextFromRichText(service.Description)}
-                    </motion.p>
-                    
-                    {/* Lien avec animation */}
-                    <motion.div
-                      className="mt-auto"
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                    >
-                      <Link 
-                        href={`/services/${slug}`} 
-                        className={`inline-flex items-center ${textColor} font-medium hover:underline`}
-                      >
-                        <span>En savoir plus</span>
-                        <motion.svg 
-                          className="w-5 h-5 ml-2" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                          animate={isHovered ? { x: [0, 5, 0] } : {}}
-                          transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
+                        {/* Effet de surbrillance au survol */}
+                        <motion.div 
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
+                          style={{ 
+                            backgroundSize: "200% 100%",
+                            opacity: 0
+                          }}
+                          animate={isHovered ? {
+                            backgroundPosition: ["100% 0%", "-100% 0%"],
+                            opacity: 1
+                          } : {}}
+                          transition={{
+                            duration: 1.5
+                          }}
+                        />
+                        
+                        {/* Icône avec animation séquentielle */}
+                        <motion.div 
+                          className="text-4xl mb-6 relative"
+                          custom={index}
+                          variants={iconVariants}
+                          whileHover={{ scale: 1.1 }}
+                          transition={{ type: "spring", stiffness: 300, damping: 10 }}
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </motion.svg>
-                      </Link>
+                          {/* Cercle décoratif derrière l'icône */}
+                          <motion.div 
+                            className={`absolute inset-0 w-16 h-16 opacity-20 rounded-full ${textColor.replace('text-', 'bg-')}`}
+                            animate={isHovered ? {
+                              scale: [1, 1.2, 1],
+                            } : {}}
+                            transition={{ duration: 1.5, repeat: isHovered ? Infinity : 0 }}
+                          />
+                          
+                          <motion.span 
+                            className={`text-5xl ${textColor} relative z-10 inline-block`}
+                            animate={isHovered ? {
+                              rotate: [0, 5, 0, -5, 0],
+                              scale: [1, 1.1, 1]
+                            } : {}}
+                            transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
+                          >
+                            {emoji}
+                          </motion.span>
+                        </motion.div>
+                        
+                        {/* Titre avec animation séquentielle */}
+                        <motion.h3 
+                          custom={index}
+                          variants={titleVariants}
+                          className={`text-2xl font-bold mb-4 transition-colors duration-300 group-hover:${textColor}`}
+                        >
+                          {service.Titre}
+                        </motion.h3>
+                        
+                        {/* Ligne séparatrice avec animation séquentielle */}
+                        <motion.div 
+                          custom={index}
+                          variants={lineVariants}
+                          className="h-0.5 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 transition-all duration-500 group-hover:w-20"
+                        />
+                        
+                        {/* Description avec animation séquentielle */}
+                        <motion.p 
+                          custom={index}
+                          variants={descriptionVariants}
+                          className="text-gray-600 mb-6 flex-grow"
+                        >
+                          {extractTextFromRichText(service.Description)}
+                        </motion.p>
+                        
+                        {/* Lien avec animation séquentielle */}
+                        <motion.div
+                          custom={index}
+                          variants={linkVariants}
+                          className="mt-auto"
+                          whileHover={{ x: 5 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                        >
+                          <Link 
+                            href={`/services/${slug}`} 
+                            className={`inline-flex items-center ${textColor} font-medium hover:underline`}
+                          >
+                            <span>En savoir plus</span>
+                            <motion.svg 
+                              className="w-5 h-5 ml-2" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                              animate={isHovered ? { x: [0, 5, 0] } : {}}
+                              transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </motion.svg>
+                          </Link>
+                        </motion.div>
+                        
+                        {/* Points lumineux aux coins */}
+                        <motion.div
+                          className={`absolute top-2 left-2 w-1 h-1 rounded-full ${textColor.replace('text-', 'bg-')}`}
+                          animate={{ opacity: [0.3, 0.8, 0.3] }}
+                          transition={{ duration: 2, repeat: Infinity }}
+                        />
+                        <motion.div
+                          className={`absolute bottom-2 right-2 w-1 h-1 rounded-full ${textColor.replace('text-', 'bg-')}`}
+                          animate={{ opacity: [0.3, 0.8, 0.3] }}
+                          transition={{ duration: 2, repeat: Infinity, delay: 1 }}
+                        />
+                      </motion.div>
                     </motion.div>
-                    
-                    {/* Points lumineux aux coins */}
-                    <motion.div
-                      className={`absolute top-2 left-2 w-1 h-1 rounded-full ${textColor.replace('text-', 'bg-')}`}
-                      animate={{ opacity: [0.3, 0.8, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <motion.div
-                      className={`absolute bottom-2 right-2 w-1 h-1 rounded-full ${textColor.replace('text-', 'bg-')}`}
-                      animate={{ opacity: [0.3, 0.8, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                    />
-                  </motion.div>
-                </motion.div>
-              )
-            })}
-          </motion.div>
+                  )
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
         )}
         
         {/* Voir tous les services - Bouton flottant */}
@@ -432,8 +542,8 @@ const EnhancedServices = () => {
           <motion.div
             className="text-center mt-16"
             initial={{ opacity: 0, y: 20 }}
-            animate={servicesInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.8, duration: 0.6 }}
+            animate={appear ? { opacity: 1, y: 0 } : {}}
+            transition={{ delay: 1, duration: 0.6 }}
           >
             <motion.div
               className="inline-block"
@@ -446,9 +556,16 @@ const EnhancedServices = () => {
                 className="inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-4 rounded-xl font-medium"
               >
                 <span>Voir tous nos services</span>
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-5 h-5 ml-2" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                </svg>
+                </motion.svg>
               </Link>
             </motion.div>
           </motion.div>
