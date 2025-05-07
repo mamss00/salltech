@@ -6,7 +6,6 @@ import SallTechLogo from './SallTechLogo';
 import CTAButton from './CTAButton';
 
 export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   useEffect(() => {
@@ -17,11 +16,9 @@ export default function Header() {
         if (window.scrollY > 50) {
           header.style.padding = '15px 0';
           header.style.boxShadow = '0 5px 20px rgba(0, 0, 0, 0.1)';
-          setScrolled(true);
         } else {
           header.style.padding = '30px 0';
           header.style.boxShadow = 'none';
-          setScrolled(false);
         }
       }
     };
@@ -32,16 +29,18 @@ export default function Header() {
 
   return (
     <header className="fixed w-full z-50 bg-salltech-light/95 backdrop-blur-md transition-all duration-300" style={{ padding: '30px 0' }}>
+      {/* Shadow/glow effect en arrière-plan */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 bg-gradient-to-b from-white/80 to-transparent opacity-70"></div>
+        <div className="absolute top-0 left-0 right-0 h-[1px] bg-white/40"></div>
+        <div className="absolute -top-10 right-1/4 w-64 h-64 bg-blue/20 rounded-full blur-3xl opacity-50"></div>
+        <div className="absolute -bottom-8 left-1/3 w-64 h-64 bg-purple/20 rounded-full blur-3xl opacity-40"></div>
+        <div className="absolute top-0 right-0 w-96 h-32 bg-gradient-to-r from-transparent via-red/10 to-transparent blur-3xl"></div>
+      </div>
+      
       <div className="container mx-auto px-5 flex justify-between items-center">
         <div className="z-10">
           <SallTechLogo />
-        </div>
-        
-        {/* Effet de lumière/halo - Élément absolu positionné */}
-        <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10">
-          <div className="absolute -top-20 -right-20 w-96 h-96 bg-blue/10 rounded-full blur-3xl"></div>
-          <div className="absolute -bottom-20 -left-20 w-72 h-72 bg-purple/10 rounded-full blur-3xl"></div>
-          <div className="absolute top-1/4 right-1/4 w-64 h-64 bg-red/10 rounded-full blur-3xl opacity-60"></div>
         </div>
         
         <nav className="hidden md:block">
