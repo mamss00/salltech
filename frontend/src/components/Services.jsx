@@ -30,14 +30,14 @@ const EnhancedServices = () => {
 
   // Déclencher l'animation de séquence après le chargement
   useEffect(() => {
-    if (servicesInView && !isLoading && !error) {
+    if (!isLoading && !error) {
       // Délai avant de déclencher la séquence d'animation
       const timer = setTimeout(() => {
         setAppear(true)
       }, 300)
       return () => clearTimeout(timer)
     }
-  }, [servicesInView, isLoading, error])
+  }, [isLoading, error])
 
   // Chargement des services
   useEffect(() => {
@@ -384,14 +384,12 @@ const EnhancedServices = () => {
             <p className="text-gray-600">{error}</p>
           </motion.div>
         ) : (
-          <AnimatePresence>
-            {appear && (
-              <motion.div
+          
+            <motion.div
                 ref={servicesRef}
                 variants={containerVariants}
                 initial="hidden"
-                animate="visible"
-                exit="hidden"
+                animate={servicesInView ? "visible" : "hidden"}
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
               >
                 {services.map((service, index) => {
@@ -534,7 +532,7 @@ const EnhancedServices = () => {
                 })}
               </motion.div>
             )}
-          </AnimatePresence>
+                      
         )}
         
         {/* Voir tous les services - Bouton flottant */}
