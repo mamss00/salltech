@@ -1,55 +1,54 @@
-'use client';
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import SallTechLogo from './SallTechLogo';
-import CTAButton from './CTAButton';
+'use client'
 
-export default function Header() {
-  const [scrolled, setScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+import { useState, useEffect } from 'react'
+import SallTechLogo from './SallTechLogo'
 
+const Header = () => {
+  const [scrolled, setScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  
   useEffect(() => {
-    // Header fixe au défilement
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+      setScrolled(window.scrollY > 50)
+    }
+    
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+  
   return (
-    <header 
-      className={`fixed w-full z-50 bg-salltech-light/80 backdrop-blur-lg transition-all duration-300 ${
-        scrolled ? 'py-4 shadow-md' : 'py-6 md:py-8'
-      }`}
-    >
-      <div className="container mx-auto px-5 flex justify-between items-center">
-        <div className="z-10">
-          <Link href="/" className="block">
-            <SallTechLogo />
-          </Link>
-        </div>
+    <header className={`fixed w-full z-50 bg-salltech-light/80 backdrop-blur-lg transition-all duration-300 ${
+      scrolled ? 'py-4 shadow-md' : 'py-6 md:py-8'
+    }`}>
+      <div className="container flex justify-between items-center">
+        <a href="#home" className="z-50">
+          <SallTechLogo />
+        </a>
         
+        {/* Navigation desktop */}
         <nav className="hidden md:block">
           <ul className="flex space-x-10">
-            <li><Link href="/#home" className="header-link text-lg font-medium">Accueil</Link></li>
-            <li><Link href="/#services" className="header-link text-lg font-medium">Services</Link></li>
-            <li><Link href="/#portfolio" className="header-link text-lg font-medium">Portfolio</Link></li>
+            <li><a href="#home" className="header-link text-lg font-medium">Accueil</a></li>
+            <li><a href="#services" className="header-link text-lg font-medium">Services</a></li>
+            <li><a href="#portfolio" className="header-link text-lg font-medium">Portfolio</a></li>
           </ul>
         </nav>
         
-        <CTAButton 
-          href="/#contact" 
-          headerStyle={true}
-          showDots={true}
-        >
-          Contactez-nous
-        </CTAButton>
-
-        {/* Bouton menu mobile */}
+        {/* CTA Button - Desktop only */}
+        <div className="hidden md:block">
+          <a href="#contact" className="rounded-xl font-medium transition-all duration-400 flex items-center justify-center px-8 py-3 bg-gradient-to-r from-blue via-purple to-red bg-[length:200%_auto] hover:shadow-lg text-white">
+            <span>Contactez-nous</span>
+            <span className="dots-container ml-2 inline-flex items-center">
+              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-1"></span>
+              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-2"></span>
+              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-3"></span>
+            </span>
+          </a>
+        </div>
+        
+        {/* Mobile menu button */}
         <button 
-          className="md:hidden p-2 z-50"
+          className="md:hidden z-50 p-2"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -66,42 +65,42 @@ export default function Header() {
           </div>
         </button>
         
-        {/* Menu mobile */}
+        {/* Mobile menu */}
         <div className={`fixed inset-0 bg-light z-40 flex flex-col items-center justify-center transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <nav className="flex flex-col items-center">
             <ul className="flex flex-col items-center space-y-8 mb-12">
               <li>
-                <Link 
-                  href="/#home" 
+                <a 
+                  href="#home" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Accueil
-                </Link>
+                </a>
               </li>
               <li>
-                <Link 
-                  href="/#services" 
+                <a 
+                  href="#services" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Services
-                </Link>
+                </a>
               </li>
               <li>
-                <Link 
-                  href="/#portfolio" 
+                <a 
+                  href="#portfolio" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Portfolio
-                </Link>
+                </a>
               </li>
             </ul>
-            <Link 
-              href="/#contact" 
+            <a 
+              href="#contact" 
               className="inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-3 rounded-xl font-medium transition-all duration-400"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -111,10 +110,12 @@ export default function Header() {
                 <span className="w-1 h-1 bg-white rounded-full mr-1 opacity-0 animate-dot-pulse-2"></span>
                 <span className="w-1 h-1 bg-white rounded-full opacity-0 animate-dot-pulse-3"></span>
               </span>
-            </Link>
+            </a>
           </nav>
         </div>
       </div>
     </header>
-  );
+  )
 }
+
+export default Header
