@@ -1,54 +1,55 @@
-'use client'
+'use client';
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import SallTechLogo from './SallTechLogo';
+import CTAButton from './CTAButton';
 
-import { useState, useEffect } from 'react'
-import SallTechLogo from './SallTechLogo'
+export default function Header() {
+  const [scrolled, setScrolled] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-const Header = () => {
-  const [scrolled, setScrolled] = useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  
   useEffect(() => {
+    // Header fixe au défilement
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
-    
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-  
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 bg-light/90 backdrop-blur-md ${
-      scrolled ? 'py-3 shadow-md' : 'py-6 md:py-8'
-    }`}>
-      <div className="container flex justify-between items-center">
-        <a href="#home" className="z-50">
-          <SallTechLogo />
-        </a>
+    <header 
+      className={`fixed w-full z-50 transition-all duration-300 ${
+        scrolled ? 'py-4 shadow-md bg-white/80 backdrop-blur-md' : 'py-6 md:py-8 bg-white/50 backdrop-blur-xl'
+      }`}
+    >
+      <div className="container mx-auto px-5 flex justify-between items-center">
+        <div className="z-10">
+          <Link href="/" className="block">
+            <SallTechLogo />
+          </Link>
+        </div>
         
-        {/* Navigation desktop */}
         <nav className="hidden md:block">
           <ul className="flex space-x-10">
-            <li><a href="#home" className="header-link">Accueil</a></li>
-            <li><a href="#services" className="header-link">Services</a></li>
-            <li><a href="#portfolio" className="header-link">Portfolio</a></li>
+            <li><Link href="/#home" className="header-link text-lg font-medium">Accueil</Link></li>
+            <li><Link href="/#services" className="header-link text-lg font-medium">Services</Link></li>
+            <li><Link href="/#portfolio" className="header-link text-lg font-medium">Portfolio</Link></li>
           </ul>
         </nav>
         
-        {/* CTA Button - Desktop only */}
-        <div className="hidden md:block">
-          <a href="#contact" className="cta-button">
-            <span>Contactez-nous</span>
-            <span className="inline-flex items-center ml-2 h-1">
-              <span className="w-1 h-1 bg-white rounded-full mr-1 opacity-0 animate-dot-pulse-1"></span>
-              <span className="w-1 h-1 bg-white rounded-full mr-1 opacity-0 animate-dot-pulse-2"></span>
-              <span className="w-1 h-1 bg-white rounded-full opacity-0 animate-dot-pulse-3"></span>
-            </span>
-          </a>
-        </div>
-        
-        {/* Mobile menu button */}
+        <CTAButton 
+          href="/#contact" 
+          headerStyle={true}
+          showDots={true}
+        >
+          Contactez-nous
+        </CTAButton>
+
+        {/* Bouton menu mobile */}
         <button 
-          className="md:hidden z-50 p-2"
+          className="md:hidden p-2 z-50"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
           aria-label="Toggle menu"
         >
@@ -65,43 +66,43 @@ const Header = () => {
           </div>
         </button>
         
-        {/* Mobile menu */}
-        <div className={`fixed inset-0 bg-light z-40 flex flex-col items-center justify-center transition-transform duration-300 ease-in-out ${
+        {/* Menu mobile */}
+        <div className={`fixed inset-0 bg-white/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <nav className="flex flex-col items-center">
             <ul className="flex flex-col items-center space-y-8 mb-12">
               <li>
-                <a 
-                  href="#home" 
+                <Link 
+                  href="/#home" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Accueil
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="#services" 
+                <Link 
+                  href="/#services" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Services
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="#portfolio" 
+                <Link 
+                  href="/#portfolio" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Portfolio
-                </a>
+                </Link>
               </li>
             </ul>
-            <a 
-              href="#contact" 
-              className="cta-button"
+            <Link 
+              href="/#contact" 
+              className="inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-3 rounded-xl font-medium transition-all duration-400"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Contactez-nous
@@ -110,12 +111,10 @@ const Header = () => {
                 <span className="w-1 h-1 bg-white rounded-full mr-1 opacity-0 animate-dot-pulse-2"></span>
                 <span className="w-1 h-1 bg-white rounded-full opacity-0 animate-dot-pulse-3"></span>
               </span>
-            </a>
+            </Link>
           </nav>
         </div>
       </div>
     </header>
-  )
+  );
 }
-
-export default Header
