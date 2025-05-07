@@ -40,19 +40,21 @@ export default function Header() {
       
       <div className="container mx-auto px-5 flex justify-between items-center">
         <div className="z-10">
-          <SallTechLogo />
+          <Link href="/">
+            <SallTechLogo />
+          </Link>
         </div>
         
         <nav className="hidden md:block">
           <ul className="flex space-x-10">
-            <li><Link href="#home" className="header-link text-lg font-medium">Accueil</Link></li>
-            <li><Link href="#services" className="header-link text-lg font-medium">Services</Link></li>
-            <li><Link href="#portfolio" className="header-link text-lg font-medium">Portfolio</Link></li>
+            <li><Link href="/" className="header-link text-lg font-medium">Accueil</Link></li>
+            <li><Link href="/services" className="header-link text-lg font-medium">Services</Link></li>
+            <li><Link href="/portfolio" className="header-link text-lg font-medium">Portfolio</Link></li>
           </ul>
         </nav>
         
         <CTAButton 
-          href="#contact" 
+          href="/contact" 
           headerStyle={true}
           showDots={true}
         >
@@ -85,35 +87,35 @@ export default function Header() {
           <nav className="flex flex-col items-center">
             <ul className="flex flex-col items-center space-y-8 mb-12">
               <li>
-                <a 
-                  href="#home" 
+                <Link 
+                  href="/" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Accueil
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="#services" 
+                <Link 
+                  href="/services" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Services
-                </a>
+                </Link>
               </li>
               <li>
-                <a 
-                  href="#portfolio" 
+                <Link 
+                  href="/portfolio" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Portfolio
-                </a>
+                </Link>
               </li>
             </ul>
-            <a 
-              href="#contact" 
+            <Link 
+              href="/contact" 
               className="inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-3 rounded-xl font-medium transition-all duration-400"
               onClick={() => setIsMobileMenuOpen(false)}
             >
@@ -123,7 +125,7 @@ export default function Header() {
                 <span className="w-1 h-1 bg-white rounded-full mr-1 opacity-0 animate-dot-pulse-2"></span>
                 <span className="w-1 h-1 bg-white rounded-full opacity-0 animate-dot-pulse-3"></span>
               </span>
-            </a>
+            </Link>
           </nav>
         </div>
       </div>
