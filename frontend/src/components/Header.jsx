@@ -40,21 +40,21 @@ export default function Header() {
       
       <div className="container mx-auto px-5 flex justify-between items-center">
         <div className="z-10">
-          <Link href="/">
+          <Link href="https://www.sall.technology/#home">
             <SallTechLogo />
           </Link>
         </div>
         
         <nav className="hidden md:block">
           <ul className="flex space-x-10">
-            <li><Link href="/" className="header-link text-lg font-medium">Accueil</Link></li>
-            <li><Link href="/services" className="header-link text-lg font-medium">Services</Link></li>
-            <li><Link href="/portfolio" className="header-link text-lg font-medium">Portfolio</Link></li>
+            <li><Link href="https://www.sall.technology/#home" className="header-link text-lg font-medium">Accueil</Link></li>
+            <li><Link href="https://www.sall.technology/#services" className="header-link text-lg font-medium">Services</Link></li>
+            <li><Link href="https://www.sall.technology/#portfolio" className="header-link text-lg font-medium">Portfolio</Link></li>
           </ul>
         </nav>
         
         <CTAButton 
-          href="/contact" 
+          href="https://www.sall.technology/#contact" 
           headerStyle={true}
           showDots={true}
         >
@@ -88,7 +88,7 @@ export default function Header() {
             <ul className="flex flex-col items-center space-y-8 mb-12">
               <li>
                 <Link 
-                  href="/" 
+                  href="https://www.sall.technology/#home" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -97,7 +97,7 @@ export default function Header() {
               </li>
               <li>
                 <Link 
-                  href="/services" 
+                  href="https://www.sall.technology/#services" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -106,7 +106,7 @@ export default function Header() {
               </li>
               <li>
                 <Link 
-                  href="/portfolio" 
+                  href="https://www.sall.technology/#portfolio" 
                   className="text-2xl font-medium"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
@@ -115,7 +115,7 @@ export default function Header() {
               </li>
             </ul>
             <Link 
-              href="/contact" 
+              href="https://www.sall.technology/#contact" 
               className="inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-3 rounded-xl font-medium transition-all duration-400"
               onClick={() => setIsMobileMenuOpen(false)}
             >
