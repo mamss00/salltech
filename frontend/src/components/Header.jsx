@@ -2,23 +2,34 @@
 
 import { useState, useEffect } from 'react'
 import SallTechLogo from './SallTechLogo'
+import CTAButton from './CTAButton'
 
-const Header = () => {
+export default function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
   useEffect(() => {
+    // Header fixe au défilement
     const handleScroll = () => {
-      setScrolled(window.scrollY > 50)
-    }
-    
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-  
+      const header = document.querySelector('header');
+      if (header) {
+        if (window.scrollY > 50) {
+          setScrolled(true);
+        } else {
+          setScrolled(false);
+        }
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
-    <header className="fixed w-full z-50 bg-white/10 backdrop-blur-lg transition-all duration-300 py-6 md:py-8">
-      <div className="container flex justify-between items-center">
+    <header className={`fixed w-full z-50 bg-white/10 backdrop-blur-lg transition-all duration-300 ${
+      scrolled ? 'py-3 shadow-md' : 'py-6 md:py-8'
+    }`}>
+      <div className="container mx-auto px-5 flex justify-between items-center">
         <a href="#home" className="z-50">
           <SallTechLogo />
         </a>
@@ -33,16 +44,13 @@ const Header = () => {
         </nav>
         
         {/* CTA Button - Desktop only */}
-        <div className="hidden md:block">
-          <a href="#contact" className="rounded-xl font-medium transition-all duration-400 flex items-center justify-center px-8 py-3 bg-gradient-to-r from-blue via-purple to-red bg-[length:200%_auto] hover:shadow-lg text-white">
-            <span>Contactez-nous</span>
-            <span className="dots-container ml-2 inline-flex items-center">
-              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-1"></span>
-              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-2"></span>
-              <span className="dot w-1 h-1 bg-current rounded-full mx-0.5 opacity-0 animate-dot-pulse-3"></span>
-            </span>
-          </a>
-        </div>
+        <CTAButton 
+          href="#contact" 
+          headerStyle={true}
+          showDots={true}
+        >
+          Contactez-nous
+        </CTAButton>
         
         {/* Mobile menu button */}
         <button 
@@ -115,5 +123,3 @@ const Header = () => {
     </header>
   )
 }
-
-export default Header
