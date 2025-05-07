@@ -17,9 +17,7 @@ const Header = () => {
   }, [])
   
   return (
-    <header className={`fixed w-full z-50 bg-salltech-light/80 backdrop-blur-lg transition-all duration-300 ${
-      scrolled ? 'py-4 shadow-md' : 'py-6 md:py-8'
-    }`}>
+    <header className="fixed w-full z-50 bg-white/10 backdrop-blur-lg transition-all duration-300 py-6 md:py-8">
       <div className="container flex justify-between items-center">
         <a href="#home" className="z-50">
           <SallTechLogo />
@@ -66,7 +64,7 @@ const Header = () => {
         </button>
         
         {/* Mobile menu */}
-        <div className={`fixed inset-0 bg-light z-40 flex flex-col items-center justify-center transition-transform duration-300 ease-in-out ${
+        <div className={`fixed inset-0 bg-white/95 backdrop-blur-lg z-40 flex flex-col items-center justify-center transition-transform duration-300 ease-in-out ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}>
           <nav className="flex flex-col items-center">
