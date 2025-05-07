@@ -74,15 +74,16 @@ const EnhancedServices = () => {
 
   // Variants d'animation pour les cartes
   const itemVariants = {
-    hidden: { y: 50, opacity: 0 },
+    hidden: { y: 100, opacity: 0, scale: 0.8 },
     visible: {
       y: 0,
       opacity: 1,
+      scale: 1,
       transition: { 
         type: "spring",
-        stiffness: 100,
+        stiffness: 80,
         damping: 20,
-        duration: 0.6 
+        duration: 0.8 
       }
     }
   }
@@ -111,10 +112,13 @@ const EnhancedServices = () => {
   const particles = generateParticles(20);
 
   return (
-    <section 
+    <motion.section 
       id="services" 
       className="py-32 relative overflow-hidden"
       ref={sectionRef}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
     >
       {/* Arrière-plan amélioré avec effets dynamiques */}
       <div className="absolute inset-0 z-0">
@@ -205,13 +209,18 @@ const EnhancedServices = () => {
         className="container relative z-10"
         style={{ opacity: sectionOpacity }}
       >
-        {/* Titre avec animation améliorée */}
+        {/* Titre avec animation d'entrée améliorée */}
         <div className="text-center relative">
           <motion.div
             className="inline-block mb-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0, y: -30, scale: 0.8 }}
+            animate={titleInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+            transition={{ 
+              type: "spring",
+              stiffness: 200,
+              damping: 15,
+              duration: 0.8
+            }}
           >
             <motion.span 
               className="inline-block px-4 py-1.5 bg-blue/10 rounded-full text-blue text-sm font-medium"
@@ -226,9 +235,15 @@ const EnhancedServices = () => {
           
           <motion.h2
             ref={titleRef}
-            initial={{ opacity: 0, y: 20 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
+            initial={{ opacity: 0, y: 40, scale: 0.9 }}
+            animate={titleInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+            transition={{ 
+              type: "spring",
+              stiffness: 100,
+              damping: 15,
+              duration: 0.8,
+              delay: 0.2
+            }}
             className="text-4xl md:text-5xl font-extrabold mb-6 text-center relative"
           >
             Nos <motion.span 
@@ -256,9 +271,15 @@ const EnhancedServices = () => {
 
           <motion.p
             ref={descRef}
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 50 }}
             animate={descInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 50,
+              damping: 20,
+              duration: 0.8, 
+              delay: 0.4 
+            }}
             className="text-lg text-gray-600 max-w-3xl mx-auto text-center mb-20"
           >
             Nous proposons des services digitaux sur mesure pour les entreprises mauritaniennes.
@@ -268,16 +289,40 @@ const EnhancedServices = () => {
 
         {/* État de chargement avec animation */}
         {isLoading ? (
-          <div className="flex flex-col justify-center items-center h-64">
+          <motion.div 
+            className="flex flex-col justify-center items-center h-64"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ 
+              type: "spring",
+              stiffness: 100,
+              damping: 15,
+              duration: 0.5 
+            }}
+          >
             <motion.div 
               className="w-16 h-16 mb-6 relative"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              initial={{ rotate: 0 }}
+              animate={{ 
+                rotate: 360,
+                boxShadow: ["0 0 0px rgba(52, 152, 219, 0)", "0 0 15px rgba(52, 152, 219, 0.5)", "0 0 0px rgba(52, 152, 219, 0)"]
+              }}
+              transition={{ 
+                rotate: { duration: 2, repeat: Infinity, ease: "linear" },
+                boxShadow: { duration: 2, repeat: Infinity, repeatType: "reverse" }
+              }}
             >
               <div className="absolute top-0 left-0 right-0 bottom-0 rounded-full border-4 border-t-blue border-r-purple border-b-red border-l-transparent"></div>
             </motion.div>
-            <p className="text-gray-500 text-lg">Chargement en cours...</p>
-          </div>
+            <motion.p 
+              className="text-gray-500 text-lg"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Chargement en cours...
+            </motion.p>
+          </motion.div>
         ) : error ? (
           <motion.div 
             className="text-center py-10 px-6 bg-red/10 rounded-xl backdrop-blur-sm"
@@ -300,6 +345,13 @@ const EnhancedServices = () => {
             initial="hidden"
             animate={servicesInView ? 'visible' : 'hidden'}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            // Animation d'entrée améliorée pour tout le conteneur de services
+            transition={{
+              staggerChildren: 0.15,
+              delayChildren: 0.3,
+              duration: 0.8,
+              when: "beforeChildren"
+            }}
           >
             {services.map((service, index) => {
               const color = service.Couleur || getColorByIndex(index)
@@ -323,6 +375,26 @@ const EnhancedServices = () => {
                       y: -10, 
                       boxShadow: '0 20px 30px rgba(0, 0, 0, 0.1)',
                       scale: 1.02
+                    }}
+                    // Animation d'entrée individuelle pour chaque carte
+                    initial={{ 
+                      opacity: 0, 
+                      scale: 0.8, 
+                      y: 50, 
+                      rotateY: -15 
+                    }}
+                    animate={{ 
+                      opacity: 1, 
+                      scale: 1, 
+                      y: 0, 
+                      rotateY: 0 
+                    }}
+                    transition={{ 
+                      type: "spring",
+                      stiffness: 60,
+                      damping: 20,
+                      delay: index * 0.1,
+                      duration: 0.8 
                     }}
                   >
                     {/* Effet de surbrillance au survol */}
@@ -427,28 +499,55 @@ const EnhancedServices = () => {
           </motion.div>
         )}
         
-        {/* Voir tous les services - Bouton flottant */}
+        {/* Voir tous les services - Bouton flottant avec animation d'entrée */}
         {!isLoading && !error && services.length > 0 && (
           <motion.div
             className="text-center mt-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={servicesInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ delay: 0.8, duration: 0.6 }}
+            initial={{ opacity: 0, y: 60, scale: 0.8 }}
+            animate={servicesInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+            transition={{ 
+              type: "spring",
+              stiffness: 50,
+              damping: 15,
+              delay: 0.9, 
+              duration: 1 
+            }}
           >
             <motion.div
-              className="inline-block"
+              className="inline-block relative"
               whileHover={{ y: -5, boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)' }}
               whileTap={{ y: 0, scale: 0.98 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
+              {/* Effet lumineux d'animation */}
+              <motion.div 
+                className="absolute -inset-1 bg-gradient-to-r from-blue via-purple to-red opacity-70 blur-lg rounded-xl"
+                animate={{ 
+                  opacity: [0, 0.7, 0],
+                  scale: [0.9, 1.05, 0.9]
+                }}
+                transition={{ 
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              />
+              
               <Link 
                 href="/services" 
-                className="inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-4 rounded-xl font-medium"
+                className="relative inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-4 rounded-xl font-medium z-10"
               >
                 <span>Voir tous nos services</span>
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <motion.svg 
+                  className="w-5 h-5 ml-2" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                </svg>
+                </motion.svg>
               </Link>
             </motion.div>
           </motion.div>
