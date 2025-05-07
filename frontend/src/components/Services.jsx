@@ -553,7 +553,7 @@ const EnhancedServices = () => {
           </motion.div>
         )}
       </motion.div>
-    </section>
+    </motion.section>
   )
 }
 
