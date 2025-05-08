@@ -19,6 +19,8 @@ const EnhancedServices = () => {
   const [error, setError] = useState(null)
   const [hoveredCard, setHoveredCard] = useState(null)
   const [appear, setAppear] = useState(false)
+  // État pour suivre les cartes qui sont complètement chargées
+  const [cardsLoaded, setCardsLoaded] = useState([])
 
   // Animation au scroll pour l'ensemble de la section
   const { scrollYProgress } = useScroll({
@@ -30,14 +32,14 @@ const EnhancedServices = () => {
 
   // Déclencher l'animation de séquence après le chargement
   useEffect(() => {
-    if (!isLoading && !error) {
+    if (!isLoading && !error && services.length > 0) {
       // Délai avant de déclencher la séquence d'animation
       const timer = setTimeout(() => {
         setAppear(true)
       }, 300)
       return () => clearTimeout(timer)
     }
-  }, [isLoading, error])
+  }, [isLoading, error, services])
 
   // Chargement des services
   useEffect(() => {
@@ -55,6 +57,13 @@ const EnhancedServices = () => {
     }
     fetchServices()
   }, [])
+
+  // Marquer une carte comme chargée
+  const handleCardLoaded = (id) => {
+    if (!cardsLoaded.includes(id)) {
+      setCardsLoaded(prev => [...prev, id])
+    }
+  }
 
   // Fonction pour extraire le texte du format richtext
   const extractTextFromRichText = (content) => {
@@ -105,7 +114,7 @@ const EnhancedServices = () => {
         damping: 15,
         mass: 0.8,
         duration: 0.7,
-        delay: i * 0.1
+        delay: i * 0.1 + 0.3 // Ajout d'un délai supplémentaire
       }
     })
   }
@@ -119,7 +128,7 @@ const EnhancedServices = () => {
       rotateY: 0,
       transition: { 
         type: "spring", 
-        delay: 0.1 + (i * 0.05),
+        delay: 0.2 + (i * 0.1), // Amplification du délai entre les éléments
         duration: 0.6 
       } 
     })
@@ -132,7 +141,7 @@ const EnhancedServices = () => {
       x: 0,
       transition: { 
         type: "spring", 
-        delay: 0.2 + (i * 0.05),
+        delay: 0.4 + (i * 0.1), // Augmentation du délai
         duration: 0.5 
       } 
     })
@@ -145,7 +154,7 @@ const EnhancedServices = () => {
       opacity: 1,
       transition: { 
         type: "spring", 
-        delay: 0.3 + (i * 0.05),
+        delay: 0.6 + (i * 0.1), // Augmentation du délai
         duration: 0.5 
       } 
     })
@@ -158,7 +167,7 @@ const EnhancedServices = () => {
       y: 0,
       transition: { 
         type: "spring", 
-        delay: 0.4 + (i * 0.05),
+        delay: 0.8 + (i * 0.1), // Augmentation du délai
         duration: 0.5 
       } 
     })
@@ -171,7 +180,7 @@ const EnhancedServices = () => {
       y: 0,
       transition: { 
         type: "spring", 
-        delay: 0.5 + (i * 0.05),
+        delay: 1 + (i * 0.1), // Augmentation du délai
         duration: 0.5 
       } 
     })
@@ -384,12 +393,13 @@ const EnhancedServices = () => {
             <p className="text-gray-600">{error}</p>
           </motion.div>
         ) : (
-          
-            <motion.div
-                ref={servicesRef}
+          // Ajout de l'animation d'entrée contrôlée par servicesInView
+          <AnimatePresence>
+            {services.length > 0 && servicesInView && (
+              <motion.div
                 variants={containerVariants}
                 initial="hidden"
-                animate={servicesInView ? "visible" : "hidden"}
+                animate="visible"
                 className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
               >
                 {services.map((service, index) => {
@@ -402,13 +412,13 @@ const EnhancedServices = () => {
                   return (
                     <motion.div
                       key={service.id}
-                      custom={index} // Utiliser custom pour le délai séquentiel
+                      custom={index}
                       variants={itemVariants}
                       className="group h-full"
                       onMouseEnter={() => setHoveredCard(service.id)}
                       onMouseLeave={() => setHoveredCard(null)}
-                      initial="hidden"
-                      animate="visible"
+                      // Ajout de la fonction onAnimationComplete pour suivre les cartes chargées
+                      onAnimationComplete={() => handleCardLoaded(service.id)}
                     >
                       <motion.div 
                         className={`bg-gradient-to-br ${color} backdrop-blur-sm rounded-2xl shadow-md 
@@ -489,17 +499,19 @@ const EnhancedServices = () => {
                           {extractTextFromRichText(service.Description)}
                         </motion.p>
                         
-                        {/* Lien avec animation séquentielle */}
+                        {/* Lien avec animation séquentielle - FIX: Ajout de pointer-events-auto pour s'assurer que le lien est cliquable */}
                         <motion.div
                           custom={index}
                           variants={linkVariants}
-                          className="mt-auto"
+                          className="mt-auto pointer-events-auto relative z-20"
                           whileHover={{ x: 5 }}
                           transition={{ type: "spring", stiffness: 400, damping: 10 }}
                         >
                           <Link 
                             href={`/services/${slug}`} 
                             className={`inline-flex items-center ${textColor} font-medium hover:underline`}
+                            // Stopper la propagation pour éviter les interférences
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <span>En savoir plus</span>
                             <motion.svg 
@@ -532,8 +544,9 @@ const EnhancedServices = () => {
                 })}
               </motion.div>
             )}
+          </AnimatePresence>
+        )}
                       
-        
         {/* Voir tous les services - Bouton flottant */}
         {!isLoading && !error && services.length > 0 && (
           <motion.div
