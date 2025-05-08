@@ -78,8 +78,8 @@ const EnhancedServices = () => {
     visible: {
       opacity: 1,
       transition: { 
-        staggerChildren: 0.15,
-        delayChildren: 0.3,
+        staggerChildren: 0.5, // Augmenté de 0.15 à 0.5 pour un décalage plus important
+        delayChildren: 0.5,   // Augmenté de 0.3 à 0.5
         when: "beforeChildren",
         ease: "easeOut"
       }
@@ -105,7 +105,7 @@ const EnhancedServices = () => {
         damping: 15,
         mass: 0.8,
         duration: 0.7,
-        delay: i * 0.2 + 0.3 // Augmentation significative du délai
+        delay: i * 0.5 + 0.3 // Décalage augmenté significativement (0.5s entre chaque carte)
       }
     })
   }
