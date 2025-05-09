@@ -4,7 +4,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import CTAButton from '@/components/CTAButton';
-import { generateParticles } from '@/components/background/GridUtils';
 
 function EnhancedHero() {
   // Animation pour le composant de droite
@@ -19,15 +18,6 @@ function EnhancedHero() {
   // Pour le défilement vertical des points clés
   const [currentKey, setCurrentKey] = useState(0);
   const intervalRef = useRef(null);
-  
-  // Phrases pour l'effet de typing
-  const phrases = [
-    "les sites web",
-    "les apps",
-    "la rigueur",
-    "l'excellence", 
-    "la qualité"
-  ];
   
   // Points clés qui défileront
   const keyPoints = [
@@ -84,6 +74,15 @@ function EnhancedHero() {
       name: 'DSAA', 
       logo: 'https://www.dsaa.eu/wp-content/uploads/DSAA-Logo-mitClaim-rgb.svg'
     }
+  ];
+  
+  // Phrases plus courtes pour l'effet de typing
+  const phrases = [
+    "les sites web",
+    "les apps",
+    "la rigueur",
+    "l'excellence", 
+    "la qualité"
   ];
   
   // Effet de typing
@@ -171,8 +170,25 @@ function EnhancedHero() {
 
   return (
     <section className="min-h-screen flex items-center pt-32 pb-16 overflow-hidden relative">
-      {/* Note: L'arrière-plan est géré par SectionWrapper dans app/page.js */}
-      
+      <div className="absolute inset-0 z-0">
+        {/* Cercles colorés en arrière-plan */}
+        <motion.div 
+          className="absolute -top-32 -right-32 w-96 h-96 bg-blue/10 rounded-full blur-3xl animate-float-1"
+        />
+        
+        <motion.div 
+          className="absolute -bottom-32 -left-32 w-96 h-96 bg-purple/10 rounded-full blur-3xl animate-float-2"
+        />
+        
+        <motion.div 
+          className="absolute top-1/3 left-1/4 w-64 h-64 bg-red/10 rounded-full blur-3xl animate-float-2"
+        />
+        
+        <motion.div 
+          className="absolute bottom-1/3 right-1/4 w-72 h-72 bg-blue/10 rounded-full blur-3xl animate-float-1"
+        />
+      </div>
+
       <div className="container mx-auto px-5 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center min-h-[calc(100vh-8rem)]">
           {/* Colonne de gauche - Contenu principal */}
@@ -636,6 +652,25 @@ function EnhancedHero() {
         
         .animate-blink {
           animation: blink 1s infinite;
+        }
+        
+        @keyframes floatingCircle {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+        }
+        
+        .animate-float {
+          animation: floatingCircle 5s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-ring {
+          0% { transform: scale(0.8); opacity: 0.2; }
+          50% { transform: scale(1.2); opacity: 0.5; }
+          100% { transform: scale(0.8); opacity: 0.2; }
+        }
+        
+        .animate-pulse-ring {
+          animation: pulse-ring 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
       `}</style>
     </section>
