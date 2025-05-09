@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import BackgroundDecoration from './BackgroundDecoration'
-import ConnectingElements from './ConnectingElements'
-import GridBackground from './GridBackground'
+import BackgroundDecoration from '../background/BackgroundDecoration'
+import ConnectingElements from '../background/ConnectingElements'
+import GridBackground from '../background/GridBackground'
 
 /**
  * Composant pour envelopper les sections et créer une continuité visuelle
@@ -64,6 +64,12 @@ export default function SectionWrapper({
           secondaryColor={secondaryColor}
         />
       )}
+      
+      {/* Décorations d'arrière-plan */}
+      <BackgroundDecoration
+        primaryColor={primaryColor}
+        secondaryColor={secondaryColor}
+      />
       
       {/* Le contenu de la section */}
       {children}
