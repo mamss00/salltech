@@ -635,6 +635,15 @@ function EnhancedHero() {
           animation: blink 1s infinite;
         }
         
+        @keyframes floatingCircle {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-15px); }
+        }
+        
+        .animate-float {
+          animation: floatingCircle 5s ease-in-out infinite;
+        }
+        
         @keyframes pulse-ring {
           0% { transform: scale(0.8); opacity: 0.2; }
           50% { transform: scale(1.2); opacity: 0.5; }
