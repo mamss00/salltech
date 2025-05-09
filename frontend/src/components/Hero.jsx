@@ -168,67 +168,8 @@ function EnhancedHero() {
     }
   };
 
-  // Effet de particules pour le fond
-  const generateParticles = (count) => {
-    return Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 3 + 1,
-      speed: Math.random() * 40 + 20
-    }));
-  };
-
-  const particles = generateParticles(30);
-
   return (
     <section className="min-h-screen flex items-center pt-32 pb-16 overflow-hidden relative">
-      {/* Fond décoratif avec effet de parallaxe */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/3 h-2/3 bg-blue/5 rounded-full blur-3xl transform translate-x-1/4 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 left-0 w-1/3 h-2/3 bg-purple/5 rounded-full blur-3xl transform -translate-x-1/4 translate-y-1/4"></div>
-        
-        {/* Grille décorative avec points */}
-        <div className="absolute inset-0 opacity-20">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(52, 152, 219, 0.3)" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
-        
-        {/* Particules animées */}
-        {particles.map((particle) => (
-          <motion.div
-            key={particle.id}
-            className="absolute w-1 h-1 rounded-full bg-blue/30"
-            style={{
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              width: `${particle.size}px`,
-              height: `${particle.size}px`
-            }}
-            animate={{
-              y: ["0%", "100%"],
-              opacity: [0, 1, 0]
-            }}
-            transition={{
-              y: {
-                duration: particle.speed,
-                repeat: Infinity,
-                ease: "linear"
-              },
-              opacity: {
-                duration: particle.speed * 0.8,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }
-            }}
-          />
-        ))}
-      </div>
-
       <div className="container mx-auto px-5 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center min-h-[calc(100vh-8rem)]">
           {/* Colonne de gauche - Contenu principal */}
@@ -679,52 +620,6 @@ function EnhancedHero() {
                 Depuis 2019
               </motion.div>
             </motion.div>
-            
-            {/* Éléments décoratifs en arrière-plan */}
-            <motion.div
-              className="absolute -top-12 -right-12 w-48 h-48 rounded-full bg-blue/20 blur-3xl"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 0.6, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.2 }}
-            />
-            <motion.div
-              className="absolute -bottom-12 -left-12 w-48 h-48 rounded-full bg-purple/20 blur-3xl"
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 0.6, scale: 1 }}
-              transition={{ duration: 1.2, delay: 0.4 }}
-            />
-            
-            {/* Formes géométriques */}
-            <motion.div
-              className="absolute top-1/4 -left-6 w-12 h-12 border-2 border-blue/30 rounded-lg"
-              initial={{ opacity: 0, rotate: 0 }}
-              animate={{ 
-                opacity: [0, 1, 0.5, 1, 0],
-                rotate: [0, 90, 180, 270, 360],
-                scale: [0.8, 1, 0.9, 1, 0.8]
-              }}
-              transition={{ 
-                duration: 15, 
-                repeat: Infinity,
-                times: [0, 0.25, 0.5, 0.75, 1]
-              }}
-            />
-            
-            <motion.div
-              className="absolute bottom-1/3 -right-6 w-8 h-8 border-2 border-purple/30 rounded-full"
-              initial={{ opacity: 0, rotate: 0 }}
-              animate={{ 
-                opacity: [0, 0.7, 0.3, 0.7, 0],
-                rotate: [0, -90, -180, -270, -360],
-                scale: [0.8, 1.2, 0.9, 1.2, 0.8]
-              }}
-              transition={{ 
-                duration: 12, 
-                repeat: Infinity,
-                times: [0, 0.25, 0.5, 0.75, 1],
-                delay: 2
-              }}
-            />
           </div>
         </div>
       </div>
@@ -738,15 +633,6 @@ function EnhancedHero() {
         
         .animate-blink {
           animation: blink 1s infinite;
-        }
-        
-        @keyframes floatingCircle {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-15px); }
-        }
-        
-        .animate-float {
-          animation: floatingCircle 5s ease-in-out infinite;
         }
         
         @keyframes pulse-ring {

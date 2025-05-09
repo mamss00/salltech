@@ -10,6 +10,10 @@
   --color-red: #e74c3c;
   --color-dark: #1a1a2e;
   --color-light: #f7f7f7;
+  --color-blue-rgb: 52, 152, 219;
+  --color-purple-rgb: 155, 89, 182;
+  --color-red-rgb: 231, 76, 60;
+
 }
 
 @layer base {
