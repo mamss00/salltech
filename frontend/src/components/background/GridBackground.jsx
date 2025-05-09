@@ -2,286 +2,136 @@
 
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { generateParticles, generateGridPattern } from './GridUtils'
-import ConnectionLines from './ConnectionLines'
 
-/**
- * Composant principal pour ajouter une grille décorative et des éléments animés
- * en arrière-plan qui créent une continuité visuelle
- */
-export default function GridBackground({ 
-  type = 'lines', 
-  color = 'blue',
-  opacity = 5,
-  animate = true,
-  addParticles = true,
-  particleCount = 15
-}) {
-  // État pour les particules
-  const [particles, setParticles] = useState([]);
-  
-  // Générer les particules au montage du composant
+export default function GridBackground({ color = 'blue', opacity = 5 }) {
+  // État pour stocker les points de connexion
+  const [connections, setConnections] = useState([]);
+  const [nodes, setNodes] = useState([]);
+
+  // Générer les nœuds et connexions au chargement
   useEffect(() => {
-    if (!addParticles) return;
-    const newParticles = generateParticles(particleCount, color);
-    setParticles(newParticles);
-  }, [addParticles, particleCount, color]);
-  
+    // Générer un ensemble de nœuds
+    const nodeCount = Math.floor(window.innerWidth / 150);
+    const newNodes = Array.from({ length: nodeCount }).map(() => ({
+      x: Math.random() * 98 + 1, // 1% à 99%
+      y: Math.random() * 98 + 1, // 1% à 99%
+      size: Math.random() * 2 + 1 // 1px à 3px
+    }));
+    setNodes(newNodes);
+
+    // Générer des connexions entre certains nœuds
+    const newConnections = [];
+    newNodes.forEach((node, i) => {
+      // Pour chaque nœud, on le connecte à 1-2 autres
+      const connectionCount = Math.floor(Math.random() * 2) + 1;
+      for (let j = 0; j < connectionCount; j++) {
+        // Choisir un autre nœud aléatoire
+        const targetIndex = Math.floor(Math.random() * nodeCount);
+        if (targetIndex !== i) {
+          newConnections.push({
+            start: { x: node.x, y: node.y },
+            end: { x: newNodes[targetIndex].x, y: newNodes[targetIndex].y },
+            width: Math.random() * 0.5 + 0.1 // 0.1px à 0.6px
+          });
+        }
+      }
+    });
+    setConnections(newConnections);
+  }, []);
+
   return (
     <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+      {/* Fond tech subtil */}
+      <div className={`absolute inset-0 bg-gradient-to-b from-gray-50 to-gray-100 opacity-${opacity}`}></div>
+      
       {/* Grille de fond */}
-      <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className={`opacity-${opacity}`}>
-        {generateGridPattern(type, color)}
-        <rect width="100%" height="100%" fill={`url(#${type === 'dots' ? 'dotsPattern' : type === 'circuit' ? 'circuitPattern' : type === 'honeycomb' ? 'honeycombPattern' : 'linesPattern'})`} />
+      <svg className={`absolute inset-0 opacity-${opacity/2}`} width="100%" height="100%">
+        <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+          <path d="M 20 0 L 0 0 0 20" fill="none" stroke={`rgba(var(--color-${color}-rgb), 0.1)`} strokeWidth="0.3" />
+        </pattern>
+        <rect width="100%" height="100%" fill="url(#grid)" />
       </svg>
       
-      {/* Lignes de connexion */}
-      <ConnectionLines color={color} animate={animate} />
+      {/* Éléments de circuit */}
+      <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
+        {/* Lignes de connexion */}
+        {connections.map((conn, i) => (
+          <motion.line
+            key={`conn-${i}`}
+            x1={`${conn.start.x}%`}
+            y1={`${conn.start.y}%`}
+            x2={`${conn.end.x}%`}
+            y2={`${conn.end.y}%`}
+            stroke={`rgba(var(--color-${color}-rgb), 0.15)`}
+            strokeWidth={conn.width}
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: Math.random() * 2 + 1, delay: Math.random() * 2 }}
+          />
+        ))}
+        
+        {/* Nœuds */}
+        {nodes.map((node, i) => (
+          <motion.circle
+            key={`node-${i}`}
+            cx={`${node.x}%`}
+            cy={`${node.y}%`}
+            r={node.size}
+            fill={`rgba(var(--color-${color}-rgb), 0.2)`}
+            initial={{ scale: 0 }}
+            animate={{ scale: [0, 1, 0.8, 1] }}
+            transition={{ duration: 0.5, delay: Math.random() * 2 }}
+          />
+        ))}
+      </svg>
       
-      {/* Particules animées */}
-      {addParticles && particles.map(particle => (
-        <motion.div
-          key={particle.id}
-          className={`absolute w-1 h-1 rounded-full bg-${particle.color}/${opacity * 4}`}
-          style={{
-            left: `${particle.x}%`,
-            top: `${particle.y}%`,
-            width: `${particle.size}px`,
-            height: `${particle.size}px`
-          }}
-          animate={{
-            y: ["0%", "100%"],
-            opacity: [0, 0.8, 0]
-          }}
-          transition={{
-            y: {
-              duration: particle.duration,
-              repeat: Infinity,
-              ease: "linear",
-              delay: particle.delay
-            },
-            opacity: {
-              duration: particle.duration * 0.8,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: particle.delay
-            }
-          }}
-        />
-      ))}
-      
-      {/* Nuages colorés en arrière-plan */}
-      <motion.div 
-        className={`absolute top-1/4 right-1/4 w-96 h-96 rounded-full bg-${color}/2 blur-3xl`}
-        animate={animate ? {
-          scale: [1, 1.1, 1],
-          opacity: [0.2, 0.3, 0.2]
-        } : {}}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          repeatType: "reverse"
-        }}
-      />
-      
-      <motion.div 
-        className="absolute bottom-1/3 left-1/4 w-96 h-96 rounded-full bg-purple/2 blur-3xl"
-        animate={animate ? {
-          scale: [1, 1.15, 1],
-          opacity: [0.15, 0.25, 0.15]
-        } : {}}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          repeatType: "reverse",
-          delay: 5
-        }}
-      />
-      
-      <motion.div 
-        className="absolute top-2/3 right-1/3 w-64 h-64 rounded-full bg-red/2 blur-3xl"
-        animate={animate ? {
-          scale: [1, 1.2, 1],
-          opacity: [0.1, 0.2, 0.1]
-        } : {}}
-        transition={{
-          duration: 22,
-          repeat: Infinity,
-          repeatType: "reverse",
-          delay: 8
-        }}
-      />
-      
-      {/* Formes géométriques flottantes */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Cercle décoratif */}
-        <motion.div 
-          className={`absolute top-1/4 left-10 w-40 h-40 border border-${color}/10 rounded-full`}
-          style={{ opacity: opacity / 100 }}
-          animate={animate ? {
-            rotate: 360,
-            x: [0, 20, 0],
-            y: [0, -20, 0]
-          } : {}}
-          transition={{
-            rotate: { duration: 40, repeat: Infinity, ease: "linear" },
-            x: { duration: 20, repeat: Infinity, repeatType: "reverse", ease: "easeInOut" },
-            y: { duration: 25, repeat: Infinity, repeatType: "reverse", ease: "easeInOut", delay: 5 }
-          }}
-        >
-          <motion.div 
-            className={`absolute inset-4 border border-${color}/15 rounded-full`}
-            animate={animate ? {
-              rotate: -360,
-            } : {}}
+      {/* Points lumineux subtils */}
+      <div className="absolute inset-0">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <motion.div
+            key={`point-${i}`}
+            className={`absolute w-1 h-1 rounded-full bg-${color}/20`}
+            style={{
+              left: `${10 + (i * 10)}%`,
+              top: `${15 + (i * 8)}%`,
+            }}
+            animate={{
+              opacity: [0.1, 0.3, 0.1],
+              scale: [1, 1.5, 1]
+            }}
             transition={{
-              duration: 30,
+              duration: 3 + i,
               repeat: Infinity,
-              ease: "linear",
-              delay: 2
+              repeatType: "reverse"
             }}
           />
-        </motion.div>
-        
-        {/* Triangle décoratif */}
-        <motion.div 
-          className="absolute bottom-1/4 right-20 opacity-10"
-          animate={animate ? {
-            rotate: [0, 10, -10, 0],
-            scale: [1, 1.05, 0.95, 1]
-          } : {}}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        >
-          <svg width="100" height="100" viewBox="0 0 100 100">
-            <motion.path 
-              d="M50,10 L90,80 L10,80 Z" 
-              stroke={`var(--color-${color})`} 
-              strokeWidth="1.5" 
-              fill="none"
-              animate={animate ? {
-                d: [
-                  "M50,10 L90,80 L10,80 Z",
-                  "M50,15 L85,75 L15,75 Z",
-                  "M50,10 L90,80 L10,80 Z"
-                ]
-              } : {}}
-              transition={{
-                duration: 15,
-                repeat: Infinity,
-                repeatType: "mirror"
-              }}
-            />
-          </svg>
-        </motion.div>
-        
-        {/* Rectangle décoratif */}
-        <motion.div 
-          className="absolute top-1/3 left-1/3 opacity-10"
-          animate={animate ? {
-            rotate: [45, 30, 45, 60, 45],
-            scale: [1, 1.1, 1, 0.9, 1]
-          } : {}}
-          transition={{
-            duration: 30,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 10
-          }}
-        >
-          <svg width="80" height="80" viewBox="0 0 80 80">
-            <motion.rect 
-              x="20" 
-              y="20" 
-              width="40" 
-              height="40" 
-              stroke={`var(--color-purple)`} 
-              strokeWidth="1.5" 
-              fill="none"
-              animate={animate ? {
-                width: [40, 50, 40, 30, 40],
-                height: [40, 30, 40, 50, 40],
-                x: [20, 15, 20, 25, 20],
-                y: [20, 25, 20, 15, 20]
-              } : {}}
-              transition={{
-                duration: 25,
-                repeat: Infinity,
-                repeatType: "mirror"
-              }}
-            />
-          </svg>
-        </motion.div>
-        
-        {/* Points décoratifs */}
-        <div className="absolute inset-0">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <motion.div
-              key={`dot-${i}`}
-              className={`absolute w-1 h-1 rounded-full bg-${i % 2 === 0 ? color : 'purple'}/20`}
-              style={{
-                left: `${20 + (i * 15)}%`,
-                top: `${80 - (i * 10)}%`
-              }}
-              animate={animate ? {
-                opacity: [0.2, 0.5, 0.2],
-                scale: [1, 1.5, 1]
-              } : {}}
-              transition={{
-                duration: 4 + i,
-                repeat: Infinity,
-                repeatType: "mirror",
-                delay: i * 0.5
-              }}
-            />
-          ))}
-        </div>
+        ))}
       </div>
       
-      {/* Points de connexion aux bords pour transition entre sections */}
-      <div className="absolute inset-x-0 top-0 h-2 overflow-hidden">
-        <div className="flex justify-around">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <motion.div
-              key={`top-point-${i}`}
-              className={`w-1 h-1 rounded-full bg-${i % 3 === 0 ? color : i % 3 === 1 ? 'purple' : 'red'}/30`}
-              animate={animate ? {
-                y: [-5, 5, -5],
-                opacity: [0.2, 0.4, 0.2]
-              } : {}}
-              transition={{
-                duration: 3 + (i % 3),
-                repeat: Infinity,
-                repeatType: "mirror",
-                delay: i * 0.2
-              }}
-            />
-          ))}
-        </div>
-      </div>
-      
-      <div className="absolute inset-x-0 bottom-0 h-2 overflow-hidden">
-        <div className="flex justify-around">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <motion.div
-              key={`bottom-point-${i}`}
-              className={`w-1 h-1 rounded-full bg-${i % 3 === 0 ? color : i % 3 === 1 ? 'purple' : 'red'}/30`}
-              animate={animate ? {
-                y: [5, -5, 5],
-                opacity: [0.2, 0.4, 0.2]
-              } : {}}
-              transition={{
-                duration: 3 + (i % 3),
-                repeat: Infinity,
-                repeatType: "mirror",
-                delay: i * 0.2
-              }}
-            />
-          ))}
-        </div>
+      {/* Effet de code binaire */}
+      <div className="absolute inset-0 overflow-hidden opacity-10">
+        {Array.from({ length: 15 }).map((_, i) => (
+          <motion.div
+            key={`binary-${i}`}
+            className="absolute text-xs font-mono"
+            style={{
+              left: `${Math.random() * 90 + 5}%`,
+              top: 0,
+              color: `rgba(var(--color-${color}-rgb), 0.5)`
+            }}
+            initial={{ y: -100 }}
+            animate={{ y: '100vh' }}
+            transition={{
+              duration: Math.random() * 60 + 30,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+          >
+            {Array.from({ length: Math.floor(Math.random() * 20) + 10 }).map((_, j) => (
+              <div key={j}>{Math.random() > 0.5 ? '1' : '0'}</div>
+            ))}
+          </motion.div>
+        ))}
       </div>
     </div>
   );
