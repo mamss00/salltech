@@ -1,4 +1,4 @@
-import SectionWrapper from '@/components/sections/SectionWrapper'
+import SectionWrapper from '@/components/background/SectionWrapper'
 import Hero from '@/components/Hero'
 import Services from '@/components/Services'
 import Portfolio from '@/components/Portfolio'

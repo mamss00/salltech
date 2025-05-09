@@ -2,9 +2,9 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import BackgroundDecoration from '../background/BackgroundDecoration'
-import ConnectingElements from '../background/ConnectingElements'
-import GridBackground from '../background/GridBackground'
+import BackgroundDecoration from './BackgroundDecoration'
+import ConnectingElements from './ConnectingElements'
+import GridBackground from './GridBackground'
 
 /**
  * Composant pour envelopper les sections et créer une continuité visuelle
