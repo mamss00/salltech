@@ -4,209 +4,226 @@ import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
+import Link from 'next/link'
 import CTAButton from '@/components/CTAButton'
 import { generateParticles } from '@/components/background/GridUtils'
-import Link from 'next/link'
+import ConnectionLines from '@/components/background/ConnectionLines'
 
-const EnhancedPortfolio = () => {
-  // Refs pour animation
+const Portfolio = () => {
+  // Animation avec plusieurs effets
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [descRef, descInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [projectsRef, projectsInView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  const sectionRef = useRef(null)
   
-  // État pour les projets et filtres
-  const [projects, setProjects] = useState([])
-  const [filteredProjects, setFilteredProjects] = useState([])
-  const [activeFilter, setActiveFilter] = useState('Tous')
-  const [activeProject, setActiveProject] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  
-  // Effet de défilement
+  // Animation au défilement
+  const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
-    target: sectionRef,
+    target: containerRef,
     offset: ["start end", "end start"]
   })
   
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.5, 1, 1, 0.5])
-  const sectionScale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.95, 1, 1, 0.95])
+  // Transformations basées sur le défilement
+  const containerOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.7, 1, 1, 0.7])
   
   // Pour les particules d'arrière-plan
-  const particles = generateParticles(20, 'purple')
+  const particles = generateParticles(30, 'purple')
   
-  // Définition des projets
+  // Simulation d'un chargement depuis une API
+  const [hasScrolled, setHasScrolled] = useState(false)
+  const [activeFilter, setActiveFilter] = useState('Tous')
+  const [filteredProjects, setFilteredProjects] = useState([])
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState(null)
+  
   useEffect(() => {
-    // Simulation d'un chargement depuis une API
-    setTimeout(() => {
-      const projectsData = [
-        {
-          id: 1,
-          title: 'Site E-commerce SMCI',
-          category: 'E-commerce',
-          image: 'https://picsum.photos/600/400?random=1',
-          description: 'Plateforme e-commerce complète pour la Société Mauritanienne de Commerce International, offrant une expérience d\'achat fluide et sécurisée.',
-          technologies: ['Next.js', 'Tailwind CSS', 'Stripe'],
-          link: '#',
-          featured: true
-        },
-        {
-          id: 2,
-          title: 'Application Mobile Nouadhibou Pêche',
-          category: 'Application Mobile',
-          image: 'https://picsum.photos/600/400?random=2',
-          description: 'Application permettant aux pêcheurs de suivre les prix du marché en temps réel et de gérer leurs ventes efficacement.',
-          technologies: ['React Native', 'Firebase', 'Redux'],
-          link: '#',
-          featured: true
-        },
-        {
-          id: 3,
-          title: 'Dashboard Administratif',
-          category: 'Web App',
-          image: 'https://picsum.photos/600/400?random=3',
-          description: 'Panneau d\'administration sur mesure pour une entreprise locale avec visualisation de données avancée et rapports personnalisés.',
-          technologies: ['Vue.js', 'Node.js', 'MongoDB'],
-          link: '#',
-          featured: true
-        },
-        {
-          id: 4,
-          title: 'Boutique en ligne Mauritanie Artisanat',
-          category: 'E-commerce',
-          image: 'https://picsum.photos/600/400?random=4',
-          description: 'Plateforme de vente en ligne pour les artisans mauritaniens mettant en valeur l\'artisanat local et facilitant l\'accès au marché international.',
-          technologies: ['WordPress', 'WooCommerce', 'Elementor'],
-          link: '#'
-        },
-        {
-          id: 5,
-          title: 'Site vitrine Banque BNM',
-          category: 'Site Web',
-          image: 'https://picsum.photos/600/400?random=5',
-          description: 'Site institutionnel moderne pour la Banque Nationale de Mauritanie avec des fonctionnalités avancées et une interface utilisateur intuitive.',
-          technologies: ['Next.js', 'TypeScript', 'Framer Motion'],
-          link: '#'
-        },
-        {
-          id: 6,
-          title: 'App de livraison Nouakchott Express',
-          category: 'Application Mobile',
-          image: 'https://picsum.photos/600/400?random=6',
-          description: 'Service de livraison à domicile pour les restaurants et commerces de Nouakchott avec suivi en temps réel et paiement intégré.',
-          technologies: ['Flutter', 'Firebase', 'Stripe'],
-          link: '#',
-          featured: true
-        }
-      ]
-      
-      setProjects(projectsData)
-      setFilteredProjects(projectsData)
-      setIsLoading(false)
-    }, 1000)
-  }, [])
-  
-  // Filtrer les projets
-  const filterProjects = (category) => {
-    setActiveFilter(category)
-    
-    if (category === 'Tous') {
-      setFilteredProjects(projects)
-      return
+    const handleScroll = () => {
+      const scrollTop = window.pageYOffset
+      if (scrollTop < (hasScrolled ? window.innerHeight * 0.5 : window.innerHeight)) {
+        setHasScrolled(true)
+      }
     }
     
-    const filtered = projects.filter(project => project.category === category)
-    setFilteredProjects(filtered)
+    window.addEventListener('scroll', handleScroll)
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [hasScrolled])
+  
+  // Couleurs des cartes - progression subtile
+  const getCardColor = (index) => {
+    // Créer une progression plus subtile et élégante entre les couleurs
+    switch (index % 5) {
+      case 0: return "from-purple/20 to-purple/5";
+      case 1: return "from-blue/20 to-blue/5";
+      case 2: return "from-red/20 to-red/5";
+      case 3: return "from-purple/20 to-blue/5";
+      case 4: return "from-blue/20 to-red/5";
+      default: return "from-purple/20 to-purple/5";
+    }
+  };
+  
+  const projects = [
+    {
+      id: 1,
+      title: 'Site E-commerce SMCI',
+      category: 'E-commerce',
+      image: 'https://picsum.photos/600/400?random=1',
+      description: 'Plateforme e-commerce pour la Société Mauritanienne de Commerce International.',
+      technologies: ['Next.js', 'Tailwind', 'Stripe'],
+      featured: true,
+      size: 'large'
+    },
+    {
+      id: 2,
+      title: 'Application Mobile Nouadhibou Pêche',
+      category: 'Application Mobile',
+      image: 'https://picsum.photos/600/400?random=2',
+      description: 'Application permettant aux pêcheurs de suivre les prix du marché en temps réel.',
+      technologies: ['React Native', 'Firebase', 'Redux'],
+      featured: true,
+      size: 'medium'
+    },
+    {
+      id: 3,
+      title: 'Dashboard Administratif',
+      category: 'Web App',
+      image: 'https://picsum.photos/600/400?random=3',
+      description: 'Panneau d\'administration sur mesure pour une entreprise locale.',
+      technologies: ['Vue.js', 'Node.js', 'MongoDB'],
+      featured: true,
+      size: 'medium'
+    },
+    {
+      id: 4,
+      title: 'Boutique en ligne Mauritanie Artisanat',
+      category: 'E-commerce',
+      image: 'https://picsum.photos/600/400?random=4',
+      description: 'Plateforme de vente en ligne pour les artisans mauritaniens.',
+      technologies: ['WordPress', 'WooCommerce', 'Elementor'],
+      size: 'small'
+    },
+    {
+      id: 5,
+      title: 'Site vitrine Banque BNM',
+      category: 'Site Web',
+      image: 'https://picsum.photos/600/400?random=5',
+      description: 'Site institutionnel moderne pour la Banque Nationale de Mauritanie.',
+      technologies: ['Next.js', 'TypeScript', 'Framer Motion'],
+      size: 'medium'
+    },
+    {
+      id: 6,
+      title: 'Application de livraison Nouakchott Express',
+      category: 'Application Mobile',
+      image: 'https://picsum.photos/600/400?random=6',
+      description: 'Service de livraison à domicile pour les restaurants et commerces de Nouakchott.',
+      technologies: ['Flutter', 'Firebase', 'Stripe'],
+      featured: true,
+      size: 'small'
+    }
+  ]
+  
+  useEffect(() => {
+    setFilteredProjects(projects)
+  }, [])
+  
+  // Filtrer les projets par catégorie
+  const filterByCategory = (category) => {
+    setActiveFilter(category)
+    if (category === 'Tous') {
+      setFilteredProjects(projects)
+    } else {
+      setFilteredProjects(projects.filter(project => project.category === category))
+    }
   }
   
   // Obtenir les catégories uniques
-  const categories = ['Tous', ...new Set(projects.map(project => project.category))]
+  const categories = ['Tous', ...Array.from(new Set(projects.map(project => project.category)))]
   
-  // Variants pour animations
+  // Animation variants qui fonctionnent
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3
+        staggerChildren: 0.1
       }
     }
   }
   
   const itemVariants = {
-    hidden: { y: 30, opacity: 0, scale: 0.9 },
-    visible: (i) => ({
+    hidden: { y: 30, opacity: 0 },
+    visible: {
       y: 0,
       opacity: 1,
-      scale: 1,
-      transition: { 
-        type: "spring",
-        stiffness: 80,
-        damping: 12,
-        delay: i * 0.1
-      }
-    })
+      transition: { duration: 0.5 }
+    }
   }
-  
-  // Fonction pour obtenir une couleur en fonction de l'index
-  const getColorClass = (index) => {
-    const colors = [
-      { bg: "from-blue/20 to-blue/5", text: "text-blue", accent: "bg-blue" },
-      { bg: "from-purple/20 to-purple/5", text: "text-purple", accent: "bg-purple" },
-      { bg: "from-red/20 to-red/5", text: "text-red", accent: "bg-red" }
-    ]
-    return colors[index % colors.length]
-  }
+
+  // Style personnalisé pour les animations et les gradients
+  const customStyles = `
+    
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    .animate-gradient-shift {
+      animation: gradientMove 4s ease infinite;
+    }
+    
+    .bg-gradient-text {
+      background-image: linear-gradient(45deg, #3498db, #9b59b6, #e74c3c);
+    }
+    
+    @keyframes float-1 {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(-20px) rotate(5deg); }
+    }
+    
+    @keyframes float-2 {
+      0%, 100% { transform: translateY(0) rotate(0); }
+      50% { transform: translateY(20px) rotate(-5deg); }
+    }
+    
+    @keyframes float-3 {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); }
+      50% { transform: translate(-50%, -50%) scale(1.1); }
+    }
+    
+    .animate-float-1 {
+      animation: float-1 15s ease-in-out infinite;
+    }
+    
+    .animate-float-2 {
+      animation: float-2 18s ease-in-out infinite;
+    }
+    
+    .animate-float-3 {
+      animation: float-3 20s ease-in-out infinite;
+    }
+  `;
 
   return (
     <section 
       id="portfolio" 
+      ref={containerRef}
       className="py-32 relative overflow-hidden"
-      ref={sectionRef}
     >
+      <style jsx>{customStyles}</style>
+      
       {/* Arrière-plan élaboré */}
       <div className="absolute inset-0 overflow-hidden z-0">
-        {/* Cercles décoratifs */}
-        <motion.div 
-          className="absolute -top-40 right-1/4 w-96 h-96 rounded-full bg-purple/5 blur-3xl"
-          animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ 
-            duration: 12,
-            repeat: Infinity,
-            repeatType: "reverse"
-          }}
-        />
+        {/* Lignes de connexion fluides */}
+        <ConnectionLines color="purple" animate={true} />
         
-        <motion.div 
-          className="absolute bottom-20 -left-20 w-72 h-72 rounded-full bg-red/5 blur-3xl"
-          animate={{ 
-            scale: [1, 1.15, 1],
-            opacity: [0.3, 0.5, 0.3],
-          }}
-          transition={{ 
-            duration: 15,
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: 2
-          }}
-        />
+        {/* Éléments de fond animés */}
+        <div className="absolute -top-20 -right-20 w-96 h-96 bg-purple/10 rounded-full blur-3xl animate-float-1"></div>
+        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-blue/10 rounded-full blur-3xl animate-float-2"></div>
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-5xl max-h-5xl bg-gradient-to-br from-purple/5 via-blue/5 to-red/5 rounded-full blur-3xl opacity-50 animate-float-3"></div>
         
-        {/* Motif géométrique */}
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%">
-            <pattern id="portfolioPattern" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M20 20L40 20L40 40" stroke="rgba(155, 89, 182, 0.7)" strokeWidth="0.5" fill="none" />
-              <path d="M0 0L0 20L20 20" stroke="rgba(155, 89, 182, 0.7)" strokeWidth="0.5" fill="none" />
-              <circle cx="20" cy="20" r="1" fill="rgba(155, 89, 182, 0.5)" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#portfolioPattern)" />
-          </svg>
-        </div>
-        
-        {/* Particules décoratives */}
+        {/* Particules */}
         {particles.map((particle, index) => (
           <motion.div
             key={`particle-${index}`}
@@ -216,28 +233,44 @@ const EnhancedPortfolio = () => {
               top: `${particle.y}%`,
               width: `${particle.size}px`,
               height: `${particle.size}px`,
-              backgroundColor: index % 3 === 0 ? 'rgba(155, 89, 182, 0.3)' : 
-                             index % 3 === 1 ? 'rgba(52, 152, 219, 0.3)' : 
-                                              'rgba(231, 76, 60, 0.3)',
+              backgroundColor: particle.color === 'purple' ? 'rgba(155, 89, 182, 0.3)' : 
+                              particle.color === 'blue' ? 'rgba(52, 152, 219, 0.3)' : 
+                                                      'rgba(231, 76, 60, 0.3)'
             }}
             animate={{
-              x: [0, (index % 2 === 0 ? 30 : -30), 0],
-              y: [0, (index % 2 === 0 ? -20 : 20), 0],
-              opacity: [particle.size / 5, particle.size / 2, particle.size / 5],
-              scale: [1, 1.2, 1]
+              x: [0, Math.random() * 20 - 10, 0],
+              y: [0, Math.random() * 20 - 10, 0],
+              opacity: [0, particle.size / 3, 0],
+              scale: [0, 1, 0]
             }}
             transition={{
               duration: particle.duration,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
+              delay: particle.delay
             }}
           />
         ))}
+        
+        {/* Grille de fond subtile */}
+        <div className="absolute inset-0 opacity-5">
+          <svg width="100%" height="100%">
+            <pattern id="portfolioHoneycomb" width="56" height="100" patternUnits="userSpaceOnUse">
+              <path 
+                d="M28 0L56 25L56 75L28 100L0 75L0 25Z" 
+                stroke="rgba(155, 89, 182, 0.8)" 
+                strokeWidth="1" 
+                fill="none" 
+              />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#portfolioHoneycomb)" />
+          </svg>
+        </div>
       </div>
-
+      
       <motion.div 
         className="container relative z-10"
-        style={{ opacity: sectionOpacity, scale: sectionScale }}
+        style={{ opacity: containerOpacity }}
       >
         <motion.h2
           ref={titleRef}
@@ -246,19 +279,7 @@ const EnhancedPortfolio = () => {
           transition={{ duration: 0.6 }}
           className="text-4xl md:text-5xl font-extrabold mb-6 text-center"
         >
-          Notre <motion.span 
-            className="gradient-text"
-            animate={{ 
-              backgroundPosition: ['0% center', '100% center', '0% center'] 
-            }}
-            transition={{ 
-              duration: 8, 
-              ease: 'linear', 
-              repeat: Infinity 
-            }}
-          >
-            Portfolio
-          </motion.span>
+          Notre <span className="gradient-text bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">Portfolio</span>
         </motion.h2>
         
         <motion.p
@@ -272,253 +293,276 @@ const EnhancedPortfolio = () => {
           et internationales qui reflètent notre expertise et notre savoir-faire.
         </motion.p>
         
-        {/* Filtre de catégories */}
+        {/* Filtres de catégories */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={descInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-3 mb-12"
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-wrap justify-center gap-4 mb-16"
         >
           {categories.map((category, index) => (
             <motion.button
-              key={category}
-              onClick={() => filterProjects(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeFilter === category 
-                  ? 'bg-purple text-white shadow-lg shadow-purple/20' 
+              key={index}
+              onClick={() => filterByCategory(category)}
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all relative ${
+                activeFilter === category
+                  ? 'text-white shadow-lg' 
                   : 'bg-white/80 text-gray-600 hover:bg-gray-100'
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              {category}
               {activeFilter === category && (
                 <motion.span
-                  layoutId="categoryIndicator"
-                  className="absolute inset-0 rounded-full bg-purple -z-10"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  layoutId="activeCategory"
+                  className="absolute inset-0 bg-purple-600 rounded-full -z-10"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
                 />
               )}
+              {category}
             </motion.button>
           ))}
         </motion.div>
         
-        {/* État de chargement */}
-        {isLoading ? (
-          <div className="flex justify-center items-center h-72">
-            <motion.div
-              className="relative w-20 h-20"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-            >
-              <motion.span
-                className="absolute w-full h-full rounded-full border-2 border-t-transparent border-purple"
-                animate={{ 
-                  rotate: 360,
-                  borderColor: ['rgba(155, 89, 182, 0.3) rgba(155, 89, 182, 0.3) rgba(155, 89, 182, 0.3) transparent', 
-                               'rgba(52, 152, 219, 0.3) rgba(52, 152, 219, 0.3) rgba(52, 152, 219, 0.3) transparent',
-                               'rgba(155, 89, 182, 0.3) rgba(155, 89, 182, 0.3) rgba(155, 89, 182, 0.3) transparent']
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-              />
-              <motion.span 
-                className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-purple"
-                animate={{ 
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{ duration: 1, repeat: Infinity }}
-              />
-            </motion.div>
-          </div>
-        ) : (
-          <motion.div
-            ref={projectsRef}
-            variants={containerVariants}
-            initial="hidden"
-            animate={projectsInView ? "visible" : "hidden"}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-          >
-            {filteredProjects.map((project, index) => {
-              const colorClass = getColorClass(index);
-              
-              return (
-                <motion.div
-                  key={project.id}
-                  custom={index}
-                  variants={itemVariants}
-                  className="group h-full"
-                  onClick={() => setActiveProject(project)}
+        {/* Grille asymétrique avec design plus élégant */}
+        <motion.div
+          ref={projectsRef}
+          variants={containerVariants}
+          initial="hidden"
+          animate={projectsInView ? "visible" : "hidden"}
+          className="grid grid-cols-1 md:grid-cols-12 gap-8"
+        >
+          {/* Section Projets Vedettes - Disposition asymétrique distincte */}
+          {filteredProjects.filter(project => project.featured).map((project, index) => {
+            let colSpan;
+            
+            // Première rangée avec disposition asymétrique
+            if (index === 0) {
+              colSpan = "md:col-span-8"; // Premier projet en vedette (large)
+            } else if (index === 1) {
+              colSpan = "md:col-span-4"; // Deuxième projet
+            } else if (index === 2) {
+              colSpan = "md:col-span-6"; // Troisième projet
+            } else {
+              colSpan = "md:col-span-6"; // Autres projets
+            }
+            
+            return (
+              <motion.div
+                key={`featured-${project.id}`}
+                variants={itemVariants}
+                className={`group ${colSpan}`}
+              >
+                <motion.div 
+                  className={`bg-gradient-to-br ${getCardColor(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full`}
+                  whileHover={{ 
+                    y: -8,
+                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                  }}
                 >
-                  <motion.div 
-                    className={`bg-gradient-to-br ${colorClass.bg} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-                    whileHover={{ 
-                      y: -10, 
-                      boxShadow: '0 20px 30px rgba(0, 0, 0, 0.1)',
-                    }}
-                  >
-                    {/* Image avec overlay */}
-                    <div className="relative h-56 overflow-hidden">
-                      <Image
-                        src={project.image}
-                        alt={project.title}
-                        fill
-                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                        unoptimized
-                      />
-                      
-                      {/* Overlay au survol */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      
-                      {/* Badge de catégorie */}
-                      <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                        <span className="inline-block px-3 py-1 text-sm bg-white/90 text-blue font-medium rounded-full shadow-md">
-                          {project.category}
-                        </span>
-                      </div>
-                      
-                      {/* Boutons d'action */}
-                      <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                        <a href="#" className="p-2 bg-white/90 text-blue hover:text-purple rounded-full shadow-md transition-colors duration-300">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                          </svg>
-                        </a>
-                        <a href="#" className="p-2 bg-white/90 text-blue hover:text-purple rounded-full shadow-md transition-colors duration-300">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                          </svg>
-                        </a>
-                      </div>
+                  {/* Image avec overlay et badges */}
+                  <div className="relative h-56 overflow-hidden">
+                    <Image
+                      src={project.image}
+                      alt={project.title}
+                      fill
+                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    
+                    <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                      <span className="inline-block px-3 py-1 text-sm bg-white/90 text-purple font-medium rounded-full shadow-md">
+                        {project.category}
+                      </span>
                     </div>
                     
-                    {/* Contenu de la carte */}
-                    <div className="p-6">
-                      <h3 className={`text-xl font-bold mb-3 group-hover:${colorClass.text} transition-colors duration-300`}>
-                        {project.title}
-                      </h3>
-                      
-                      <div className={`h-0.5 w-12 ${colorClass.accent}/60 mb-4 opacity-60 group-hover:w-20 transition-all duration-300`}></div>
-                      
-                      <p className="text-gray-600 mb-6 line-clamp-3">{project.description}</p>
-                      
-                      <div className="flex flex-wrap gap-2 mt-auto">
-                        {project.technologies.map((tech, techIndex) => (
-                          <span 
-                            key={techIndex} 
-                            className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-blue/10 hover:text-blue"
-                          >
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                    
-                    {/* Lien "Voir le projet" avec animation des points */}
-                    <div className="px-6 pb-6 pt-0 mt-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <a href="#" className={`flex items-center ${colorClass.text} font-medium hover:underline transition-all duration-300 group-hover:text-opacity-80`}>
-                        <span>Voir le projet</span>
-                        <span className="flex items-center ml-2">
-                          <span className="dots-container">
-                            <span className="dot animate-dot-pulse-1"></span>
-                            <span className="dot animate-dot-pulse-2"></span>
-                            <span className="dot animate-dot-pulse-3"></span>
-                          </span>
-                        </span>
+                    <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                      <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                      </a>
+                      <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                        </svg>
                       </a>
                     </div>
-                  </motion.div>
+                  </div>
+                  
+                  {/* Contenu de la carte */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
+                      {project.title}
+                    </h3>
+                    
+                    <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
+                    
+                    <p className="text-gray-600 mb-6 line-clamp-3">{project.description}</p>
+                    
+                    <div className="flex flex-wrap gap-2 mt-auto">
+                      {project.technologies.map((tech, index) => (
+                        <span 
+                          key={index} 
+                          className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-purple/10 hover:text-purple"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 </motion.div>
-              )
-            })}
-          </motion.div>
-        )}
-        
-        {/* Modal de projet */}
-        <AnimatePresence>
-          {activeProject && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-8"
-              onClick={() => setActiveProject(null)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, y: 20 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 20 }}
-                transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                className="bg-white rounded-2xl max-w-4xl max-h-[90vh] overflow-auto shadow-2xl"
-                onClick={e => e.stopPropagation()}
-              >
-                <div className="relative aspect-video">
-                  <Image
-                    src={activeProject.image}
-                    alt={activeProject.title}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                  
-                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-70"></div>
-                  
-                  <div className="absolute bottom-0 left-0 right-0 p-8">
-                    <span className="inline-block px-3 py-1 bg-white/90 text-purple rounded-full text-sm font-medium shadow-md mb-4">
-                      {activeProject.category}
-                    </span>
-                    <h3 className="text-3xl font-bold text-white mb-2">{activeProject.title}</h3>
-                    <div className="h-1 w-16 bg-gradient-to-r from-blue via-purple to-red rounded-full mb-4"></div>
-                  </div>
-                  
-                  <button 
-                    className="absolute top-4 right-4 w-10 h-10 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/70 transition-colors duration-300"
-                    onClick={() => setActiveProject(null)}
-                  >
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
-                  </button>
-                </div>
-                
-                <div className="p-8">
-                  <p className="text-gray-700 text-lg mb-6">{activeProject.description}</p>
-                  
-                  <h4 className="text-lg font-semibold mb-3">Technologies utilisées</h4>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {activeProject.technologies.map((tech, techIndex) => (
-                      <span 
-                        key={techIndex} 
-                        className="px-3 py-1.5 rounded-full bg-purple/10 text-purple text-sm"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                  
-                  <div className="flex justify-end mt-6">
-                    <a 
-                      href={activeProject.link} 
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue via-purple to-red text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                    >
-                      <span>Voir le projet</span>
-                      <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
               </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+            );
+          })}
+          
+          {/* Projets réguliers avec disposition asymétrique plus subtile */}
+          {filteredProjects.filter(project => !project.featured).map((project, index) => {
+            // Disposition asymétrique pour les projets non vedettes
+            let colSpan;
+            const actualIndex = index + filteredProjects.filter(p => p.featured).length;
+            
+            if (index % 3 === 0) {
+              colSpan = "md:col-span-5"; 
+            } else if (index % 3 === 1) {
+              colSpan = "md:col-span-7";
+            } else {
+              colSpan = "md:col-span-12 md:h-64";
+            }
+            
+            return (
+              <motion.div
+                key={`regular-${project.id}`}
+                variants={itemVariants}
+                className={`group ${colSpan}`}
+              >
+                <motion.div 
+                  className={`bg-gradient-to-br ${getCardColor(actualIndex)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full group`}
+                  animate={{ 
+                    background: [
+                      `linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(155, 89, 182, 0.05))`,
+                      `linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.05))`,
+                      `linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.05))`,
+                      `linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(155, 89, 182, 0.05))`
+                    ]
+                  }}
+                  transition={{ 
+                    duration: 20, 
+                    ease: "linear", 
+                    repeat: Infinity,
+                    delay: index * 3 // Décalage entre les cartes
+                  }}
+                >
+                  {/* Contenu différent en fonction de la taille */}
+                  {index % 3 === 2 ? (
+                    // Projet horizontal
+                    <div className="flex h-full">
+                      <div className="relative w-1/3 md:w-1/4">
+                        <div className="absolute inset-0">
+                          <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            className="object-cover"
+                            sizes="33vw"
+                            unoptimized
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        </div>
+                      </div>
+                      <div className="p-6 flex-1 flex flex-col justify-center">
+                        <span className="inline-block px-3 py-1 text-xs bg-purple/10 text-purple font-medium rounded-full mb-3">
+                          {project.category}
+                        </span>
+                        <h3 className="text-xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
+                          {project.title}
+                        </h3>
+                        <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
+                        <p className="text-gray-600 mb-4 line-clamp-2">{project.description}</p>
+                        <div className="flex flex-wrap gap-2">
+                          {project.technologies.map((tech, techIndex) => (
+                            <span 
+                              key={techIndex} 
+                              className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      {/* Image avec overlay et badges */}
+                      <div className="relative h-48 overflow-hidden">
+                        <Image
+                          src={project.image}
+                          alt={project.title}
+                          fill
+                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          unoptimized
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                        
+                        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                          <span className="inline-block px-3 py-1 text-sm bg-white/90 text-purple font-medium rounded-full shadow-md">
+                            {project.category}
+                          </span>
+                        </div>
+                        
+                        <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                          <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                      
+                      {/* Contenu de la carte */}
+                      <div className="p-5">
+                        <h3 className="text-lg font-bold mb-2 group-hover:text-purple transition-colors duration-300">
+                          {project.title}
+                        </h3>
+                        
+                        <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
+                        
+                        <p className="text-gray-600 mb-4 line-clamp-2 text-sm">{project.description}</p>
+                        
+                        <div className="flex flex-wrap gap-1.5">
+                          {project.technologies.slice(0, 2).map((tech, techIndex) => (
+                            <span 
+                              key={techIndex} 
+                              className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                          {project.technologies.length > 2 && (
+                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full">
+                              +{project.technologies.length - 2}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </motion.div>
+              </motion.div>
+            );
+          })}
+        </motion.div>
         
         {/* Bouton "Explorer Tous Nos Projets" */}
         <div className="text-center mt-16">
           <CTAButton 
-            href="#" 
+            href="/portfolio" 
             className="mx-auto inline-flex items-center justify-center space-x-3"
           >
             Explorer Tous Nos Projets
@@ -529,4 +573,4 @@ const EnhancedPortfolio = () => {
   )
 }
 
-export default EnhancedPortfolio
+export default Portfolio
