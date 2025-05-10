@@ -74,8 +74,7 @@ const EnhancedPortfolio = () => {
           image: 'https://picsum.photos/600/400?random=4',
           description: 'Plateforme de vente en ligne pour les artisans mauritaniens mettant en valeur l\'artisanat local et facilitant l\'accès au marché international.',
           technologies: ['WordPress', 'WooCommerce', 'Elementor'],
-          link: '#',
-          featured: false
+          link: '#'
         },
         {
           id: 5,
@@ -84,8 +83,7 @@ const EnhancedPortfolio = () => {
           image: 'https://picsum.photos/600/400?random=5',
           description: 'Site institutionnel moderne pour la Banque Nationale de Mauritanie avec des fonctionnalités avancées et une interface utilisateur intuitive.',
           technologies: ['Next.js', 'TypeScript', 'Framer Motion'],
-          link: '#',
-          featured: false
+          link: '#'
         },
         {
           id: 6,
@@ -95,37 +93,7 @@ const EnhancedPortfolio = () => {
           description: 'Service de livraison à domicile pour les restaurants et commerces de Nouakchott avec suivi en temps réel et paiement intégré.',
           technologies: ['Flutter', 'Firebase', 'Stripe'],
           link: '#',
-          featured: false
-        },
-        {
-          id: 7,
-          title: 'Application de Suivi Médical',
-          category: 'Web App',
-          image: 'https://picsum.photos/600/400?random=7',
-          description: 'Une solution complète de suivi médical pour les cliniques privées avec gestion des rendez-vous et dossiers patients.',
-          technologies: ['React', 'Express', 'PostgreSQL'],
-          link: '#',
-          featured: false
-        },
-        {
-          id: 8,
-          title: 'Portail Éducatif National',
-          category: 'Site Web',
-          image: 'https://picsum.photos/600/400?random=8',
-          description: 'Plateforme éducative offrant des ressources pédagogiques et des cours en ligne pour les écoles mauritaniennes.',
-          technologies: ['Django', 'React', 'AWS'],
-          link: '#',
-          featured: false
-        },
-        {
-          id: 9,
-          title: 'App Nouakchott City Guide',
-          category: 'Application Mobile',
-          image: 'https://picsum.photos/600/400?random=9',
-          description: 'Guide touristique interactif de Nouakchott avec cartographie GPS, points d\'intérêt et recommandations locales.',
-          technologies: ['React Native', 'MongoDB', 'MapBox'],
-          link: '#',
-          featured: false
+          featured: true
         }
       ]
       
@@ -477,7 +445,7 @@ const EnhancedPortfolio = () => {
           </motion.p>
         </div>
         
-        {/* Filtre de catégories amélioré avec meilleur contraste */}
+        {/* Nouveau filtre de catégories élégant */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={descInView ? { opacity: 1, y: 0 } : {}}
@@ -488,17 +456,17 @@ const EnhancedPortfolio = () => {
             <motion.button
               key={category}
               onClick={() => filterProjects(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 ${
                 activeFilter === category 
-                  ? 'bg-purple-700 text-white shadow-lg shadow-purple-500/30' 
-                  : 'bg-white text-gray-700 hover:bg-gray-50 border border-gray-200'
+                  ? 'bg-purple-600 text-white shadow-lg shadow-purple-500/20' 
+                  : 'bg-white/80 text-gray-600 hover:bg-gray-100'
               }`}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               animate={activeFilter === category ? {
-                boxShadow: ['0 10px 15px -3px rgba(155, 89, 182, 0.2), 0 4px 6px -2px rgba(155, 89, 182, 0.1)', 
-                            '0 15px 20px -3px rgba(155, 89, 182, 0.3), 0 8px 8px -2px rgba(155, 89, 182, 0.15)',
-                            '0 10px 15px -3px rgba(155, 89, 182, 0.2), 0 4px 6px -2px rgba(155, 89, 182, 0.1)']
+                boxShadow: ['0 10px 15px -3px rgba(155, 89, 182, 0.1), 0 4px 6px -2px rgba(155, 89, 182, 0.05)', 
+                            '0 15px 20px -3px rgba(155, 89, 182, 0.2), 0 8px 8px -2px rgba(155, 89, 182, 0.1)',
+                            '0 10px 15px -3px rgba(155, 89, 182, 0.1), 0 4px 6px -2px rgba(155, 89, 182, 0.05)']
               } : {}}
               transition={{ duration: 2, repeat: activeFilter === category ? Infinity : 0, repeatType: "reverse" }}
             >
@@ -506,7 +474,7 @@ const EnhancedPortfolio = () => {
               {activeFilter === category && (
                 <motion.span
                   layoutId="categoryIndicator"
-                  className="absolute inset-0 rounded-full bg-purple-700 -z-10"
+                  className="absolute inset-0 rounded-full bg-purple-600 -z-10"
                   transition={{ type: "spring", stiffness: 300, damping: 30 }}
                 />
               )}
@@ -544,167 +512,167 @@ const EnhancedPortfolio = () => {
           </div>
         ) : (
           <>
-            {/* Mise en avant des projets spéciaux - Design amélioré et équilibré */}
+            {/* Mise en avant des projets spéciaux - Nouveau design asymétrique */}
             <div className="mb-16">
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.8, delay: 0.5 }}
-                className="grid grid-cols-1 md:grid-cols-6 gap-6 lg:gap-8"
+                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
               >
-                {filteredProjects.filter(project => project.featured).map((project, index) => {
-                  // Répartition équilibrée des projets mis en avant
-                  // Premier projet en vedette, les autres en taille normale
-                  const colSpan = index === 0 
-                    ? 'md:col-span-6 lg:col-span-4' 
-                    : 'md:col-span-3 lg:col-span-2';
-                    
-                  return (
-                    <motion.div
-                      key={project.id}
-                      custom={index}
-                      variants={itemVariants}
-                      initial="hidden"
-                      animate="visible"
-                      className={`group relative ${colSpan}`}
-                      onClick={() => setActiveProject(project)}
-                      whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                    >
-                      <div className={`relative h-full rounded-2xl overflow-hidden shadow-lg transition-all duration-500 bg-gradient-to-br ${
-                        index === 0 ? 'from-purple-500/20 to-purple-600/5' : getProjectStyle(index).gradient
+                {filteredProjects.filter(project => project.featured).map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    custom={index}
+                    variants={itemVariants}
+                    initial="hidden"
+                    animate="visible"
+                    className={`group relative ${
+                      index === 0 ? 'md:col-span-2 md:row-span-2' : ''
+                    }`}
+                    onClick={() => setActiveProject(project)}
+                    whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                  >
+                    <div className={`relative h-full rounded-2xl overflow-hidden shadow-lg transition-all duration-500 bg-gradient-to-br ${
+                      index === 0 ? 'from-purple-500/20 to-purple-600/5' : getProjectStyle(index).gradient
+                    }`}>
+                      {/* Image avec effet parallaxe au survol */}
+                      <div className={`relative overflow-hidden ${
+                        index === 0 ? 'aspect-[16/9] md:aspect-[2/1]' : 'aspect-[4/3]'
                       }`}>
-                        {/* Image avec effet parallaxe au survol */}
-                        <div className={`relative overflow-hidden ${
-                          index === 0 ? 'aspect-[16/9] md:aspect-[2/1]' : 'aspect-[4/3]'
-                        }`}>
-                          <motion.div
-                            className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110"
-                            style={{ originY: 0.5 }}
-                          >
-                            <Image
-                              src={project.image}
-                              alt={project.title}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                              priority={index < 3}
-                              unoptimized
-                            />
-                            
-                            {/* Overlay dégradé au survol */}
-                            <motion.div 
-                              className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300"
-                            />
-                          </motion.div>
-                          
-                          {/* Badge de catégorie */}
-                          <motion.div 
-                            className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm shadow-md z-10"
-                            initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.2 * index + 0.5 }}
-                          >
-                            <span className={index === 0 ? "text-purple-600" : getProjectStyle(index).textColor}>
-                              {project.category}
-                            </span>
-                          </motion.div>
-                          
-                          {/* Boutons d'action au survol */}
-                          <motion.div 
-                            className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
-                            initial={{ y: 20 }}
-                            whileInView={{ y: 0 }}
-                            transition={{ delay: 0.1 }}
-                          >
-                            <motion.a
-                              href={project.link}
-                              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-purple-600 shadow-lg"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                              </svg>
-                            </motion.a>
-                            <motion.a
-                              href={project.link}
-                              className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-purple-600 shadow-lg"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                            >
-                              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
-                            </motion.a>
-                          </motion.div>
-                        </div>
-                        
-                        {/* Contenu descriptif avec révélation au survol */}
-                        <div className="p-6 relative z-10">
-                          <h3 className={`text-xl ${index === 0 ? 'md:text-2xl' : ''} font-bold mb-3 group-hover:text-purple-600 transition-colors duration-300`}>
-                            {project.title}
-                          </h3>
-                          
-                          {/* Ligne décorative dynamique */}
-                          <motion.div 
-                            className={`h-0.5 w-12 mb-4 ${index === 0 ? "bg-purple-500/60" : getProjectStyle(index).accentColor + "/60"} group-hover:w-20 transition-all duration-300`}
+                        <motion.div
+                          className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-110"
+                          style={{ originY: 0.5 }}
+                        >
+                          <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                            priority={index < 3}
+                            unoptimized
                           />
                           
-                          {/* Description avec taille adaptée */}
-                          <p className={`text-gray-600 mb-4 ${
-                            index === 0 ? 'line-clamp-3 md:line-clamp-4' : 'line-clamp-2 md:line-clamp-3'
-                          } group-hover:text-gray-700 transition-colors duration-300`}>
-                            {project.description}
-                          </p>
-                          
-                          {/* Technologies utilisées avec design amélioré */}
-                          <div className="flex flex-wrap gap-2 mt-auto">
-                            {project.technologies.map((tech, techIndex) => (
-                              <motion.span 
-                                key={techIndex} 
-                                className={`text-xs px-2.5 py-1 rounded-full ${
-                                  index === 0 
-                                    ? 'bg-purple-100 text-purple-700' 
-                                    : `bg-${getProjectStyle(index).textColor.split('-')[1]}-100 ${getProjectStyle(index).textColor}`
-                                } transition-all duration-300 hover:scale-105`}
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.1 * techIndex + 0.5 + (0.1 * index) }}
-                              >
-                                {tech}
-                              </motion.span>
-                            ))}
-                          </div>
+                          {/* Overlay dégradé au survol */}
+                          <motion.div 
+                            className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/60 to-transparent opacity-0 group-hover:opacity-70 transition-opacity duration-300"
+                          />
+                        </motion.div>
+                        
+                        {/* Badge de catégorie */}
+                        <motion.div 
+                          className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm shadow-md z-10"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.2 * index + 0.5 }}
+                        >
+                          <span className={index === 0 ? "text-purple-600" : getProjectStyle(index).textColor}>
+                            {project.category}
+                          </span>
+                        </motion.div>
+                        
+                        {/* Boutons d'action au survol */}
+                        <motion.div 
+                          className="absolute inset-0 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10"
+                          initial={{ y: 20 }}
+                          whileInView={{ y: 0 }}
+                          transition={{ delay: 0.1 }}
+                        >
+                          <motion.a
+                            href={project.link}
+                            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-purple-600 shadow-lg"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                            </svg>
+                          </motion.a>
+                          <motion.a
+                            href={project.link}
+                            className="w-10 h-10 rounded-full bg-white/90 backdrop-blur-sm flex items-center justify-center text-purple-600 shadow-lg"
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </motion.a>
+                        </motion.div>
+                      </div>
+                      
+                      {/* Contenu descriptif avec révélation au survol */}
+                      <div className="p-6 relative z-10">
+                        <h3 className={`text-xl ${index === 0 ? 'md:text-2xl' : ''} font-bold mb-3 group-hover:text-purple-600 transition-colors duration-300`}>
+                          {project.title}
+                        </h3>
+                        
+                        {/* Ligne décorative dynamique */}
+                        <motion.div 
+                          className={`h-0.5 w-12 mb-4 ${index === 0 ? "bg-purple-500/60" : getProjectStyle(index).accentColor + "/60"} group-hover:w-20 transition-all duration-300`}
+                        />
+                        
+                        {/* Description avec taille adaptée */}
+                        <p className={`text-gray-600 mb-4 ${
+                          index === 0 ? 'line-clamp-3 md:line-clamp-4' : 'line-clamp-2 md:line-clamp-3'
+                        } group-hover:text-gray-700 transition-colors duration-300`}>
+                          {project.description}
+                        </p>
+                        
+                        {/* Technologies utilisées avec design amélioré */}
+                        <div className="flex flex-wrap gap-2 mt-auto">
+                          {project.technologies.map((tech, techIndex) => (
+                            <motion.span 
+                              key={techIndex} 
+                              className={`text-xs px-2.5 py-1 rounded-full ${
+                                index === 0 
+                                  ? 'bg-purple-100 text-purple-700' 
+                                  : `bg-${getProjectStyle(index).textColor.split('-')[1]}-100 ${getProjectStyle(index).textColor}`
+                              } transition-all duration-300 hover:scale-105`}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.1 * techIndex + 0.5 + (0.1 * index) }}
+                            >
+                              {tech}
+                            </motion.span>
+                          ))}
                         </div>
                       </div>
-                    </motion.div>
-                  );
-                })}
+                    </div>
+                  </motion.div>
+                ))}
               </motion.div>
             </div>
             
-            {/* Grille de projets principale avec layout optimisé */}
+            {/* Grille de projets principale avec layout alternatif */}
             <motion.div
               variants={containerVariants}
               initial="hidden"
               animate="visible"
-              className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8"
+              className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-8"
             >
               {filteredProjects.filter(project => !project.featured).map((project, index) => {
                 const style = getProjectStyle(index + 3); // Décalage pour varier les styles
                 
-                // Calcul de la taille pour assurer une grille cohérente
-                // Nous avons simplifié pour une grille de 3 colonnes plus cohérente
-                // Mais nous gardons un peu de variété pour l'intérêt visuel
-                const colSpan = index % 6 === 0 ? 'md:col-span-2' : '';
+                // Layout alternatif pour créer un design asymétrique intéressant
+                const spanClasses = index % 5 === 0 
+                  ? 'md:col-span-8' 
+                  : index % 5 === 1 
+                    ? 'md:col-span-4' 
+                    : index % 5 === 2 
+                      ? 'md:col-span-6' 
+                      : index % 5 === 3 
+                        ? 'md:col-span-6' 
+                        : 'md:col-span-12';
                 
                 return (
                   <motion.div
                     key={project.id}
                     custom={index}
                     variants={itemVariants}
-                    className={`group cursor-pointer ${colSpan}`}
+                    className={`group cursor-pointer ${spanClasses}`}
                     onClick={() => setActiveProject(project)}
                     whileHover={{ y: -8, transition: { duration: 0.3 } }}
                   >
