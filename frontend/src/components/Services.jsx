@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { getServices, titreToSlug } from '@/utils/api'
 import Link from 'next/link'
+import { generateParticles } from '@/components/background/GridUtils'
+import ConnectionLines from '@/components/background/ConnectionLines'
 
 const EnhancedServices = () => {
   // Refs pour les animations scroll
@@ -20,6 +22,9 @@ const EnhancedServices = () => {
   const [hoveredCard, setHoveredCard] = useState(null)
   const [appear, setAppear] = useState(false)
   
+  // Pour les particules d'arrière-plan
+  const particles = generateParticles(30, 'blue')
+  
   // Animation au scroll pour l'ensemble de la section
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -27,6 +32,7 @@ const EnhancedServices = () => {
   })
 
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.5, 1, 1, 0.5])
+  const sectionScale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.95, 1, 1, 0.95])
 
   // Déclencher l'animation de séquence après le chargement
   useEffect(() => {
@@ -78,8 +84,8 @@ const EnhancedServices = () => {
     visible: {
       opacity: 1,
       transition: { 
-        staggerChildren: 0.5, // Augmenté de 0.15 à 0.5 pour un décalage plus important
-        delayChildren: 0.5,   // Augmenté de 0.3 à 0.5
+        staggerChildren: 0.5,
+        delayChildren: 0.5,
         when: "beforeChildren",
         ease: "easeOut"
       }
@@ -105,7 +111,7 @@ const EnhancedServices = () => {
         damping: 15,
         mass: 0.8,
         duration: 0.7,
-        delay: i * 0.5 + 0.3 // Décalage augmenté significativement (0.5s entre chaque carte)
+        delay: i * 0.5 + 0.3
       }
     })
   }
@@ -119,7 +125,7 @@ const EnhancedServices = () => {
       rotateY: 0,
       transition: { 
         type: "spring", 
-        delay: 0.3 + (i * 0.1), // Délai plus important
+        delay: 0.3 + (i * 0.1),
         duration: 0.6 
       } 
     })
@@ -132,7 +138,7 @@ const EnhancedServices = () => {
       x: 0,
       transition: { 
         type: "spring", 
-        delay: 0.5 + (i * 0.1), // Délai plus important
+        delay: 0.5 + (i * 0.1),
         duration: 0.5 
       } 
     })
@@ -145,7 +151,7 @@ const EnhancedServices = () => {
       opacity: 1,
       transition: { 
         type: "spring", 
-        delay: 0.7 + (i * 0.1), // Délai plus important
+        delay: 0.7 + (i * 0.1),
         duration: 0.5 
       } 
     })
@@ -158,7 +164,7 @@ const EnhancedServices = () => {
       y: 0,
       transition: { 
         type: "spring", 
-        delay: 0.9 + (i * 0.1), // Délai plus important
+        delay: 0.9 + (i * 0.1),
         duration: 0.5 
       } 
     })
@@ -171,7 +177,7 @@ const EnhancedServices = () => {
       y: 0,
       transition: { 
         type: "spring", 
-        delay: 1.1 + (i * 0.1), // Délai plus important
+        delay: 1.1 + (i * 0.1),
         duration: 0.5 
       } 
     })
@@ -187,30 +193,23 @@ const EnhancedServices = () => {
     return colorClasses[index % colorClasses.length]
   }
 
-  // Effet de particules pour l'arrière-plan
-  const generateParticles = (count) => {
-    return Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 2 + 1,
-      duration: Math.random() * 30 + 20
-    }))
-  }
-  
-  const particles = generateParticles(20)
-
   return (
     <section 
       id="services" 
       className="py-32 relative overflow-hidden"
       ref={sectionRef}
     >
-      {/* Arrière-plan amélioré avec effets dynamiques */}
-      <div className="absolute inset-0 z-0">
+      {/* Arrière-plan amélioré avec effets dynamiques similaires à ceux du Hero */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Lignes de connexion fluides comme dans le Hero */}
+        <ConnectionLines color="blue" animate={true} />
+        
         {/* Cercles colorés en arrière-plan */}
         <motion.div 
-          className="absolute -top-32 -right-32 w-96 h-96 bg-blue/5 rounded-full blur-3xl"
+          className="absolute -top-32 -right-32 w-96 h-96 rounded-full"
+          style={{ 
+            background: "radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0) 70%)"
+          }}
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -223,7 +222,10 @@ const EnhancedServices = () => {
         />
         
         <motion.div 
-          className="absolute -bottom-32 -left-32 w-96 h-96 bg-purple/5 rounded-full blur-3xl"
+          className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full"
+          style={{ 
+            background: "radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0) 70%)"
+          }}
           animate={{ 
             scale: [1, 1.15, 1],
             opacity: [0.3, 0.5, 0.3],
@@ -236,25 +238,31 @@ const EnhancedServices = () => {
           }}
         />
         
-        <motion.div 
-          className="absolute top-1/3 left-1/4 w-64 h-64 bg-red/5 rounded-full blur-3xl"
-          animate={{ 
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{ 
-            duration: 10,
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: 1
-          }}
-        />
+        {/* Grille subtile */}
+        <div className="absolute inset-0 opacity-5">
+          <svg width="100%" height="100%">
+            <pattern id="dotGrid" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="0.5" fill="rgba(52, 152, 219, 0.5)" />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#dotGrid)" />
+          </svg>
+        </div>
         
-        {/* Particules animées */}
-        {particles.map(particle => (
+        {/* Motif de lignes diagonales */}
+        <div className="absolute inset-0 opacity-3">
+          <svg width="100%" height="100%">
+            <pattern id="diagonalLines" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+              <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(52, 152, 219, 0.2)" strokeWidth="0.5" />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#diagonalLines)" />
+          </svg>
+        </div>
+        
+        {/* Particules flottantes comme dans le Hero */}
+        {particles.map((particle, index) => (
           <motion.div
-            key={particle.id}
-            className="absolute w-1 h-1 rounded-full bg-blue/30"
+            key={`particle-${index}`}
+            className="absolute w-1 h-1 rounded-full bg-blue/20"
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
@@ -262,8 +270,9 @@ const EnhancedServices = () => {
               height: `${particle.size}px`
             }}
             animate={{
-              y: ["0%", "100%"],
-              opacity: [0, 0.8, 0]
+              y: [0, 100, 0],
+              opacity: [0, particle.size / 4, 0],
+              scale: [0, 1, 0]
             }}
             transition={{
               y: {
@@ -275,25 +284,21 @@ const EnhancedServices = () => {
                 duration: particle.duration * 0.8,
                 repeat: Infinity,
                 ease: "easeInOut"
+              },
+              scale: {
+                duration: particle.duration * 0.2,
+                repeat: Infinity,
+                ease: "easeInOut",
+                repeatType: "loop"
               }
             }}
           />
         ))}
-        
-        {/* Grille subtile */}
-        <div className="absolute inset-0 opacity-10">
-          <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(52, 152, 219, 0.3)" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
       </div>
 
       <motion.div 
         className="container relative z-10"
-        style={{ opacity: sectionOpacity }}
+        style={{ opacity: sectionOpacity, scale: sectionScale }}
       >
         {/* Séquence d'animation du titre */}
         <div className="text-center relative">
@@ -303,14 +308,61 @@ const EnhancedServices = () => {
             animate={titleInView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.5 }}
           >
+            {/* Badge élégant amélioré avec effet lumineux comme dans le Hero */}
             <motion.span 
-              className="inline-block px-4 py-1.5 bg-blue/10 rounded-full text-blue text-sm font-medium"
+              className="inline-flex items-center px-5 py-2.5 rounded-full relative overflow-hidden"
+              style={{ background: "linear-gradient(120deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1))" }}
               animate={titleInView ? {
                 boxShadow: ['0 0 0 rgba(52, 152, 219, 0)', '0 0 10px rgba(52, 152, 219, 0.3)', '0 0 0 rgba(52, 152, 219, 0)']
               } : {}}
               transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
             >
-              NOS SOLUTIONS
+              {/* Effet de brillance qui parcourt l'élément */}
+              <motion.div 
+                className="absolute inset-0 bg-gradient-to-r from-transparent via-blue/10 to-transparent"
+                style={{ 
+                  backgroundSize: "200% 100%"
+                }}
+                animate={{
+                  backgroundPosition: ["100% 0%", "-100% 0%"],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatDelay: 5
+                }}
+              />
+              
+              <motion.span 
+                className="w-2.5 h-2.5 rounded-full bg-blue mr-3 relative z-10"
+                animate={{ 
+                  scale: [1, 1.5, 1],
+                  opacity: [0.5, 1, 0.5]
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              >
+                {/* Effet de halo */}
+                <motion.span 
+                  className="absolute inset-0 rounded-full bg-blue opacity-20"
+                  animate={{
+                    scale: [1, 2, 1],
+                    opacity: [0.2, 0, 0.2]
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    ease: "easeInOut"
+                  }}
+                />
+              </motion.span>
+              
+              <span className="text-blue text-sm font-semibold tracking-wider uppercase relative z-10">
+                NOS SOLUTIONS
+              </span>
             </motion.span>
           </motion.div>
           
@@ -335,13 +387,20 @@ const EnhancedServices = () => {
               Services
             </motion.span>
             
-            {/* Effet de soulignement animé */}
+            {/* Ligne décorative sous le titre */}
             <motion.div 
-              className="absolute left-1/2 transform -translate-x-1/2 -bottom-3 h-1 bg-gradient-to-r from-blue via-purple to-red rounded-full"
+              className="h-1 w-16 absolute left-1/2 transform -translate-x-1/2 -bottom-3 rounded-full overflow-hidden"
+              style={{ background: "linear-gradient(to right, #3498db, #9b59b6)" }}
               initial={{ width: 0, opacity: 0 }}
-              animate={titleInView ? { width: '120px', opacity: 1 } : {}}
-              transition={{ delay: 0.4, duration: 0.8 }}
-            />
+              animate={titleInView ? { width: "6rem", opacity: 1 } : {}}
+              transition={{ duration: 0.8, delay: 0.6 }}
+            >
+              <motion.div 
+                className="h-full w-full bg-gradient-to-r from-blue via-purple to-red"
+                animate={{ x: ["-100%", "100%"] }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+              />
+            </motion.div>
           </motion.h2>
 
           <motion.p
@@ -395,6 +454,7 @@ const EnhancedServices = () => {
               const color = service.Couleur || getColorByIndex(index)
               const emoji = unicodeToEmoji(service.Emoji)
               const textColor = color.includes('blue') ? 'text-blue' : color.includes('purple') ? 'text-purple' : color.includes('red') ? 'text-red' : 'text-blue'
+              const backgroundColor = color.includes('blue') ? 'bg-blue' : color.includes('purple') ? 'bg-purple' : color.includes('red') ? 'bg-red' : 'bg-blue'
               const slug = service.slug || titreToSlug(service.Titre)
               const isHovered = hoveredCard === service.id
 
@@ -408,14 +468,27 @@ const EnhancedServices = () => {
                   onMouseLeave={() => setHoveredCard(null)}
                 >
                   <motion.div 
-                    className={`bg-gradient-to-br ${color} backdrop-blur-sm rounded-2xl shadow-md 
-                    transition-all duration-500 h-full flex flex-col p-8 relative overflow-hidden`}
+                    className="backdrop-blur-sm rounded-2xl shadow-md overflow-hidden transition-all duration-500 h-full flex flex-col relative"
+                    style={{
+                      background: `linear-gradient(135deg, ${color.includes('blue') ? 'rgba(52, 152, 219, 0.15)' : 
+                                                            color.includes('purple') ? 'rgba(155, 89, 182, 0.15)' : 
+                                                            'rgba(231, 76, 60, 0.15)'}, 
+                                                 ${color.includes('blue') ? 'rgba(52, 152, 219, 0.05)' : 
+                                                  color.includes('purple') ? 'rgba(155, 89, 182, 0.05)' : 
+                                                  'rgba(231, 76, 60, 0.05)'})`
+                    }}
                     whileHover={{ 
                       y: -10, 
                       boxShadow: '0 20px 30px rgba(0, 0, 0, 0.1)',
                       scale: 1.02
                     }}
                   >
+                    {/* Bordure fine et élégante */}
+                    <div className="absolute inset-0 rounded-2xl border border-white/20 pointer-events-none"></div>
+                    
+                    {/* Effet de glassmorphism */}
+                    <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-0"></div>
+                    
                     {/* Effet de surbrillance au survol */}
                     <motion.div 
                       className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
@@ -432,96 +505,134 @@ const EnhancedServices = () => {
                       }}
                     />
                     
-                    {/* Icône avec animation séquentielle */}
-                    <motion.div 
-                      className="text-4xl mb-6 relative"
-                      custom={index}
-                      variants={iconVariants}
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ type: "spring", stiffness: 300, damping: 10 }}
-                    >
-                      {/* Cercle décoratif derrière l'icône */}
+                    {/* Contenu avec z-index supérieur */}
+                    <div className="p-8 relative z-10 flex flex-col h-full">
+                      {/* Icône avec animation séquentielle */}
                       <motion.div 
-                        className={`absolute inset-0 w-16 h-16 opacity-20 rounded-full ${textColor.replace('text-', 'bg-')}`}
-                        animate={isHovered ? {
-                          scale: [1, 1.2, 1],
-                        } : {}}
-                        transition={{ duration: 1.5, repeat: isHovered ? Infinity : 0 }}
-                      />
+                        className="mb-6 relative"
+                        custom={index}
+                        variants={iconVariants}
+                      >
+                        <div className="relative">
+                          {/* Cercle décoratif derrière l'icône */}
+                          <motion.div 
+                            className={`absolute -inset-4 ${backgroundColor}/10 rounded-full opacity-30`}
+                            animate={isHovered ? {
+                              scale: [1, 1.2, 1],
+                            } : {}}
+                            transition={{ duration: 1.5, repeat: isHovered ? Infinity : 0 }}
+                          />
+                          
+                          <motion.span 
+                            className={`text-5xl ${textColor} relative z-10 inline-block`}
+                            animate={isHovered ? {
+                              rotate: [0, 5, 0, -5, 0],
+                              scale: [1, 1.1, 1]
+                            } : {}}
+                            transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
+                          >
+                            {emoji}
+                          </motion.span>
+                          
+                          {/* Effet de halo */}
+                          <motion.div 
+                            className={`absolute -inset-8 ${backgroundColor}/5 rounded-full opacity-0`}
+                            animate={isHovered ? {
+                              scale: [1, 1.5, 1],
+                              opacity: [0, 0.5, 0]
+                            } : {}}
+                            transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
+                          />
+                        </div>
+                      </motion.div>
                       
-                      <motion.span 
-                        className={`text-5xl ${textColor} relative z-10 inline-block`}
-                        animate={isHovered ? {
-                          rotate: [0, 5, 0, -5, 0],
-                          scale: [1, 1.1, 1]
-                        } : {}}
-                        transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
+                      {/* Titre avec animation séquentielle */}
+                      <motion.h3 
+                        custom={index}
+                        variants={titleVariants}
+                        className={`text-2xl font-bold mb-4 transition-colors duration-300 group-hover:${textColor}`}
                       >
-                        {emoji}
-                      </motion.span>
-                    </motion.div>
-                    
-                    {/* Titre avec animation séquentielle */}
-                    <motion.h3 
-                      custom={index}
-                      variants={titleVariants}
-                      className={`text-2xl font-bold mb-4 transition-colors duration-300 group-hover:${textColor}`}
-                    >
-                      {service.Titre}
-                    </motion.h3>
-                    
-                    {/* Ligne séparatrice avec animation séquentielle */}
-                    <motion.div 
-                      custom={index}
-                      variants={lineVariants}
-                      className="h-0.5 bg-gradient-to-r from-blue via-purple to-red mb-5 opacity-60 transition-all duration-500 group-hover:w-20"
-                    />
-                    
-                    {/* Description avec animation séquentielle */}
-                    <motion.p 
-                      custom={index}
-                      variants={descriptionVariants}
-                      className="text-gray-600 mb-6 flex-grow"
-                    >
-                      {extractTextFromRichText(service.Description)}
-                    </motion.p>
-                    
-                    {/* Lien avec animation séquentielle - FIX: Ajout de pointer-events-auto pour s'assurer que le lien est cliquable */}
-                    <motion.div
-                      custom={index}
-                      variants={linkVariants}
-                      className="mt-auto pointer-events-auto relative z-20"
-                      whileHover={{ x: 5 }}
-                      transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                    >
-                      <Link 
-                        href={`/services/${slug}`} 
-                        className={`inline-flex items-center ${textColor} font-medium hover:underline`}
-                        // Stopper la propagation pour éviter les interférences
-                        onClick={(e) => e.stopPropagation()}
+                        {service.Titre}
+                      </motion.h3>
+                      
+                      {/* Ligne séparatrice avec animation séquentielle */}
+                      <motion.div 
+                        custom={index}
+                        variants={lineVariants}
+                        className="h-0.5 overflow-hidden mb-5 rounded-full"
+                        style={{ width: "40px" }}
                       >
-                        <span>En savoir plus</span>
-                        <motion.svg 
-                          className="w-5 h-5 ml-2" 
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                          animate={isHovered ? { x: [0, 5, 0] } : {}}
-                          transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
+                        <motion.div
+                          className="h-full w-full bg-gradient-to-r from-blue via-purple to-red"
+                          animate={{ x: ["-100%", "100%"] }}
+                          transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
+                        />
+                      </motion.div>
+                      
+                      {/* Description avec animation séquentielle */}
+                      <motion.p 
+                        custom={index}
+                        variants={descriptionVariants}
+                        className="text-gray-600 mb-6 flex-grow"
+                      >
+                        {extractTextFromRichText(service.Description)}
+                      </motion.p>
+                      
+                      {/* Lien avec animation séquentielle */}
+                      <motion.div
+                        custom={index}
+                        variants={linkVariants}
+                        className="mt-auto pointer-events-auto relative z-20"
+                      >
+                        <Link 
+                          href={`/services/${slug}`} 
+                          className={`inline-flex items-center px-4 py-2 rounded-lg ${textColor} font-medium relative overflow-hidden group-hover:bg-${backgroundColor}/10 transition-all duration-300`}
+                          onClick={(e) => e.stopPropagation()}
                         >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                        </motion.svg>
-                      </Link>
-                    </motion.div>
+                          <motion.span
+                            className="relative z-10"
+                            whileHover={{ x: 5 }}
+                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                          >
+                            En savoir plus
+                            <motion.svg 
+                              className="w-5 h-5 ml-2 inline-block" 
+                              fill="none" 
+                              stroke="currentColor" 
+                              viewBox="0 0 24 24"
+                              animate={isHovered ? { x: [0, 5, 0] } : {}}
+                              transition={{ duration: 1, repeat: isHovered ? Infinity : 0 }}
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                            </motion.svg>
+                          </motion.span>
+                          
+                          {/* Effet de brillance au survol */}
+                          <motion.div 
+                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"
+                            style={{ 
+                              backgroundSize: "200% 100%",
+                            }}
+                            animate={{
+                              backgroundPosition: ["100% 0%", "-100% 0%"],
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                            }}
+                          />
+                        </Link>
+                      </motion.div>
+                    </div>
                     
                     {/* Points lumineux aux coins */}
                     <motion.div
-                      className={`absolute top-2 left-2 w-1 h-1 rounded-full ${textColor.replace('text-', 'bg-')}`}
+                      className={`absolute top-2 left-2 w-1 h-1 rounded-full ${backgroundColor}/40`}
                       animate={{ opacity: [0.3, 0.8, 0.3] }}
                       transition={{ duration: 2, repeat: Infinity }}
                     />
                     <motion.div
-                      className={`absolute bottom-2 right-2 w-1 h-1 rounded-full ${textColor.replace('text-', 'bg-')}`}
+                      className={`absolute bottom-2 right-2 w-1 h-1 rounded-full ${backgroundColor}/40`}
                       animate={{ opacity: [0.3, 0.8, 0.3] }}
                       transition={{ duration: 2, repeat: Infinity, delay: 1 }}
                     />
@@ -533,7 +644,7 @@ const EnhancedServices = () => {
         )}
                     
       
-        {/* Voir tous les services - Bouton flottant */}
+        {/* Voir tous les services - Bouton flottant avec style glassmorphism */}
         {!isLoading && !error && services.length > 0 && (
           <motion.div
             className="text-center mt-16"
@@ -542,33 +653,64 @@ const EnhancedServices = () => {
             transition={{ delay: 1, duration: 0.6 }}
           >
             <motion.div
-              className="inline-block"
-              whileHover={{ y: -5, boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)' }}
-              whileTap={{ y: 0, scale: 0.98 }}
+              className="inline-block relative overflow-hidden rounded-xl"
+              whileHover={{ 
+                y: -5, 
+                boxShadow: '0 20px 30px rgba(0, 0, 0, 0.15)'
+              }}
+              whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
-              <Link 
-                href="/services" 
-                className="inline-flex items-center bg-gradient-to-r from-blue via-purple to-red text-white px-8 py-4 rounded-xl font-medium"
-              >
-                <span>Voir tous nos services</span>
-                <motion.svg 
-                  className="w-5 h-5 ml-2" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  viewBox="0 0 24 24"
-                  animate={{ x: [0, 5, 0] }}
-                  transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-blue via-purple to-red bg-[length:200%_auto]"
+                  animate={{ 
+                    backgroundPosition: ['0% center', '100% center', '0% center'] 
+                  }}
+                  transition={{ 
+                    duration: 8, 
+                    ease: 'linear', 
+                    repeat: Infinity 
+                  }}
+                />
+                
+                {/* Effet de brillance qui se déplace */}
+                <motion.div 
+                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                  style={{ 
+                    backgroundSize: "200% 100%",
+                  }}
+                  animate={{
+                    backgroundPosition: ["100% 0%", "-100% 0%"],
+                  }}
+                  transition={{
+                    duration: 2,
+                    repeat: Infinity,
+                    repeatDelay: 3
+                  }}
+                />
+                
+                <Link 
+                  href="/services" 
+                  className="inline-flex items-center text-white px-8 py-4 font-medium relative z-10"
                 >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                </motion.svg>
-              </Link>
-            </motion.div>
-          </motion.div>
-        )}
-      </motion.div>
-    </section>
-  )
+                  <span className="mr-2">Voir tous nos services</span>
+                  <motion.svg 
+                    className="w-5 h-5" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                  >
+<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                 </motion.svg>
+               </Link>
+             </motion.div>
+         </motion.div>
+       )}
+     </motion.div>
+   </section>
+ )
 }
 
 export default EnhancedServices
