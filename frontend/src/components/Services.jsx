@@ -660,7 +660,6 @@ const EnhancedServices = () => {
                           onClick={(e) => e.stopPropagation()}
                         >
                           <motion.span
-<motion.span
                            className="relative z-10 flex items-center"
                            whileHover={{ x: 5 }}
                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
