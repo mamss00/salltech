@@ -28,7 +28,7 @@ const Portfolio = () => {
   // Pour les particules d'arrière-plan
   const particles = generateParticles(30, 'purple')
   
-  // Simulation d'un chargement depuis une API
+  // États
   const [hasScrolled, setHasScrolled] = useState(false)
   const [activeFilter, setActiveFilter] = useState('Tous')
   const [filteredProjects, setFilteredProjects] = useState([])
@@ -70,8 +70,7 @@ const Portfolio = () => {
       image: 'https://picsum.photos/600/400?random=1',
       description: 'Plateforme e-commerce pour la Société Mauritanienne de Commerce International.',
       technologies: ['Next.js', 'Tailwind', 'Stripe'],
-      featured: true,
-      size: 'large'
+      featured: true
     },
     {
       id: 2,
@@ -80,8 +79,7 @@ const Portfolio = () => {
       image: 'https://picsum.photos/600/400?random=2',
       description: 'Application permettant aux pêcheurs de suivre les prix du marché en temps réel.',
       technologies: ['React Native', 'Firebase', 'Redux'],
-      featured: true,
-      size: 'medium'
+      featured: true
     },
     {
       id: 3,
@@ -90,8 +88,7 @@ const Portfolio = () => {
       image: 'https://picsum.photos/600/400?random=3',
       description: 'Panneau d\'administration sur mesure pour une entreprise locale.',
       technologies: ['Vue.js', 'Node.js', 'MongoDB'],
-      featured: true,
-      size: 'medium'
+      featured: true
     },
     {
       id: 4,
@@ -99,8 +96,7 @@ const Portfolio = () => {
       category: 'E-commerce',
       image: 'https://picsum.photos/600/400?random=4',
       description: 'Plateforme de vente en ligne pour les artisans mauritaniens.',
-      technologies: ['WordPress', 'WooCommerce', 'Elementor'],
-      size: 'small'
+      technologies: ['WordPress', 'WooCommerce', 'Elementor']
     },
     {
       id: 5,
@@ -108,8 +104,7 @@ const Portfolio = () => {
       category: 'Site Web',
       image: 'https://picsum.photos/600/400?random=5',
       description: 'Site institutionnel moderne pour la Banque Nationale de Mauritanie.',
-      technologies: ['Next.js', 'TypeScript', 'Framer Motion'],
-      size: 'medium'
+      technologies: ['Next.js', 'TypeScript', 'Framer Motion']
     },
     {
       id: 6,
@@ -118,8 +113,7 @@ const Portfolio = () => {
       image: 'https://picsum.photos/600/400?random=6',
       description: 'Service de livraison à domicile pour les restaurants et commerces de Nouakchott.',
       technologies: ['Flutter', 'Firebase', 'Stripe'],
-      featured: true,
-      size: 'small'
+      featured: true
     }
   ]
   
@@ -162,7 +156,6 @@ const Portfolio = () => {
 
   // Style personnalisé pour les animations et les gradients
   const customStyles = `
-    
     @keyframes gradientMove {
       0% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
@@ -202,6 +195,26 @@ const Portfolio = () => {
     
     .animate-float-3 {
       animation: float-3 20s ease-in-out infinite;
+    }
+    
+    @keyframes dots-pulse {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+    
+    .grid-masonry {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      grid-auto-rows: minmax(100px, auto);
+      gap: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+      .grid-masonry {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
     }
   `;
 
@@ -325,245 +338,431 @@ const Portfolio = () => {
           ))}
         </motion.div>
         
-        {/* Grille asymétrique avec design plus élégant */}
+        {/* Layout asymétrique avec une vraie disposition masonry */}
         <motion.div
           ref={projectsRef}
           variants={containerVariants}
           initial="hidden"
           animate={projectsInView ? "visible" : "hidden"}
-          className="grid grid-cols-1 md:grid-cols-12 gap-8"
+          className="grid-masonry"
         >
-          {/* Section Projets Vedettes - Disposition asymétrique distincte */}
-          {filteredProjects.filter(project => project.featured).map((project, index) => {
-            let colSpan;
-            
-            // Première rangée avec disposition asymétrique
-            if (index === 0) {
-              colSpan = "md:col-span-8"; // Premier projet en vedette (large)
-            } else if (index === 1) {
-              colSpan = "md:col-span-4"; // Deuxième projet
-            } else if (index === 2) {
-              colSpan = "md:col-span-6"; // Troisième projet
-            } else {
-              colSpan = "md:col-span-6"; // Autres projets
-            }
-            
-            return (
-              <motion.div
-                key={`featured-${project.id}`}
-                variants={itemVariants}
-                className={`group ${colSpan}`}
+          {/* Premier projet - Grande taille */}
+          {filteredProjects.length > 0 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-8 md:row-span-2 md:col-start-1 md:row-start-1"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br ${getCardColor(0)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+                whileHover={{ 
+                  y: -8,
+                  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
+                }}
               >
-                <motion.div 
-                  className={`bg-gradient-to-br ${getCardColor(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full`}
-                  whileHover={{ 
-                    y: -8,
-                    boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                  }}
-                >
-                  {/* Image avec overlay et badges */}
-                  <div className="relative h-56 overflow-hidden">
-                    <Image
-                      src={project.image}
-                      alt={project.title}
-                      fill
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                      <span className="inline-block px-3 py-1 text-sm bg-white/90 text-purple font-medium rounded-full shadow-md">
-                        {project.category}
+                {/* Image avec overlay et badges */}
+                <div className="relative h-64 md:h-96 overflow-hidden">
+                  <Image
+                    src={filteredProjects[0].image}
+                    alt={filteredProjects[0].title}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 66vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-purple font-medium rounded-full shadow-md">
+                      {filteredProjects[0].category}
+                    </span>
+                  </div>
+                  
+                  <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                    <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                      </svg>
+                    </a>
+                    <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+                
+                {/* Contenu de la carte */}
+                <div className="p-6 md:p-8">
+                  <h3 className="text-2xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
+                    {filteredProjects[0].title}
+                  </h3>
+                  
+                  <div className="h-0.5 w-16 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-24 transition-all duration-300"></div>
+                  
+                  <p className="text-gray-600 mb-6 md:text-lg">{filteredProjects[0].description}</p>
+                  
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {filteredProjects[0].technologies.map((tech, index) => (
+                      <span 
+                        key={index} 
+                        className="text-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-purple/10 hover:text-purple"
+                      >
+                        {tech}
                       </span>
-                    </div>
-                    
-                    <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                      <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                        </svg>
-                      </a>
-                      <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                        </svg>
-                      </a>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+          
+          {/* Deuxième projet - taille moyenne, à droite du premier */}
+          {filteredProjects.length > 1 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-4 md:row-span-2 md:col-start-9 md:row-start-1"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br ${getCardColor(1)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+              >
+                <div className="relative h-56 overflow-hidden">
+                  <Image
+                    src={filteredProjects[1].image}
+                    alt={filteredProjects[1].title}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-blue font-medium rounded-full shadow-md">
+                      {filteredProjects[1].category}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="p-6 flex flex-col h-[calc(100%-14rem)]">
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-blue transition-colors duration-300">
+                    {filteredProjects[1].title}
+                  </h3>
+                  
+                  <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
+                  
+                  <p className="text-gray-600 mb-6 flex-grow">{filteredProjects[1].description}</p>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {filteredProjects[1].technologies.map((tech, index) => (
+                      <span 
+                        key={index} 
+                        className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+          
+          {/* Troisième projet - horizontal en dessous du premier et deuxième */}
+          {filteredProjects.length > 2 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-12 md:col-start-1 md:row-start-3"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br ${getCardColor(2)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+              >
+                <div className="flex flex-col md:flex-row h-full">
+                  <div className="md:w-1/3 relative">
+                    <div className="h-48 md:h-full relative">
+                      <Image
+                        src={filteredProjects[2].image}
+                        alt={filteredProjects[2].title}
+                        fill
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, 33vw"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     </div>
                   </div>
                   
-                  {/* Contenu de la carte */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
-                      {project.title}
+                  <div className="p-6 md:w-2/3 flex flex-col justify-center">
+                    <span className="inline-block px-3 py-1 text-sm w-fit bg-red/10 text-red font-medium rounded-full mb-4">
+                      {filteredProjects[2].category}
+                    </span>
+                    
+                    <h3 className="text-2xl font-bold mb-3 group-hover:text-red transition-colors duration-300">
+                      {filteredProjects[2].title}
                     </h3>
                     
-                    <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
+                    <div className="h-0.5 w-16 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-24 transition-all duration-300"></div>
                     
-                    <p className="text-gray-600 mb-6 line-clamp-3">{project.description}</p>
+                    <p className="text-gray-600 mb-6">{filteredProjects[2].description}</p>
                     
-                    <div className="flex flex-wrap gap-2 mt-auto">
-                      {project.technologies.map((tech, index) => (
+                    <div className="flex flex-wrap gap-2">
+                      {filteredProjects[2].technologies.map((tech, index) => (
                         <span 
                           key={index} 
-                          className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-purple/10 hover:text-purple"
+                          className="text-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
                         >
                           {tech}
                         </span>
                       ))}
                     </div>
                   </div>
-                </motion.div>
+                </div>
               </motion.div>
-            );
-          })}
+            </motion.div>
+          )}
           
-          {/* Projets réguliers avec disposition asymétrique plus subtile */}
-          {filteredProjects.filter(project => !project.featured).map((project, index) => {
-            // Disposition asymétrique pour les projets non vedettes
-            let colSpan;
-            const actualIndex = index + filteredProjects.filter(p => p.featured).length;
-            
-            if (index % 3 === 0) {
-              colSpan = "md:col-span-5"; 
-            } else if (index % 3 === 1) {
-              colSpan = "md:col-span-7";
-            } else {
-              colSpan = "md:col-span-12 md:h-64";
-            }
-            
-            return (
-              <motion.div
-                key={`regular-${project.id}`}
-                variants={itemVariants}
-                className={`group ${colSpan}`}
+          {/* Quatrième projet - petit, en dessous du troisième côté gauche */}
+          {filteredProjects.length > 3 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-4 md:col-start-1 md:row-start-4"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br ${getCardColor(3)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
               >
-                <motion.div 
-                  className={`bg-gradient-to-br ${getCardColor(actualIndex)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full group`}
-                  animate={{ 
-                    background: [
-                      `linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(155, 89, 182, 0.05))`,
-                      `linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.05))`,
-                      `linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(231, 76, 60, 0.05))`,
-                      `linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(155, 89, 182, 0.05))`
-                    ]
-                  }}
-                  transition={{ 
-                    duration: 20, 
-                    ease: "linear", 
-                    repeat: Infinity,
-                    delay: index * 3 // Décalage entre les cartes
-                  }}
-                >
-                  {/* Contenu différent en fonction de la taille */}
-                  {index % 3 === 2 ? (
-                    // Projet horizontal
-                    <div className="flex h-full">
-                      <div className="relative w-1/3 md:w-1/4">
-                        <div className="absolute inset-0">
-                          <Image
-                            src={project.image}
-                            alt={project.title}
-                            fill
-                            className="object-cover"
-                            sizes="33vw"
-                            unoptimized
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        </div>
-                      </div>
-                      <div className="p-6 flex-1 flex flex-col justify-center">
-                        <span className="inline-block px-3 py-1 text-xs bg-purple/10 text-purple font-medium rounded-full mb-3">
-                          {project.category}
-                        </span>
-                        <h3 className="text-xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
-                          {project.title}
-                        </h3>
-                        <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
-                        <p className="text-gray-600 mb-4 line-clamp-2">{project.description}</p>
-                        <div className="flex flex-wrap gap-2">
-                          {project.technologies.map((tech, techIndex) => (
-                            <span 
-                              key={techIndex} 
-                              className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <>
-                      {/* Image avec overlay et badges */}
-                      <div className="relative h-48 overflow-hidden">
-                        <Image
-                          src={project.image}
-                          alt={project.title}
-                          fill
-                          className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                          unoptimized
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                        
-                        <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                          <span className="inline-block px-3 py-1 text-sm bg-white/90 text-purple font-medium rounded-full shadow-md">
-                            {project.category}
-                          </span>
-                        </div>
-                        
-                        <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                          <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                            </svg>
-                          </a>
-                        </div>
-                      </div>
-                      
-                      {/* Contenu de la carte */}
-                      <div className="p-5">
-                        <h3 className="text-lg font-bold mb-2 group-hover:text-purple transition-colors duration-300">
-                          {project.title}
-                        </h3>
-                        
-                        <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
-                        
-                        <p className="text-gray-600 mb-4 line-clamp-2 text-sm">{project.description}</p>
-                        
-                        <div className="flex flex-wrap gap-1.5">
-                          {project.technologies.slice(0, 2).map((tech, techIndex) => (
-                            <span 
-                              key={techIndex} 
-                              className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                          {project.technologies.length > 2 && (
-                            <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full">
-                              +{project.technologies.length - 2}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </motion.div>
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={filteredProjects[3].image}
+                    alt={filteredProjects[3].title}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-purple transition-colors duration-300">
+                    {filteredProjects[3].title}
+                  </h3>
+                  
+                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
+                  
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{filteredProjects[3].description}</p>
+                  
+                  <div className="flex flex-wrap gap-1.5">
+                    {filteredProjects[3].technologies.slice(0, 2).map((tech, index) => (
+                      <span 
+                        key={index} 
+                        className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {filteredProjects[3].technologies.length > 2 && (
+                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full">
+                        +{filteredProjects[3].technologies.length - 2}
+                      </span>
+                    )}
+                  </div>
+                </div>
               </motion.div>
-            );
-          })}
+            </motion.div>
+          )}
+          
+          {/* Cinquième projet - moyen, au milieu */}
+          {filteredProjects.length > 4 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-4 md:col-start-5 md:row-start-4 md:row-span-2"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br ${getCardColor(4)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+              >
+                <div className="relative h-56 md:h-64 overflow-hidden">
+                  <Image
+                    src={filteredProjects[4].image}
+                    alt={filteredProjects[4].title}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-blue font-medium rounded-full shadow-md">
+                      {filteredProjects[4].category}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="p-6 flex flex-col flex-grow">
+                  <h3 className="text-xl font-bold mb-3 group-hover:text-blue transition-colors duration-300">
+                    {filteredProjects[4].title}
+                  </h3>
+                  
+<div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
+                  
+                  <p className="text-gray-600 mb-6 flex-grow">{filteredProjects[4].description}</p>
+                  
+                  <div className="flex flex-wrap gap-2 mt-auto">
+                    {filteredProjects[4].technologies.map((tech, index) => (
+                      <span 
+                        key={index} 
+                        className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+          
+          {/* Sixième projet - à droite */}
+          {filteredProjects.length > 5 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-4 md:col-start-9 md:row-start-4"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br ${getCardColor(5)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={filteredProjects[5].image}
+                    alt={filteredProjects[5].title}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  
+                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
+                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-red font-medium rounded-full shadow-md">
+                      {filteredProjects[5].category}
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="p-6">
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-red transition-colors duration-300">
+                    {filteredProjects[5].title}
+                  </h3>
+                  
+                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
+                  
+                  <p className="text-gray-600 mb-4 line-clamp-3">{filteredProjects[5].description}</p>
+                  
+                  <div className="flex flex-wrap gap-1.5">
+                    {filteredProjects[5].technologies.slice(0, 2).map((tech, index) => (
+                      <span 
+                        key={index} 
+                        className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {filteredProjects[5].technologies.length > 2 && (
+                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full">
+                        +{filteredProjects[5].technologies.length - 2}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+          
+          {/* Projet supplémentaire - en bas à gauche */}
+          {filteredProjects.length > 6 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-4 md:col-start-1 md:row-start-5"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br from-blue/20 to-purple/5 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={filteredProjects[6].image}
+                    alt={filteredProjects[6].title}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-blue transition-colors duration-300">
+                    {filteredProjects[6].title}
+                  </h3>
+                  
+                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
+                  
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{filteredProjects[6].description}</p>
+                  
+                  <div className="flex flex-wrap gap-1.5">
+                    {filteredProjects[6].technologies.slice(0, 2).map((tech, index) => (
+                      <span 
+                        key={index} 
+                        className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+          
+          {/* Projet supplémentaire - en bas à droite */}
+          {filteredProjects.length > 7 && (
+            <motion.div
+              variants={itemVariants}
+              className="group col-span-12 md:col-span-3 md:col-start-9 md:row-start-5"
+            >
+              <motion.div 
+                className={`bg-gradient-to-br from-red/20 to-blue/5 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+              >
+                <div className="relative h-48 overflow-hidden">
+                  <Image
+                    src={filteredProjects[7].image}
+                    alt={filteredProjects[7].title}
+                    fill
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </div>
+                
+                <div className="p-5">
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-red transition-colors duration-300">
+                    {filteredProjects[7].title}
+                  </h3>
+                  
+                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
+                  
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{filteredProjects[7].description}</p>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
         </motion.div>
         
         {/* Bouton "Explorer Tous Nos Projets" */}
         <div className="text-center mt-16">
           <CTAButton 
             href="/portfolio" 
-            className="mx-auto inline-flex items-center justify-center space-x-3"
+            className="mx-auto inline-flex items-center justify-center"
           >
             Explorer Tous Nos Projets
           </CTAButton>
