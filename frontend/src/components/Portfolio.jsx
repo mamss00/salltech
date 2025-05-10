@@ -313,29 +313,29 @@ const Portfolio = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex flex-wrap justify-center gap-4 mb-16"
         >
-          {categories.map((category, index) => (
-            <motion.button
-              key={index}
-              onClick={() => filterByCategory(category)}
-              className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all relative ${
-                activeFilter === category
-                  ? 'text-white shadow-lg' 
-                  : 'bg-white/80 text-gray-600 hover:bg-gray-100'
-              }`}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              {activeFilter === category && (
-                <motion.span
-                  layoutId="activeCategory"
-                  className="absolute inset-0 bg-purple-600 rounded-full -z-10"
-                  initial={false}
-                  transition={{ type: "spring", stiffness: 300, damping: 25 }}
-                />
-              )}
-              {category}
-            </motion.button>
-          ))}
+        {categories.map((category, index) => (
+          <motion.button
+            key={index}
+            onClick={() => filterByCategory(category)}
+            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all relative ${
+              activeFilter === category
+                ? 'text-white shadow-lg' // Ici le texte est blanc sur fond violet
+                : 'bg-white/80 text-gray-600 hover:bg-gray-100'
+            }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {activeFilter === category && (
+              <motion.span
+                layoutId="activeCategory"
+                className="absolute inset-0 bg-purple-600 rounded-full -z-10"
+                initial={false}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              />
+            )}
+            {category}
+          </motion.button>
+        ))}
         </motion.div>
         
         {/* Layout asymétrique avec une vraie disposition masonry */}
