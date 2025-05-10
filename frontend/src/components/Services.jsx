@@ -6,7 +6,6 @@ import { useInView } from 'react-intersection-observer'
 import { getServices, titreToSlug } from '@/utils/api'
 import Link from 'next/link'
 import { generateParticles } from '@/components/background/GridUtils'
-import ConnectionLines from '@/components/background/ConnectionLines'
 
 const EnhancedServices = () => {
   // Refs pour les animations scroll
@@ -23,7 +22,7 @@ const EnhancedServices = () => {
   const [appear, setAppear] = useState(false)
   
   // Pour les particules d'arrière-plan
-  const particles = generateParticles(30, 'blue')
+  const particles = generateParticles(25, 'blue')
   
   // Animation au scroll pour l'ensemble de la section
   const { scrollYProgress } = useScroll({
@@ -32,12 +31,12 @@ const EnhancedServices = () => {
   })
 
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.5, 1, 1, 0.5])
-  const sectionScale = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.95, 1, 1, 0.95])
+  // Effet unique pour Services - léger zoom au défilement
+  const sectionScale = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.98, 1, 1, 0.98])
 
   // Déclencher l'animation de séquence après le chargement
   useEffect(() => {
     if (!isLoading && !error && services.length > 0) {
-      // Délai avant de déclencher la séquence d'animation
       const timer = setTimeout(() => {
         setAppear(true)
       }, 300)
@@ -78,68 +77,67 @@ const EnhancedServices = () => {
     }
   }
 
-  // Variants d'animation pour le conteneur
+  // Variants d'animation pour le conteneur - spécifique aux services
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: { 
-        staggerChildren: 0.5,
-        delayChildren: 0.5,
+        // Moins de décalage entre les éléments que dans Hero
+        staggerChildren: 0.2,
+        delayChildren: 0.3,
         when: "beforeChildren",
         ease: "easeOut"
       }
     }
   }
 
-  // Variants d'animation pour les cartes
+  // Variants d'animation pour les cartes - style spécifique aux services
   const itemVariants = {
     hidden: { 
-      y: 80,
+      y: 50,
       opacity: 0,
-      scale: 0.9,
-      rotateZ: -2
+      scale: 0.95,
+      // Légère rotation pour donner un effet "feuille" ou "carte"
+      rotateX: 5
     },
     visible: (i) => ({
       y: 0,
       opacity: 1,
       scale: 1,
-      rotateZ: 0,
+      rotateX: 0,
       transition: { 
         type: "spring",
-        stiffness: 80,
-        damping: 15,
-        mass: 0.8,
-        duration: 0.7,
-        delay: i * 0.5 + 0.3
+        stiffness: 90,
+        damping: 12,
+        delay: i * 0.15 // Délai moins prononcé que dans Hero
       }
     })
   }
 
-  // Variants pour les éléments internes des cartes
+  // Variants pour les éléments internes des cartes - spécifiques aux services
   const iconVariants = {
-    hidden: { scale: 0, opacity: 0, rotateY: 90 },
+    hidden: { scale: 0, opacity: 0 },
     visible: (i) => ({ 
       scale: 1, 
-      opacity: 1, 
-      rotateY: 0,
+      opacity: 1,
       transition: { 
         type: "spring", 
-        delay: 0.3 + (i * 0.1),
-        duration: 0.6 
+        delay: 0.2 + (i * 0.05),
+        duration: 0.5
       } 
     })
   }
 
   const titleVariants = {
-    hidden: { opacity: 0, x: -20 },
+    hidden: { opacity: 0, x: -10 },
     visible: (i) => ({ 
       opacity: 1, 
       x: 0,
       transition: { 
         type: "spring", 
-        delay: 0.5 + (i * 0.1),
-        duration: 0.5 
+        delay: 0.3 + (i * 0.05),
+        duration: 0.4
       } 
     })
   }
@@ -150,115 +148,127 @@ const EnhancedServices = () => {
       width: "40px", 
       opacity: 1,
       transition: { 
-        type: "spring", 
-        delay: 0.7 + (i * 0.1),
-        duration: 0.5 
+        type: "tween", 
+        delay: 0.4 + (i * 0.05),
+        duration: 0.4
       } 
     })
   }
 
   const descriptionVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: (i) => ({ 
-      opacity: 1, 
-      y: 0,
-      transition: { 
-        type: "spring", 
-        delay: 0.9 + (i * 0.1),
-        duration: 0.5 
-      } 
-    })
-  }
-
-  const linkVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: (i) => ({ 
       opacity: 1, 
       y: 0,
       transition: { 
+        type: "tween", 
+        delay: 0.5 + (i * 0.05),
+        duration: 0.4
+      } 
+    })
+  }
+
+  const linkVariants = {
+    hidden: { opacity: 0, y: 5 },
+    visible: (i) => ({ 
+      opacity: 1, 
+      y: 0,
+      transition: { 
         type: "spring", 
-        delay: 1.1 + (i * 0.1),
-        duration: 0.5 
+        delay: 0.6 + (i * 0.05),
+        duration: 0.3
       } 
     })
   }
 
   // Obtenir la classe de couleur en fonction de l'index
   const getColorByIndex = (index) => {
+    // Classes spécifiques aux services - dégradés plus professionnels et structurés
     const colorClasses = [
-      'from-blue/20 to-blue/5',
-      'from-purple/20 to-purple/5',
-      'from-red/20 to-red/5'
+      'from-blue/15 to-blue/3',
+      'from-purple/15 to-purple/3',
+      'from-red/15 to-red/3'
     ]
     return colorClasses[index % colorClasses.length]
   }
 
+  // Pattern spécifique pour l'arrière-plan de la section Services
+  const servicePattern = (
+    <svg width="100%" height="100%" className="absolute inset-0 opacity-5">
+      <pattern id="serviceGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 20 L 20 40 M 0 20 L 20 0" fill="none" stroke="rgba(52, 152, 219, 0.3)" strokeWidth="0.5" />
+      </pattern>
+      <rect width="100%" height="100%" fill="url(#serviceGrid)" />
+    </svg>
+  )
+
   return (
     <section 
       id="services" 
-      className="py-32 relative overflow-hidden"
+      className="py-32 relative overflow-hidden bg-gray-50"
       ref={sectionRef}
     >
-      {/* Arrière-plan amélioré avec effets dynamiques similaires à ceux du Hero */}
+      {/* Arrière-plan spécifique à la section Services */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        {/* Lignes de connexion fluides comme dans le Hero */}
-        <ConnectionLines color="blue" animate={true} />
+        {/* Pattern géométrique unique à la section Services */}
+        {servicePattern}
         
-        {/* Cercles colorés en arrière-plan */}
+        {/* Cercles colorés avec disposition spécifique aux services */}
         <motion.div 
-          className="absolute -top-32 -right-32 w-96 h-96 rounded-full"
+          className="absolute top-32 right-10 w-96 h-96 rounded-full opacity-20"
           style={{ 
-            background: "radial-gradient(circle, rgba(52, 152, 219, 0.1) 0%, rgba(52, 152, 219, 0) 70%)"
+            background: "radial-gradient(circle, rgba(52, 152, 219, 0.2) 0%, rgba(52, 152, 219, 0) 60%)"
           }}
           animate={{ 
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
+            scale: [1, 1.1, 1],
+            opacity: [0.2, 0.3, 0.2],
           }}
           transition={{ 
-            duration: 12,
+            duration: 15,
             repeat: Infinity,
             repeatType: "reverse"
           }}
         />
         
         <motion.div 
-          className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full"
+          className="absolute bottom-10 left-32 w-64 h-64 rounded-full opacity-15"
           style={{ 
-            background: "radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, rgba(155, 89, 182, 0) 70%)"
+            background: "radial-gradient(circle, rgba(155, 89, 182, 0.15) 0%, rgba(155, 89, 182, 0) 70%)"
           }}
           animate={{ 
             scale: [1, 1.15, 1],
-            opacity: [0.3, 0.5, 0.3],
+            opacity: [0.15, 0.25, 0.15],
           }}
           transition={{ 
-            duration: 15,
+            duration: 18,
             repeat: Infinity,
             repeatType: "reverse",
-            delay: 2
+            delay: 3
           }}
         />
         
-        {/* Grille subtile */}
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%">
-            <pattern id="dotGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-              <circle cx="2" cy="2" r="0.5" fill="rgba(52, 152, 219, 0.5)" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#dotGrid)" />
-          </svg>
-        </div>
+        {/* Hexagones décoratifs - élément unique à la section Services */}
+        <svg className="absolute left-0 top-1/4 h-32 w-32 opacity-10">
+          <polygon 
+            points="30,0 60,15 60,45 30,60 0,45 0,15" 
+            fill="none" 
+            stroke="rgba(52, 152, 219, 0.5)"
+            strokeWidth="1"
+            transform="translate(16, 16)"
+          />
+        </svg>
         
-        {/* Motif de lignes diagonales */}
-        <div className="absolute inset-0 opacity-3">
-          <svg width="100%" height="100%">
-            <pattern id="diagonalLines" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <line x1="0" y1="0" x2="0" y2="40" stroke="rgba(52, 152, 219, 0.2)" strokeWidth="0.5" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#diagonalLines)" />
-          </svg>
-        </div>
+        <svg className="absolute right-0 bottom-1/4 h-40 w-40 opacity-10">
+          <polygon 
+            points="35,0 70,20 70,60 35,80 0,60 0,20" 
+            fill="none" 
+            stroke="rgba(155, 89, 182, 0.5)"
+            strokeWidth="1"
+            transform="translate(20, 20)"
+          />
+        </svg>
         
-        {/* Particules flottantes comme dans le Hero */}
+        {/* Particules avec animation spécifique pour Services */}
         {particles.map((particle, index) => (
           <motion.div
             key={`particle-${index}`}
@@ -270,15 +280,16 @@ const EnhancedServices = () => {
               height: `${particle.size}px`
             }}
             animate={{
-              y: [0, 100, 0],
+              // Mouvement horizontal plutôt que vertical (different de Hero)
+              x: [0, particle.size * 10, 0],
               opacity: [0, particle.size / 4, 0],
               scale: [0, 1, 0]
             }}
             transition={{
-              y: {
+              x: {
                 duration: particle.duration,
                 repeat: Infinity,
-                ease: "linear"
+                ease: "easeInOut"
               },
               opacity: {
                 duration: particle.duration * 0.8,
@@ -300,7 +311,7 @@ const EnhancedServices = () => {
         className="container relative z-10"
         style={{ opacity: sectionOpacity, scale: sectionScale }}
       >
-        {/* Séquence d'animation du titre */}
+        {/* Séquence d'animation du titre - style spécifique aux services */}
         <div className="text-center relative">
           <motion.div
             className="inline-block mb-6"
@@ -308,59 +319,29 @@ const EnhancedServices = () => {
             animate={titleInView ? { opacity: 1, y: 0, scale: 1 } : {}}
             transition={{ duration: 0.5 }}
           >
-            {/* Badge élégant amélioré avec effet lumineux comme dans le Hero */}
+            {/* Badge avec design spécifique aux services */}
             <motion.span 
-              className="inline-flex items-center px-5 py-2.5 rounded-full relative overflow-hidden"
-              style={{ background: "linear-gradient(120deg, rgba(52, 152, 219, 0.1), rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.1))" }}
+              className="inline-flex items-center px-5 py-2 rounded-md relative overflow-hidden border border-blue/20"
+              style={{ background: "rgba(52, 152, 219, 0.05)" }}
               animate={titleInView ? {
-                boxShadow: ['0 0 0 rgba(52, 152, 219, 0)', '0 0 10px rgba(52, 152, 219, 0.3)', '0 0 0 rgba(52, 152, 219, 0)']
+                boxShadow: ['0 0 0 rgba(52, 152, 219, 0)', '0 0 8px rgba(52, 152, 219, 0.2)', '0 0 0 rgba(52, 152, 219, 0)']
               } : {}}
-              transition={{ duration: 2, repeat: Infinity, repeatDelay: 1 }}
+              transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
             >
-              {/* Effet de brillance qui parcourt l'élément */}
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-transparent via-blue/10 to-transparent"
-                style={{ 
-                  backgroundSize: "200% 100%"
-                }}
-                animate={{
-                  backgroundPosition: ["100% 0%", "-100% 0%"],
+              <motion.span 
+                className="w-2 h-2 rounded-sm bg-blue mr-3 relative z-10"
+                animate={{ 
+                  rotate: [0, 90, 180, 270, 360],
+                  opacity: [0.7, 1, 0.7]
                 }}
                 transition={{
-                  duration: 2,
+                  duration: 4,
                   repeat: Infinity,
-                  repeatDelay: 5
+                  ease: "linear"
                 }}
               />
               
-              <motion.span 
-                className="w-2.5 h-2.5 rounded-full bg-blue mr-3 relative z-10"
-                animate={{ 
-                  scale: [1, 1.5, 1],
-                  opacity: [0.5, 1, 0.5]
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}
-              >
-                {/* Effet de halo */}
-                <motion.span 
-                  className="absolute inset-0 rounded-full bg-blue opacity-20"
-                  animate={{
-                    scale: [1, 2, 1],
-                    opacity: [0.2, 0, 0.2]
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    ease: "easeInOut"
-                  }}
-                />
-              </motion.span>
-              
-              <span className="text-blue text-sm font-semibold tracking-wider uppercase relative z-10">
+              <span className="text-blue text-sm font-medium tracking-wide uppercase relative z-10">
                 NOS SOLUTIONS
               </span>
             </motion.span>
@@ -371,15 +352,16 @@ const EnhancedServices = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6 }}
-            className="text-4xl md:text-5xl font-extrabold mb-6 text-center relative"
+            className="text-4xl md:text-5xl font-bold mb-6 text-center relative"
           >
-            Nos <motion.span 
+            <span>Nos </span>
+            <motion.span 
               className="gradient-text"
               animate={{ 
                 backgroundPosition: ['0% center', '100% center', '0% center'] 
               }}
               transition={{ 
-                duration: 8, 
+                duration: 10, // Plus lent que dans Hero
                 ease: 'linear', 
                 repeat: Infinity 
               }}
@@ -387,20 +369,14 @@ const EnhancedServices = () => {
               Services
             </motion.span>
             
-            {/* Ligne décorative sous le titre */}
+            {/* Ligne décorative sous le titre - style spécifique aux services */}
             <motion.div 
-              className="h-1 w-16 absolute left-1/2 transform -translate-x-1/2 -bottom-3 rounded-full overflow-hidden"
-              style={{ background: "linear-gradient(to right, #3498db, #9b59b6)" }}
+              className="h-1 w-32 mx-auto mt-4 rounded-sm"
+              style={{ background: "linear-gradient(to right, rgba(52, 152, 219, 0.7), rgba(155, 89, 182, 0.7))" }}
               initial={{ width: 0, opacity: 0 }}
-              animate={titleInView ? { width: "6rem", opacity: 1 } : {}}
+              animate={titleInView ? { width: "8rem", opacity: 1 } : {}}
               transition={{ duration: 0.8, delay: 0.6 }}
-            >
-              <motion.div 
-                className="h-full w-full bg-gradient-to-r from-blue via-purple to-red"
-                animate={{ x: ["-100%", "100%"] }}
-                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-              />
-            </motion.div>
+            />
           </motion.h2>
 
           <motion.p
@@ -415,17 +391,39 @@ const EnhancedServices = () => {
           </motion.p>
         </div>
 
-        {/* État de chargement avec animation */}
+        {/* État de chargement avec animation spécifique aux services */}
         {isLoading ? (
           <div className="flex flex-col justify-center items-center h-64">
             <motion.div 
               className="w-16 h-16 mb-6 relative"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: 1,
+                rotate: 360,
+                transition: { duration: 2, repeat: Infinity, ease: "linear" }
+              }}
             >
-              <div className="absolute top-0 left-0 right-0 bottom-0 rounded-full border-4 border-t-blue border-r-purple border-b-red border-l-transparent"></div>
+              {/* Spinner avec hexagone - identité unique */}
+              <svg viewBox="0 0 100 100" className="w-full h-full">
+                <polygon 
+                  points="50,10 85,30 85,70 50,90 15,70 15,30" 
+                  fill="none" 
+                  stroke="url(#spinnerGradient)"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <defs>
+                    <linearGradient id="spinnerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#3498db" />
+                      <stop offset="50%" stopColor="#9b59b6" />
+                      <stop offset="100%" stopColor="#e74c3c" />
+                    </linearGradient>
+                  </defs>
+                </polygon>
+              </svg>
             </motion.div>
-            <p className="text-gray-500 text-lg">Chargement en cours...</p>
+            <p className="text-gray-500 text-lg">Chargement des services...</p>
           </div>
         ) : error ? (
           <motion.div 
@@ -468,45 +466,18 @@ const EnhancedServices = () => {
                   onMouseLeave={() => setHoveredCard(null)}
                 >
                   <motion.div 
-                    className="backdrop-blur-sm rounded-2xl shadow-md overflow-hidden transition-all duration-500 h-full flex flex-col relative"
-                    style={{
-                      background: `linear-gradient(135deg, ${color.includes('blue') ? 'rgba(52, 152, 219, 0.15)' : 
-                                                            color.includes('purple') ? 'rgba(155, 89, 182, 0.15)' : 
-                                                            'rgba(231, 76, 60, 0.15)'}, 
-                                                 ${color.includes('blue') ? 'rgba(52, 152, 219, 0.05)' : 
-                                                  color.includes('purple') ? 'rgba(155, 89, 182, 0.05)' : 
-                                                  'rgba(231, 76, 60, 0.05)'})`
-                    }}
+                    className="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 h-full flex flex-col relative border border-gray-100"
                     whileHover={{ 
-                      y: -10, 
-                      boxShadow: '0 20px 30px rgba(0, 0, 0, 0.1)',
-                      scale: 1.02
+                      y: -8, 
+                      boxShadow: '0 20px 25px rgba(0, 0, 0, 0.07)',
+                      borderColor: 'rgba(52, 152, 219, 0.3)'
                     }}
                   >
-                    {/* Bordure fine et élégante */}
-                    <div className="absolute inset-0 rounded-2xl border border-white/20 pointer-events-none"></div>
+                    {/* Bandeau supérieur coloré - caractéristique unique aux cartes de service */}
+                    <div className={`h-1.5 w-full ${backgroundColor}`}></div>
                     
-                    {/* Effet de glassmorphism */}
-                    <div className="absolute inset-0 bg-white/40 backdrop-blur-sm z-0"></div>
-                    
-                    {/* Effet de surbrillance au survol */}
-                    <motion.div 
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
-                      style={{ 
-                        backgroundSize: "200% 100%",
-                        opacity: 0
-                      }}
-                      animate={isHovered ? {
-                        backgroundPosition: ["100% 0%", "-100% 0%"],
-                        opacity: 1
-                      } : {}}
-                      transition={{
-                        duration: 1.5
-                      }}
-                    />
-                    
-                    {/* Contenu avec z-index supérieur */}
-                    <div className="p-8 relative z-10 flex flex-col h-full">
+                    {/* Conteneur principal */}
+                    <div className="p-8 flex flex-col h-full">
                       {/* Icône avec animation séquentielle */}
                       <motion.div 
                         className="mb-6 relative"
@@ -533,16 +504,6 @@ const EnhancedServices = () => {
                           >
                             {emoji}
                           </motion.span>
-                          
-                          {/* Effet de halo */}
-                          <motion.div 
-                            className={`absolute -inset-8 ${backgroundColor}/5 rounded-full opacity-0`}
-                            animate={isHovered ? {
-                              scale: [1, 1.5, 1],
-                              opacity: [0, 0.5, 0]
-                            } : {}}
-                            transition={{ duration: 2, repeat: isHovered ? Infinity : 0 }}
-                          />
                         </div>
                       </motion.div>
                       
@@ -550,7 +511,7 @@ const EnhancedServices = () => {
                       <motion.h3 
                         custom={index}
                         variants={titleVariants}
-                        className={`text-2xl font-bold mb-4 transition-colors duration-300 group-hover:${textColor}`}
+                        className={`text-xl font-bold mb-3 transition-colors duration-300 group-hover:${textColor}`}
                       >
                         {service.Titre}
                       </motion.h3>
@@ -559,15 +520,9 @@ const EnhancedServices = () => {
                       <motion.div 
                         custom={index}
                         variants={lineVariants}
-                        className="h-0.5 overflow-hidden mb-5 rounded-full"
+                        className={`h-0.5 ${backgroundColor} mb-4 rounded-full`}
                         style={{ width: "40px" }}
-                      >
-                        <motion.div
-                          className="h-full w-full bg-gradient-to-r from-blue via-purple to-red"
-                          animate={{ x: ["-100%", "100%"] }}
-                          transition={{ duration: 3, repeat: Infinity, repeatDelay: 2 }}
-                        />
-                      </motion.div>
+                      />
                       
                       {/* Description avec animation séquentielle */}
                       <motion.p 
@@ -582,15 +537,14 @@ const EnhancedServices = () => {
                       <motion.div
                         custom={index}
                         variants={linkVariants}
-                        className="mt-auto pointer-events-auto relative z-20"
+                        className="mt-auto"
                       >
                         <Link 
                           href={`/services/${slug}`} 
-                          className={`inline-flex items-center px-4 py-2 rounded-lg ${textColor} font-medium relative overflow-hidden group-hover:bg-${backgroundColor}/10 transition-all duration-300`}
+                          className={`inline-flex items-center ${textColor} font-medium relative overflow-hidden`}
                           onClick={(e) => e.stopPropagation()}
                         >
                           <motion.span
-                            className="relative z-10"
                             whileHover={{ x: 5 }}
                             transition={{ type: "spring", stiffness: 400, damping: 10 }}
                           >
@@ -606,36 +560,9 @@ const EnhancedServices = () => {
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
                             </motion.svg>
                           </motion.span>
-                          
-                          {/* Effet de brillance au survol */}
-                          <motion.div 
-                            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100"
-                            style={{ 
-                              backgroundSize: "200% 100%",
-                            }}
-                            animate={{
-                              backgroundPosition: ["100% 0%", "-100% 0%"],
-                            }}
-                            transition={{
-                              duration: 1.5,
-                              repeat: Infinity,
-                            }}
-                          />
                         </Link>
                       </motion.div>
                     </div>
-                    
-                    {/* Points lumineux aux coins */}
-                    <motion.div
-                      className={`absolute top-2 left-2 w-1 h-1 rounded-full ${backgroundColor}/40`}
-                      animate={{ opacity: [0.3, 0.8, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <motion.div
-                      className={`absolute bottom-2 right-2 w-1 h-1 rounded-full ${backgroundColor}/40`}
-                      animate={{ opacity: [0.3, 0.8, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity, delay: 1 }}
-                    />
                   </motion.div>
                 </motion.div>
               )
@@ -644,7 +571,7 @@ const EnhancedServices = () => {
         )}
                     
       
-        {/* Voir tous les services - Bouton flottant avec style glassmorphism */}
+        {/* Bouton "Voir tous les services" avec style spécifique à cette section */}
         {!isLoading && !error && services.length > 0 && (
           <motion.div
             className="text-center mt-16"
@@ -653,45 +580,37 @@ const EnhancedServices = () => {
             transition={{ delay: 1, duration: 0.6 }}
           >
             <motion.div
-              className="inline-block relative overflow-hidden rounded-xl"
+              className="inline-block relative overflow-hidden rounded-md"
               whileHover={{ 
-                y: -5, 
-                boxShadow: '0 20px 30px rgba(0, 0, 0, 0.15)'
+                y: -3, 
+                boxShadow: '0 10px 15px rgba(52, 152, 219, 0.2)'
               }}
               whileTap={{ scale: 0.97 }}
               transition={{ type: "spring", stiffness: 400, damping: 17 }}
             >
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-blue via-purple to-red bg-[length:200%_auto]"
+                  className="absolute inset-0 bg-blue"
                   animate={{ 
-                    backgroundPosition: ['0% center', '100% center', '0% center'] 
+                    opacity: [0.9, 1, 0.9]
                   }}
                   transition={{ 
-                    duration: 8, 
-                    ease: 'linear', 
+                    duration: 3, 
+                    ease: 'easeInOut', 
                     repeat: Infinity 
                   }}
                 />
                 
-                {/* Effet de brillance qui se déplace */}
-                <motion.div 
-                  className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
-                  style={{ 
-                    backgroundSize: "200% 100%",
-                  }}
-                  animate={{
-                    backgroundPosition: ["100% 0%", "-100% 0%"],
-                  }}
-                  transition={{
-                    duration: 2,
-                    repeat: Infinity,
-                    repeatDelay: 3
-                  }}
-                />
+                {/* Effet hexagones pour le bouton - identité services */}
+                <svg className="absolute inset-0 w-full h-full opacity-10" viewBox="0 0 100 100" preserveAspectRatio="none">
+                  <pattern id="hexPattern" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+                    <polygon points="5,0 10,2.5 10,7.5 5,10 0,7.5 0,2.5" fill="none" stroke="rgba(255,255,255,0.5)" strokeWidth="0.5" />
+                  </pattern>
+                  <rect width="100" height="100" fill="url(#hexPattern)" />
+                </svg>
                 
                 <Link 
                   href="/services" 
-                  className="inline-flex items-center text-white px-8 py-4 font-medium relative z-10"
+                  className="inline-flex items-center justify-center text-white px-8 py-3 font-medium relative z-10"
                 >
                   <span className="mr-2">Voir tous nos services</span>
                   <motion.svg 
@@ -702,15 +621,15 @@ const EnhancedServices = () => {
                     animate={{ x: [0, 5, 0] }}
                     transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
                   >
-<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                 </motion.svg>
-               </Link>
-             </motion.div>
-         </motion.div>
-       )}
-     </motion.div>
-   </section>
- )
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </motion.svg>
+                </Link>
+              </motion.div>
+          </motion.div>
+        )}
+      </motion.div>
+    </section>
+  )
 }
 
 export default EnhancedServices
