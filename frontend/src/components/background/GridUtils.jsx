@@ -58,7 +58,7 @@ export function generateGridPattern(type, color) {
           patternUnits="userSpaceOnUse"
         >
           <path 
-            d="M 10,10 L 90,10 M 10,50 L 90,50 M 10,90 L 90,90 M 10,10 L 10,90 M 50,10 L 50,90 M 90,10 L 90,90" 
+            d="M 10 10 L 90 10 M 10 50 L 90 50 M 10 90 L 90 90 M 10 10 L 10 90 M 50 10 L 50 90 M 90 10 L 90 90" 
             stroke={`var(--color-${color})`} 
             strokeWidth="0.5" 
             fill="none" 

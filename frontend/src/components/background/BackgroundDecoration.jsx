@@ -92,7 +92,7 @@ export default function BackgroundDecoration({
           <div className="absolute inset-0 opacity-5">
             <svg width="100%" height="100%">
               <pattern id="circuitPattern" patternUnits="userSpaceOnUse" width="100" height="100">
-                <path d="M 0,50 L 100,50 M 50,0 L 50,100" stroke={`var(--color-${primaryColor})`} strokeWidth="0.5" fill="none" />
+                <path d="M 0 50 L 100 50 M 50 0 L 50 100" stroke={`var(--color-${primaryColor})`} strokeWidth="0.5" fill="none" />
                 <circle cx="50" cy="50" r="2" fill="none" stroke={`var(--color-${primaryColor})`} strokeWidth="0.5" />
               </pattern>
               <rect width="100%" height="100%" fill="url(#circuitPattern)" />

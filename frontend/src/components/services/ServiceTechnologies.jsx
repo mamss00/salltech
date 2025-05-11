@@ -132,7 +132,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
           transition={{ duration: 2 }}
         >
           <motion.path
-            d="M 50,150 C 100,50 200,150 250,200 C 300,250 400,150 450,100 L 600,100 C 650,100 700,150 750,200"
+            d="M 50 150 C 100 50 200 150 250 200 C 300 250 400 150 450 100 L 600 100 C 650 100 700 150 750 200"
             stroke={`var(--color-${color})`}
             strokeWidth="1"
             fill="none"
@@ -141,7 +141,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
             transition={{ duration: 8, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 4 }}
           />
           <motion.path
-            d="M 100,300 L 200,300 C 250,300 250,350 300,350 L 500,350 C 550,350 550,300 600,300 L 700,300"
+            d="M 100 300 L 200 300 C 250 300 250 350 300 350 L 500 350 C 550 350 550 300 600 300 L 700 300"
             stroke="var(--color-purple)"
             strokeWidth="1"
             fill="none"
@@ -150,7 +150,7 @@ export default function ServiceTechnologies({ technologies = [], color = 'blue' 
             transition={{ duration: 7, ease: "easeInOut", repeat: Infinity, repeatType: "loop", repeatDelay: 3, delay: 2 }}
           />
           <motion.path
-            d="M 200,450 L 300,450 C 350,450 350,400 400,400 L 450,400 C 500,400 500,450 550,450 L 650,450"
+            d="M 200 450 L 300 450 C 350 450 350 400 400 400 L 450 400 C 500 400 500 450 550 450 L 650 450"
             stroke="var(--color-red)"
             strokeWidth="1"
             fill="none"
