@@ -17,20 +17,27 @@ export default function ConnectionLines({ color = 'blue', animate = true }) {
     return null
   }
 
+  // Fonction pour assurer que les nombres sont formatés correctement
+  // Pour éviter les problèmes de virgule/point décimal
+  const n = (num) => {
+    // Convertit en chaîne, remplace les virgules par des points et s'assure que c'est un nombre valide
+    return Number(num.toString().replace(',', '.')).toFixed(2).replace(/\.00$/, '');
+  }
+
   return (
     <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" xmlns="http://www.w3.org/2000/svg">
       {/* Ligne gauche */}
       <motion.path
-        d={`M 20,0 C 40,${window.innerHeight * 0.2} 20,${window.innerHeight * 0.4} 40,${window.innerHeight * 0.6} C 60,${window.innerHeight * 0.8} 30,${window.innerHeight}`}
+        d={`M 20 0 C 40 ${n(window.innerHeight * 0.2)} 20 ${n(window.innerHeight * 0.4)} 40 ${n(window.innerHeight * 0.6)} C 60 ${n(window.innerHeight * 0.8)} 30 ${n(window.innerHeight)}`}
         stroke={`rgba(var(--color-${color}-rgb), 0.03)`}
         strokeWidth="60"
         strokeLinecap="round"
         fill="none"
         animate={animate ? {
           d: [
-            `M 20,0 C 40,${window.innerHeight * 0.2} 20,${window.innerHeight * 0.4} 40,${window.innerHeight * 0.6} C 60,${window.innerHeight * 0.8} 30,${window.innerHeight}`,
-            `M 20,0 C 60,${window.innerHeight * 0.3} 0,${window.innerHeight * 0.5} 60,${window.innerHeight * 0.7} C 30,${window.innerHeight * 0.9} 30,${window.innerHeight}`,
-            `M 20,0 C 40,${window.innerHeight * 0.2} 20,${window.innerHeight * 0.4} 40,${window.innerHeight * 0.6} C 60,${window.innerHeight * 0.8} 30,${window.innerHeight}`
+            `M 20 0 C 40 ${n(window.innerHeight * 0.2)} 20 ${n(window.innerHeight * 0.4)} 40 ${n(window.innerHeight * 0.6)} C 60 ${n(window.innerHeight * 0.8)} 30 ${n(window.innerHeight)}`,
+            `M 20 0 C 60 ${n(window.innerHeight * 0.3)} 0 ${n(window.innerHeight * 0.5)} 60 ${n(window.innerHeight * 0.7)} C 30 ${n(window.innerHeight * 0.9)} 30 ${n(window.innerHeight)}`,
+            `M 20 0 C 40 ${n(window.innerHeight * 0.2)} 20 ${n(window.innerHeight * 0.4)} 40 ${n(window.innerHeight * 0.6)} C 60 ${n(window.innerHeight * 0.8)} 30 ${n(window.innerHeight)}`
           ]
         } : {}}
         transition={{
@@ -43,16 +50,16 @@ export default function ConnectionLines({ color = 'blue', animate = true }) {
       
       {/* Ligne droite */}
       <motion.path
-        d={`M ${window.innerWidth - 30},0 C ${window.innerWidth - 60},${window.innerHeight * 0.2} ${window.innerWidth - 20},${window.innerHeight * 0.4} ${window.innerWidth - 60},${window.innerHeight * 0.7} C ${window.innerWidth - 40},${window.innerHeight * 0.9} ${window.innerWidth - 50},${window.innerHeight}`}
+        d={`M ${n(window.innerWidth - 30)} 0 C ${n(window.innerWidth - 60)} ${n(window.innerHeight * 0.2)} ${n(window.innerWidth - 20)} ${n(window.innerHeight * 0.4)} ${n(window.innerWidth - 60)} ${n(window.innerHeight * 0.7)} C ${n(window.innerWidth - 40)} ${n(window.innerHeight * 0.9)} ${n(window.innerWidth - 50)} ${n(window.innerHeight)}`}
         stroke={`rgba(var(--color-purple-rgb), 0.025)`}
         strokeWidth="50"
         strokeLinecap="round"
         fill="none"
         animate={animate ? {
           d: [
-            `M ${window.innerWidth - 30},0 C ${window.innerWidth - 60},${window.innerHeight * 0.2} ${window.innerWidth - 20},${window.innerHeight * 0.4} ${window.innerWidth - 60},${window.innerHeight * 0.7} C ${window.innerWidth - 40},${window.innerHeight * 0.9} ${window.innerWidth - 50},${window.innerHeight}`,
-            `M ${window.innerWidth - 30},0 C ${window.innerWidth - 30},${window.innerHeight * 0.3} ${window.innerWidth - 70},${window.innerHeight * 0.5} ${window.innerWidth - 20},${window.innerHeight * 0.7} C ${window.innerWidth - 60},${window.innerHeight * 0.9} ${window.innerWidth - 50},${window.innerHeight}`,
-            `M ${window.innerWidth - 30},0 C ${window.innerWidth - 60},${window.innerHeight * 0.2} ${window.innerWidth - 20},${window.innerHeight * 0.4} ${window.innerWidth - 60},${window.innerHeight * 0.7} C ${window.innerWidth - 40},${window.innerHeight * 0.9} ${window.innerWidth - 50},${window.innerHeight}`
+            `M ${n(window.innerWidth - 30)} 0 C ${n(window.innerWidth - 60)} ${n(window.innerHeight * 0.2)} ${n(window.innerWidth - 20)} ${n(window.innerHeight * 0.4)} ${n(window.innerWidth - 60)} ${n(window.innerHeight * 0.7)} C ${n(window.innerWidth - 40)} ${n(window.innerHeight * 0.9)} ${n(window.innerWidth - 50)} ${n(window.innerHeight)}`,
+            `M ${n(window.innerWidth - 30)} 0 C ${n(window.innerWidth - 30)} ${n(window.innerHeight * 0.3)} ${n(window.innerWidth - 70)} ${n(window.innerHeight * 0.5)} ${n(window.innerWidth - 20)} ${n(window.innerHeight * 0.7)} C ${n(window.innerWidth - 60)} ${n(window.innerHeight * 0.9)} ${n(window.innerWidth - 50)} ${n(window.innerHeight)}`,
+            `M ${n(window.innerWidth - 30)} 0 C ${n(window.innerWidth - 60)} ${n(window.innerHeight * 0.2)} ${n(window.innerWidth - 20)} ${n(window.innerHeight * 0.4)} ${n(window.innerWidth - 60)} ${n(window.innerHeight * 0.7)} C ${n(window.innerWidth - 40)} ${n(window.innerHeight * 0.9)} ${n(window.innerWidth - 50)} ${n(window.innerHeight)}`
           ]
         } : {}}
         transition={{
@@ -66,16 +73,16 @@ export default function ConnectionLines({ color = 'blue', animate = true }) {
       
       {/* Ligne centrale */}
       <motion.path
-        d={`M ${window.innerWidth / 2},0 C ${window.innerWidth / 2 - 50},${window.innerHeight * 0.3} ${window.innerWidth / 2 + 50},${window.innerHeight * 0.6} ${window.innerWidth / 2 - 20},${window.innerHeight}`}
+        d={`M ${n(window.innerWidth / 2)} 0 C ${n(window.innerWidth / 2 - 50)} ${n(window.innerHeight * 0.3)} ${n(window.innerWidth / 2 + 50)} ${n(window.innerHeight * 0.6)} ${n(window.innerWidth / 2 - 20)} ${n(window.innerHeight)}`}
         stroke={`rgba(var(--color-red-rgb), 0.02)`}
         strokeWidth="40"
         strokeLinecap="round"
         fill="none"
         animate={animate ? {
           d: [
-            `M ${window.innerWidth / 2},0 C ${window.innerWidth / 2 - 50},${window.innerHeight * 0.3} ${window.innerWidth / 2 + 50},${window.innerHeight * 0.6} ${window.innerWidth / 2 - 20},${window.innerHeight}`,
-            `M ${window.innerWidth / 2},0 C ${window.innerWidth / 2 + 70},${window.innerHeight * 0.4} ${window.innerWidth / 2 - 70},${window.innerHeight * 0.7} ${window.innerWidth / 2 + 40},${window.innerHeight}`,
-            `M ${window.innerWidth / 2},0 C ${window.innerWidth / 2 - 50},${window.innerHeight * 0.3} ${window.innerWidth / 2 + 50},${window.innerHeight * 0.6} ${window.innerWidth / 2 - 20},${window.innerHeight}`
+            `M ${n(window.innerWidth / 2)} 0 C ${n(window.innerWidth / 2 - 50)} ${n(window.innerHeight * 0.3)} ${n(window.innerWidth / 2 + 50)} ${n(window.innerHeight * 0.6)} ${n(window.innerWidth / 2 - 20)} ${n(window.innerHeight)}`,
+            `M ${n(window.innerWidth / 2)} 0 C ${n(window.innerWidth / 2 + 70)} ${n(window.innerHeight * 0.4)} ${n(window.innerWidth / 2 - 70)} ${n(window.innerHeight * 0.7)} ${n(window.innerWidth / 2 + 40)} ${n(window.innerHeight)}`,
+            `M ${n(window.innerWidth / 2)} 0 C ${n(window.innerWidth / 2 - 50)} ${n(window.innerHeight * 0.3)} ${n(window.innerWidth / 2 + 50)} ${n(window.innerHeight * 0.6)} ${n(window.innerWidth / 2 - 20)} ${n(window.innerHeight)}`
           ]
         } : {}}
         transition={{
