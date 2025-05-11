@@ -3,151 +3,152 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
+// Version complètement réécrite pour éviter les erreurs de chemin SVG
 export default function ConnectionLines({ color = 'blue', animate = true }) {
-  // État pour savoir si le composant est monté
-  const [isMounted, setIsMounted] = useState(false)
-  const [dimensions, setDimensions] = useState({ width: 1000, height: 1000 })
+  const [mounted, setMounted] = useState(false)
   
-  // Attendre que le composant soit monté pour accéder à window
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setDimensions({
-        width: window.innerWidth || 1000,
-        height: window.innerHeight || 1000
-      })
-      setIsMounted(true)
-
-      // Gérer le redimensionnement
-      const handleResize = () => {
-        setDimensions({
-          width: window.innerWidth,
-          height: window.innerHeight
-        })
-      }
-
-      window.addEventListener('resize', handleResize)
-      return () => window.removeEventListener('resize', handleResize)
-    }
+    setMounted(true)
   }, [])
   
-  // Ne rien rendre tant que le composant n'est pas monté
-  if (!isMounted) {
-    return null
+  // Rien à rendre côté serveur
+  if (!mounted) return null
+  
+  // Couleurs basées sur les variables CSS
+  const colorValues = {
+    blue: 'rgba(52, 152, 219, 0.03)',
+    purple: 'rgba(155, 89, 182, 0.025)',
+    red: 'rgba(231, 76, 60, 0.02)'
   }
-
-  // Fonction de formatage sécurisée pour les nombres SVG
-  const formatSVGNumber = (num) => {
-    if (num === undefined || num === null || isNaN(num)) return 0;
-    // Limiter à 2 décimales et s'assurer que c'est un nombre
-    return parseFloat(parseFloat(num).toFixed(2));
-  }
-
-  // Créer des paths SVG sécurisés
-  const generateSafePath = (commands) => {
-    try {
-      return commands.join(' ');
-    } catch (error) {
-      console.error("Error generating SVG path:", error);
-      return "M 0 0"; // Fallback path
-    }
-  }
-
-  // Récupérer les dimensions de manière sécurisée
-  const w = formatSVGNumber(dimensions.width);
-  const h = formatSVGNumber(dimensions.height);
-
-  // Générer les chemins de manière sécurisée
-  const leftPath = generateSafePath([
-    "M", 20, 0,
-    "C", 40, formatSVGNumber(h * 0.2), 20, formatSVGNumber(h * 0.4), 40, formatSVGNumber(h * 0.6),
-    "C", 60, formatSVGNumber(h * 0.8), 30, h
-  ]);
-
-  const leftPathAlt = generateSafePath([
-    "M", 20, 0,
-    "C", 60, formatSVGNumber(h * 0.3), 0, formatSVGNumber(h * 0.5), 60, formatSVGNumber(h * 0.7),
-    "C", 30, formatSVGNumber(h * 0.9), 30, h
-  ]);
-
-  const rightPath = generateSafePath([
-    "M", formatSVGNumber(w - 30), 0,
-    "C", formatSVGNumber(w - 60), formatSVGNumber(h * 0.2), formatSVGNumber(w - 20), formatSVGNumber(h * 0.4), formatSVGNumber(w - 60), formatSVGNumber(h * 0.7),
-    "C", formatSVGNumber(w - 40), formatSVGNumber(h * 0.9), formatSVGNumber(w - 50), h
-  ]);
-
-  const rightPathAlt = generateSafePath([
-    "M", formatSVGNumber(w - 30), 0,
-    "C", formatSVGNumber(w - 30), formatSVGNumber(h * 0.3), formatSVGNumber(w - 70), formatSVGNumber(h * 0.5), formatSVGNumber(w - 20), formatSVGNumber(h * 0.7),
-    "C", formatSVGNumber(w - 60), formatSVGNumber(h * 0.9), formatSVGNumber(w - 50), h
-  ]);
-
-  const centerPath = generateSafePath([
-    "M", formatSVGNumber(w / 2), 0,
-    "C", formatSVGNumber(w / 2 - 50), formatSVGNumber(h * 0.3), formatSVGNumber(w / 2 + 50), formatSVGNumber(h * 0.6), formatSVGNumber(w / 2 - 20), h
-  ]);
-
-  const centerPathAlt = generateSafePath([
-    "M", formatSVGNumber(w / 2), 0,
-    "C", formatSVGNumber(w / 2 + 70), formatSVGNumber(h * 0.4), formatSVGNumber(w / 2 - 70), formatSVGNumber(h * 0.7), formatSVGNumber(w / 2 + 40), h
-  ]);
-
+  
   return (
-    <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" xmlns="http://www.w3.org/2000/svg">
-      {/* Ligne gauche */}
-      <motion.path
-        d={leftPath}
-        stroke={`rgba(var(--color-${color}-rgb), 0.03)`}
-        strokeWidth="60"
-        strokeLinecap="round"
-        fill="none"
-        animate={animate ? {
-          d: [leftPath, leftPathAlt, leftPath]
+    <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
+      {/* Utiliser des divs avec des dégradés au lieu des paths SVG complexes */}
+      <div className="absolute inset-0">
+        {/* Ligne gauche */}
+        <motion.div 
+          className="absolute left-0 h-full w-[60px]"
+          style={{ 
+            background: `linear-gradient(to bottom, transparent, ${colorValues[color]}, transparent)`,
+            opacity: 0.8,
+            borderRadius: '50%',
+          }}
+          animate={animate ? { 
+            left: ['2%', '5%', '2%'],
+            width: ['60px', '80px', '60px'],
+          } : {}}
+          transition={{
+            duration: 40,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "mirror"
+          }}
+        />
+        
+        {/* Ligne centrale */}
+        <motion.div 
+          className="absolute h-full w-[40px]"
+          style={{ 
+            background: `linear-gradient(to bottom, transparent, ${colorValues.red}, transparent)`,
+            opacity: 0.8,
+            borderRadius: '50%',
+            left: '50%',
+            transform: 'translateX(-50%)'
+          }}
+          animate={animate ? { 
+            left: ['50%', '45%', '55%', '50%'],
+            width: ['40px', '60px', '50px', '40px'],
+          } : {}}
+          transition={{
+            duration: 50,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "mirror",
+            delay: 10
+          }}
+        />
+        
+        {/* Ligne droite */}
+        <motion.div 
+          className="absolute right-0 h-full w-[50px]"
+          style={{ 
+            background: `linear-gradient(to bottom, transparent, ${colorValues.purple}, transparent)`,
+            opacity: 0.8,
+            borderRadius: '50%'
+          }}
+          animate={animate ? { 
+            right: ['2%', '5%', '2%'],
+            width: ['50px', '70px', '50px'],
+          } : {}}
+          transition={{
+            duration: 45,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "mirror",
+            delay: 5
+          }}
+        />
+      </div>
+      
+      {/* Éléments décoratifs additionnels qui ne nécessitent pas d'animation de chemin */}
+      <motion.div 
+        className="absolute top-1/4 left-1/4 w-32 h-32 rounded-full opacity-20"
+        style={{ background: `radial-gradient(circle, ${colorValues[color]} 0%, transparent 70%)` }}
+        animate={animate ? { 
+          scale: [1, 1.2, 1],
+          x: [0, 20, 0],
+          y: [0, -20, 0]
         } : {}}
         transition={{
-          duration: 40,
+          duration: 30,
           ease: "easeInOut",
           repeat: Infinity,
           repeatType: "mirror"
         }}
       />
       
-      {/* Ligne droite */}
-      <motion.path
-        d={rightPath}
-        stroke={`rgba(var(--color-purple-rgb), 0.025)`}
-        strokeWidth="50"
-        strokeLinecap="round"
-        fill="none"
-        animate={animate ? {
-          d: [rightPath, rightPathAlt, rightPath]
+      <motion.div 
+        className="absolute bottom-1/4 right-1/4 w-32 h-32 rounded-full opacity-20"
+        style={{ background: `radial-gradient(circle, ${colorValues.purple} 0%, transparent 70%)` }}
+        animate={animate ? { 
+          scale: [1, 1.2, 1],
+          x: [0, -20, 0],
+          y: [0, 20, 0]
         } : {}}
         transition={{
-          duration: 45,
+          duration: 35,
           ease: "easeInOut",
           repeat: Infinity,
           repeatType: "mirror",
-          delay: 5
+          delay: 15
         }}
       />
       
-      {/* Ligne centrale */}
-      <motion.path
-        d={centerPath}
-        stroke={`rgba(var(--color-red-rgb), 0.02)`}
-        strokeWidth="40"
-        strokeLinecap="round"
-        fill="none"
-        animate={animate ? {
-          d: [centerPath, centerPathAlt, centerPath]
-        } : {}}
-        transition={{
-          duration: 50,
-          ease: "easeInOut",
-          repeat: Infinity,
-          repeatType: "mirror",
-          delay: 10
-        }}
-      />
-    </svg>
-  );
+      {/* Points décoratifs */}
+      {[...Array(10)].map((_, i) => (
+        <motion.div
+          key={`dot-${i}`}
+          className="absolute w-1 h-1 rounded-full"
+          style={{ 
+            background: i % 3 === 0 ? colorValues[color] : 
+                      i % 3 === 1 ? colorValues.purple : 
+                                  colorValues.red,
+            left: `${10 + (i * 8)}%`,
+            top: `${20 + (i * 6)}%`
+          }}
+          animate={animate ? { 
+            opacity: [0.2, 0.8, 0.2],
+            scale: [1, 1.5, 1]
+          } : {}}
+          transition={{
+            duration: 5 + i * 2,
+            ease: "easeInOut",
+            repeat: Infinity,
+            repeatType: "mirror",
+            delay: i * 0.5
+          }}
+        />
+      ))}
+    </div>
+  )
 }
