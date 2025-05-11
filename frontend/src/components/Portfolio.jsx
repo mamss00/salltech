@@ -319,7 +319,7 @@ const Portfolio = () => {
             onClick={() => filterByCategory(category)}
             className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all relative ${
               activeFilter === category
-                ? 'text-white shadow-lg' // Ici le texte est blanc sur fond violet
+                ? 'text-white shadow-lg' 
                 : 'bg-white/80 text-gray-600 hover:bg-gray-100'
             }`}
             whileHover={{ scale: 1.05 }}
@@ -328,9 +328,20 @@ const Portfolio = () => {
             {activeFilter === category && (
               <motion.span
                 layoutId="activeCategory"
-                className="absolute inset-0 bg-purple-600 rounded-full -z-10"
+                className="absolute inset-0 rounded-full -z-10"
+                style={{ 
+                  background: 'linear-gradient(135deg, #9b59b6, #3498db, #e74c3c) !important',
+                  backgroundSize: '200% 200% !important'
+                }}
+                animate={{
+                  backgroundPosition: ['0% 0%', '100% 100%', '0% 0%']
+                }}
+                transition={{ 
+                  duration: 8, 
+                  repeat: Infinity,
+                  repeatType: "mirror"
+                }}
                 initial={false}
-                transition={{ type: "spring", stiffness: 300, damping: 25 }}
               />
             )}
             {category}
