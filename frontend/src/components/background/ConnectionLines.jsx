@@ -1,35 +1,45 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
-/**
- * Composant qui génère les lignes courbes de connexion entre les sections
- */
 export default function ConnectionLines({ color = 'blue', animate = true }) {
+  // État pour savoir si le composant est monté
+  const [isMounted, setIsMounted] = useState(false)
+  
+  // Attendre que le composant soit monté pour accéder à window
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
+  
+  // Ne rien rendre tant que le composant n'est pas monté
+  if (!isMounted) {
+    return null
+  }
+
   return (
     <svg className="absolute inset-0 w-full h-full overflow-visible pointer-events-none" xmlns="http://www.w3.org/2000/svg">
       {/* Ligne gauche */}
-        <motion.path
-        d={`M 20 0 C 40 ${window.innerHeight * 0.2} 20 ${window.innerHeight * 0.4} 40 ${window.innerHeight * 0.6} C 60 ${window.innerHeight * 0.8} 30 ${window.innerHeight}`}
+      <motion.path
+        d={`M 20,0 C 40,${window.innerHeight * 0.2} 20,${window.innerHeight * 0.4} 40,${window.innerHeight * 0.6} C 60,${window.innerHeight * 0.8} 30,${window.innerHeight}`}
         stroke={`rgba(var(--color-${color}-rgb), 0.03)`}
         strokeWidth="60"
         strokeLinecap="round"
         fill="none"
         animate={animate ? {
-            d: [
-            `M 20 0 C 40 ${window.innerHeight * 0.2} 20 ${window.innerHeight * 0.4} 40 ${window.innerHeight * 0.6} C 60 ${window.innerHeight * 0.8} 30 ${window.innerHeight}`,
-            `M 20 0 C 60 ${window.innerHeight * 0.3} 0 ${window.innerHeight * 0.5} 60 ${window.innerHeight * 0.7} C 30 ${window.innerHeight * 0.9} 30 ${window.innerHeight}`,
-            `M 20 0 C 40 ${window.innerHeight * 0.2} 20 ${window.innerHeight * 0.4} 40 ${window.innerHeight * 0.6} C 60 ${window.innerHeight * 0.8} 30 ${window.innerHeight}`
-            ]
+          d: [
+            `M 20,0 C 40,${window.innerHeight * 0.2} 20,${window.innerHeight * 0.4} 40,${window.innerHeight * 0.6} C 60,${window.innerHeight * 0.8} 30,${window.innerHeight}`,
+            `M 20,0 C 60,${window.innerHeight * 0.3} 0,${window.innerHeight * 0.5} 60,${window.innerHeight * 0.7} C 30,${window.innerHeight * 0.9} 30,${window.innerHeight}`,
+            `M 20,0 C 40,${window.innerHeight * 0.2} 20,${window.innerHeight * 0.4} 40,${window.innerHeight * 0.6} C 60,${window.innerHeight * 0.8} 30,${window.innerHeight}`
+          ]
         } : {}}
         transition={{
-            duration: 40,
-            ease: "easeInOut",
-            repeat: Infinity,
-            repeatType: "mirror"
+          duration: 40,
+          ease: "easeInOut",
+          repeat: Infinity,
+          repeatType: "mirror"
         }}
-        />
+      />
       
       {/* Ligne droite */}
       <motion.path
