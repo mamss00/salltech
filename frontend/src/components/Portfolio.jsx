@@ -313,40 +313,23 @@ const Portfolio = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex flex-wrap justify-center gap-4 mb-16"
         >
-        {categories.map((category, index) => (
-          <motion.button
-            key={index}
-            onClick={() => filterByCategory(category)}
-            className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all relative ${
-              activeFilter === category
-                ? 'text-white shadow-lg' 
-                : 'bg-white/80 text-gray-600 hover:bg-gray-100'
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            {activeFilter === category && (
-              <motion.span
-                layoutId="activeCategory"
-                className="absolute inset-0 rounded-full -z-10"
-                style={{ 
-                  background: 'linear-gradient(135deg, #9b59b6, #3498db, #e74c3c) !important',
-                  backgroundSize: '200% 200% !important'
-                }}
-                animate={{
-                  backgroundPosition: ['0% 0%', '100% 100%', '0% 0%']
-                }}
-                transition={{ 
-                  duration: 8, 
-                  repeat: Infinity,
-                  repeatType: "mirror"
-                }}
-                initial={false}
-              />
-            )}
-            {category}
-          </motion.button>
-        ))}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={descInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="flex flex-wrap justify-center gap-4 mb-16"
+        >
+          {categories.map((category, index) => (
+            <CTAButton 
+              key={index}
+              onClick={() => filterByCategory(category)}
+              variant={activeFilter === category ? "primary" : "subtle"}
+              className="px-5 py-2 text-sm"
+              showDots={false}
+            >
+              {category}
+            </CTAButton>
+          ))}
         </motion.div>
         
         {/* Layout asymétrique avec une vraie disposition masonry */}
