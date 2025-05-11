@@ -331,6 +331,7 @@ const Portfolio = () => {
             </CTAButton>
           ))}
         </motion.div>
+        </motion.div>
         
         {/* Layout asymétrique avec une vraie disposition masonry */}
         <motion.div
