@@ -4,16 +4,16 @@ const path = require('path');
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['images.unsplash.com', 'api.sall.technology'],
+    domains: ['images.unsplash.com', 'backend.sall.technology'],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'api.sall.technology',
+        hostname: 'backend.sall.technology',
         pathname: '/**',
       },
       {
         protocol: 'http',
-        hostname: 'api.sall.technology',
+        hostname: 'backend.sall.technology',
         pathname: '/**',
       }
     ],
