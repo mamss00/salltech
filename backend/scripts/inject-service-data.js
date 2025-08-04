@@ -1,8 +1,8 @@
 const axios = require('axios');
 
 // Configuration
-const STRAPI_URL = 'https://api.sall.technology';
-const STRAPI_API_TOKEN = '171dbf0211f374a22ed97a1655dd6f814ca5ce235495bd518349f325b1fe45ca2b007eba8399fdb570271785de56a06b96455cb887555db203ad85c15450b24546a80089e046758c8dadca07334f67a06f92bab9c5e808ef3ec40e0e5acb0eafd830ce92d6663de364915c4b0dd2863e30dd5756b5053727d0aea4bac81ea2c3';
+const STRAPI_URL = 'https://backend.sall.technology';
+const STRAPI_API_TOKEN = '1eb6335baa3fabf0d2701a74a85e7bdb36bc71298291843bfd5580015a28bf5e2f0bad29bca38fb2221350e120ecc956fdfb754580d19e21119789265276a85d9d8c751194c7c386c281750d46f1e38c660cc3c0ff39e5aa53003090cd9c2c5bfab537a74e3049a009417bc94e7c330f7812b298d0129df9baf0ed07950cbabf';
 
 // Fonction principale pour injecter les données
 async function injectServiceData() {
