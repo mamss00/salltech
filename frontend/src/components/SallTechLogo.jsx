@@ -11,7 +11,7 @@ const SallTechLogo = () => {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 12px;
+          gap: 6px;
         }
         
         .logo-vertical .letter {
