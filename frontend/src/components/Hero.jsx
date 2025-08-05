@@ -90,42 +90,31 @@ function EnhancedHero() {
     "la qualité"
   ];
   
-  // Effet de typing
-  useEffect(() => {
-    const typingSpeed = 100;
-    const deleteSpeed = 50;
-    const delayBeforeDelete = 2000;
-    const delayBeforeNewPhrase = 500;
-    
-    let timer;
+// Effet de typing - CORRIGÉ
+useEffect(() => {
+  const timer = setTimeout(() => {
+    const currentPhrase = phrases[phraseIndex];
     
     if (isTyping) {
-      if (charIndex < phrases[phraseIndex].length) {
-        timer = setTimeout(() => {
-          setText(phrases[phraseIndex].substring(0, charIndex + 1));
-          setCharIndex(prev => prev + 1);
-        }, typingSpeed);
+      if (charIndex <= currentPhrase.length) {
+        setText(currentPhrase.substring(0, charIndex));
+        setCharIndex(prev => prev + 1);
       } else {
-        timer = setTimeout(() => {
-          setIsTyping(false);
-        }, delayBeforeDelete);
+        setTimeout(() => setIsTyping(false), 2000);
       }
     } else {
       if (charIndex > 0) {
-        timer = setTimeout(() => {
-          setText(phrases[phraseIndex].substring(0, charIndex - 1));
-          setCharIndex(prev => prev - 1);
-        }, deleteSpeed);
+        setText(currentPhrase.substring(0, charIndex - 1));
+        setCharIndex(prev => prev - 1);
       } else {
-        timer = setTimeout(() => {
-          setIsTyping(true);
-          setPhraseIndex((prev) => (prev + 1) % phrases.length);
-        }, delayBeforeNewPhrase);
+        setIsTyping(true);
+        setPhraseIndex((prev) => (prev + 1) % phrases.length);
       }
     }
-    
-    return () => clearTimeout(timer);
-  }, [charIndex, isTyping, phraseIndex, phrases]);
+  }, isTyping ? 100 : 50);
+
+  return () => clearTimeout(timer);
+}, [charIndex, isTyping, phraseIndex]);
 
   // Animation séquentielle pour le panneau de droite
   useEffect(() => {
