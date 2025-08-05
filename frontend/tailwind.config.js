@@ -24,7 +24,7 @@ module.exports = {
         blue: '#3498db',
         purple: '#9b59b6',
         red: '#e74c3c',
-        dark: '#1a1a2e',
+        dark: '#666',
         light: '#f7f7f7',
       },
       animation: {
