@@ -15,7 +15,7 @@ const SallTechLogo = () => {
         }
         
         .logo-vertical .letter {
-          font-size: 64px;
+          font-size: 32px;
           font-weight: 200;
           position: relative;
           background: linear-gradient(45deg, #3498db, #9b59b6, #e74c3c);
@@ -28,17 +28,17 @@ const SallTechLogo = () => {
         .logo-vertical .letter::after {
           content: '';
           position: absolute;
-          bottom: -6px;
+          bottom: -1px;
           left: 50%;
           transform: translateX(-50%);
           width: 75%;
-          height: 2px;
+          height: 1.5px;
           background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);
           border-radius: 1px;
         }
         
         .logo-vertical .text {
-          font-size: 18px;
+          font-size: 12px;
           font-weight: 400;
           letter-spacing: 0.15em;
           color: #666;
@@ -48,10 +48,10 @@ const SallTechLogo = () => {
         /* Responsive pour mobile */
         @media (max-width: 768px) {
           .logo-vertical .letter {
-            font-size: 48px;
+            font-size: 28px;
           }
           .logo-vertical .text {
-            font-size: 14px;
+            font-size: 10px;
           }
         }
       `}</style>
