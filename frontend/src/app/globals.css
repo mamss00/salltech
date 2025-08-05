@@ -22,7 +22,8 @@
   }
   
   body {
-    @apply bg-light text-dark overflow-x-hidden font-sans;
+    @apply bg-light overflow-x-hidden font-sans;
+    color: #666;
   }
 }
 
@@ -57,6 +58,22 @@
 
   .dot {
     @apply w-1 h-1 bg-current rounded-full mx-0.5 opacity-0;
+  }
+
+  .text-dark {
+    color: #666 !important;
+  }
+  
+  .text-gray-800 {
+    color: #666 !important;
+  }
+  
+  .text-gray-900 {
+    color: #666 !important;
+  }
+  
+  .text-gray-700 {
+    color: #666 !important;
   }
 }
 
