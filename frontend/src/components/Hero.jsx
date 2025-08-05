@@ -347,15 +347,15 @@ function EnhancedHero() {
               >
                 Pour ceux qui<br />
                 aiment <motion.span 
-                  className="gradient-text relative inline-block min-w-[180px]"
+                  className="gradient-text relative inline-block min-w-[200px]"
                   initial={{ backgroundPosition: "0% 50%" }}
                   animate={{ backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"] }}
                   transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
                 >
                   {text}
                   <motion.span 
-                    className={`absolute -right-2 h-8 w-0.5 ${isTyping ? 'opacity-100' : 'opacity-0'}`}
-                    animate={{ opacity: isTyping ? [1, 0, 1] : 0 }}
+                    className="absolute -right-2 h-8 w-0.5"
+                    animate={{ opacity: [1, 0, 1] }}
                     transition={{ duration: 0.8, repeat: Infinity }}
                     style={{
                       background: "linear-gradient(to bottom, #3498db, #9b59b6, #e74c3c)"
@@ -858,7 +858,7 @@ function EnhancedHero() {
               
               {/* Badge flottant amélioré */}
               <motion.div
-                className="absolute -top-6 -right-6 bg-gradient-to-br from-red to-purple text-white px-4 py-2 rounded-lg shadow-lg flex items-center text-sm font-medium border border-white/20 backdrop-blur-md"
+                className="absolute -top-6 -right-6 z-10 bg-gradient-to-br from-red to-purple text-white px-4 py-2 rounded-lg shadow-lg flex items-center text-sm font-medium border border-white/20 backdrop-blur-md"
                 initial={{ opacity: 0, scale: 0, rotate: -10 }}
                 animate={{ opacity: 1, scale: 1, rotate: 0 }}
                 transition={{ 
