@@ -17,7 +17,7 @@ export default function EnhancedHeader() {
       const scrollY = window.scrollY;
       
       // Mise à jour de l'état de défilement
-      setScrolled(scrollY > 50);
+      setScrolled(scrollY > 20);
       
       // Détection de la section active pour navigation intelligente
       const sections = ['home', 'services', 'portfolio', 'contact'];
@@ -98,7 +98,7 @@ export default function EnhancedHeader() {
       animate={{ 
         y: 0, 
         opacity: 1,
-        padding: scrolled ? '15px 0' : '30px 0',
+        padding: scrolled ? '8px 0' : '16px 0',
         boxShadow: scrolled 
           ? '0 10px 30px rgba(0, 0, 0, 0.08)' 
           : 'none'
@@ -111,68 +111,9 @@ export default function EnhancedHeader() {
       }}
     >
       {/* Fond élégant avec effet de vitre */}
-      <motion.div 
-        className="absolute inset-0 backdrop-blur-md bg-white/70 overflow-hidden"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: scrolled ? 0.95 : 0.8 }}
-        transition={{ duration: 0.5 }}
-      >
-        {/* Gradient subtil au top */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-blue/30 via-purple/30 to-red/30"></div>
-        
-        {/* Illumination d'arrière-plan */}
-        <motion.div 
-          className="absolute -top-20 right-1/4 w-64 h-64 bg-blue/10 rounded-full blur-3xl"
-          animate={{ 
-            opacity: [0.3, 0.5, 0.3],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{ 
-            duration: 8,
-            repeat: Infinity,
-            repeatType: "reverse" 
-          }}
-        />
-        
-        <motion.div 
-          className="absolute -bottom-20 left-1/3 w-64 h-64 bg-purple/10 rounded-full blur-3xl"
-          animate={{ 
-            opacity: [0.2, 0.4, 0.2],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{ 
-            duration: 10,
-            repeat: Infinity,
-            repeatType: "reverse",
-            delay: 2
-          }}
-        />
-        
-        {/* Particules subtiles d'arrière-plan */}
-        {headerParticles.map(particle => (
-          <motion.div
-            key={particle.id}
-            className="absolute w-1 h-1 rounded-full bg-blue/20"
-            style={{
-              left: `${particle.x}%`,
-              top: `${particle.y}%`,
-              width: `${particle.size}px`,
-              height: `${particle.size}px`
-            }}
-            animate={{
-              y: [0, 30, 0],
-              opacity: [0, 0.3, 0]
-            }}
-            transition={{
-              duration: particle.duration,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-          />
-        ))}
-      </motion.div>
+<div className="absolute inset-0 bg-white/90 backdrop-blur-md" />
       
-      <div className="container mx-auto px-5 flex justify-between items-center relative z-10">
+      <div className="container mx-auto px-5 flex justify-between items-center relative z-10 h-16">
         {/* Logo avec animation */}
         <motion.div
           whileHover={{ scale: 1.05 }}
