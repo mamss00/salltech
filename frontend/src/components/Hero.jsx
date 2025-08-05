@@ -343,7 +343,7 @@ useEffect(() => {
                 >
                   {text}
                   <motion.span 
-                    className="absolute -right-2 h-8 w-0.5"
+                    className="inline-block h-8 w-0.5 ml-1"
                     animate={{ opacity: [1, 0, 1] }}
                     transition={{ duration: 0.8, repeat: Infinity }}
                     style={{
