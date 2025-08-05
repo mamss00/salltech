@@ -111,7 +111,30 @@ export default function EnhancedHeader() {
       }}
     >
       {/* Fond élégant avec effet de vitre */}
-<div className="absolute inset-0 bg-white/90 backdrop-blur-md" />
+<div className="absolute inset-0 overflow-hidden">
+  <div 
+    className="absolute inset-0 backdrop-blur-lg"
+    style={{ background: 'rgba(255, 255, 255, 0.75)' }}
+  />
+  <div 
+    className="absolute inset-0"
+    style={{
+      background: `linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.4) 0%, 
+        rgba(255, 255, 255, 0.1) 50%, 
+        rgba(255, 255, 255, 0.4) 100%)`,
+      opacity: 0.6
+    }}
+  />
+  <div 
+    className="absolute bottom-0 left-0 right-0 h-px"
+    style={{
+      background: scrolled 
+        ? 'linear-gradient(90deg, transparent, rgba(0,0,0,0.1), transparent)'
+        : 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)'
+    }}
+  />
+</div>
       
       <div className="container mx-auto px-5 flex justify-between items-center relative z-10 h-16">
         {/* Logo avec animation */}
