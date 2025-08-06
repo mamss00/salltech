@@ -35,205 +35,194 @@ export default function SALLTECHLoader({
     return () => clearTimeout(timer)
   }, [duration, onComplete, showOnlyFirstVisit])
 
+  // Ne rien afficher côté serveur
   if (!isClient || !shouldShow) return null
 
   return (
-    <>
-      {/* Injection CSS critique en premier */}
-      <style jsx global>{`
-        .salltech-loader-styles * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-        
-        .salltech-loader-body {
-          font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
-          background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%) !important;
-          min-height: 100vh !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: center !important;
-          overflow: hidden !important;
-          position: relative !important;
-        }
-        
-        .salltech-background-pattern {
-          position: absolute !important;
-          top: 0 !important;
-          left: 0 !important;
-          width: 100% !important;
-          height: 100% !important;
+    <div 
+      className={`fixed inset-0 z-50 transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'} ${className}`}
+      style={{
+        fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, sans-serif',
+        background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
+      <style jsx>{`
+        .loader-background {
+          position: absolute;
+          inset: 0;
           background-image: 
             radial-gradient(circle at 25% 25%, rgba(52, 152, 219, 0.08) 0%, transparent 50%),
             radial-gradient(circle at 75% 75%, rgba(155, 89, 182, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, rgba(231, 76, 60, 0.05) 0%, transparent 50%) !important;
-          animation: patternFloat 15s ease-in-out infinite !important;
+            radial-gradient(circle at 50% 50%, rgba(231, 76, 60, 0.05) 0%, transparent 50%);
+          animation: patternFloat 15s ease-in-out infinite;
         }
         
-        .salltech-loader-container {
-          position: relative !important;
-          padding: 4rem 5rem !important;
-          border-radius: 1.875rem !important;
-          overflow: hidden !important;
-          z-index: 10 !important;
+        .loader-container {
+          position: relative;
+          padding: 4rem 5rem;
+          border-radius: 1.875rem;
+          overflow: hidden;
+          z-index: 10;
         }
         
-        .salltech-loader-container::before {
-          content: '' !important;
-          position: absolute !important;
-          inset: 0 !important;
-          backdrop-filter: blur(16px) !important;
-          background: rgba(255, 255, 255, 0.75) !important;
-          border-radius: inherit !important;
-          z-index: 1 !important;
+        .loader-container::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          backdrop-filter: blur(16px);
+          background: rgba(255, 255, 255, 0.75);
+          border-radius: inherit;
+          z-index: 1;
         }
         
-        .salltech-loader-container::after {
-          content: '' !important;
-          position: absolute !important;
-          inset: 0 !important;
+        .loader-container::after {
+          content: '';
+          position: absolute;
+          inset: 0;
           background: linear-gradient(135deg, 
             rgba(255, 255, 255, 0.4) 0%, 
             rgba(255, 255, 255, 0.1) 50%, 
-            rgba(255, 255, 255, 0.4) 100%) !important;
-          opacity: 0.6 !important;
-          border: 1px solid rgba(255, 255, 255, 0.3) !important;
-          border-radius: inherit !important;
-          z-index: 2 !important;
+            rgba(255, 255, 255, 0.4) 100%);
+          opacity: 0.6;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          border-radius: inherit;
+          z-index: 2;
           box-shadow: 
             0 8px 32px rgba(0, 0, 0, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
         }
         
-        .salltech-loader-content {
-          position: relative !important;
-          z-index: 3 !important;
-          display: flex !important;
-          flex-direction: column !important;
-          align-items: center !important;
-          gap: 3rem !important;
+        .loader-content {
+          position: relative;
+          z-index: 3;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 3rem;
         }
         
-        .salltech-logo-section {
-          display: flex !important;
-          flex-direction: column !important;
-          align-items: center !important;
-          gap: 1.25rem !important;
+        .logo-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.25rem;
         }
         
-        .salltech-logo-letter {
-          font-size: 5.625rem !important;
-          font-weight: 200 !important;
-          position: relative !important;
-          background: linear-gradient(45deg, #3498db, #9b59b6, #e74c3c) !important;
-          background-size: 300% 300% !important;
-          -webkit-background-clip: text !important;
-          -webkit-text-fill-color: transparent !important;
-          background-clip: text !important;
-          animation: logoFloat 3s ease-in-out infinite, gradientShift 2s ease-in-out infinite !important;
-          filter: drop-shadow(0 0 20px rgba(52, 152, 219, 0.1)) !important;
+        .logo-letter {
+          font-size: 5.625rem;
+          font-weight: 200;
+          position: relative;
+          background: linear-gradient(45deg, #3498db, #9b59b6, #e74c3c);
+          background-size: 300% 300%;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          animation: logoFloat 3s ease-in-out infinite, gradientShift 2s ease-in-out infinite;
+          filter: drop-shadow(0 0 20px rgba(52, 152, 219, 0.1));
         }
         
-        .salltech-logo-letter::after {
-          content: '' !important;
-          position: absolute !important;
-          bottom: -0.375rem !important;
-          left: 50% !important;
-          transform: translateX(-50%) !important;
-          width: 0% !important;
-          height: 0.1875rem !important;
-          background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c) !important;
-          border-radius: 0.125rem !important;
-          animation: lineExpand 3s ease-in-out infinite !important;
+        .logo-letter::after {
+          content: '';
+          position: absolute;
+          bottom: -0.375rem;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 0%;
+          height: 0.1875rem;
+          background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);
+          border-radius: 0.125rem;
+          animation: lineExpand 3s ease-in-out infinite;
         }
         
-        .salltech-company-name {
-          font-size: 1.375rem !important;
-          font-weight: 300 !important;
-          letter-spacing: 0.2em !important;
-          color: #64748b !important;
-          text-transform: uppercase !important;
-          opacity: 0 !important;
-          animation: textFadeIn 3s ease-out infinite !important;
+        .company-name {
+          font-size: 1.375rem;
+          font-weight: 300;
+          letter-spacing: 0.2em;
+          color: #64748b;
+          text-transform: uppercase;
+          opacity: 0;
+          animation: textFadeIn 3s ease-out infinite;
         }
         
-        .salltech-progress-section {
-          display: flex !important;
-          flex-direction: column !important;
-          align-items: center !important;
-          gap: 1.25rem !important;
+        .progress-section {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 1.25rem;
         }
         
-        .salltech-progress-container {
-          width: 18.75rem !important;
-          height: 0.25rem !important;
-          background: rgba(255, 255, 255, 0.3) !important;
-          border-radius: 0.5rem !important;
-          overflow: hidden !important;
-          position: relative !important;
-          backdrop-filter: blur(10px) !important;
-          border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        .progress-container {
+          width: 18.75rem;
+          height: 0.25rem;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 0.5rem;
+          overflow: hidden;
+          position: relative;
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        .salltech-progress-bar {
-          width: 0% !important;
-          height: 100% !important;
-          background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c) !important;
-          border-radius: 0.5rem !important;
-          animation: progressLoad 3.5s ease-out infinite !important;
-          position: relative !important;
-          box-shadow: 0 0 15px rgba(52, 152, 219, 0.2) !important;
+        .progress-bar {
+          width: 0%;
+          height: 100%;
+          background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);
+          border-radius: 0.5rem;
+          animation: progressLoad 3.5s ease-out infinite;
+          position: relative;
+          box-shadow: 0 0 15px rgba(52, 152, 219, 0.2);
         }
         
-        .salltech-progress-bar::after {
-          content: '' !important;
-          position: absolute !important;
-          inset: 0 !important;
-          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent) !important;
-          animation: progressShine 2s ease-in-out infinite !important;
-          border-radius: inherit !important;
+        .progress-bar::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+          animation: progressShine 2s ease-in-out infinite;
+          border-radius: inherit;
         }
         
-        .salltech-loading-text {
-          font-size: 1rem !important;
-          color: #94a3b8 !important;
-          font-weight: 300 !important;
-          letter-spacing: 0.1em !important;
-          animation: loadingPulse 2s ease-in-out infinite !important;
+        .loading-text {
+          font-size: 1rem;
+          color: #94a3b8;
+          font-weight: 300;
+          letter-spacing: 0.1em;
+          animation: loadingPulse 2s ease-in-out infinite;
         }
         
-        .salltech-particle {
-          position: absolute !important;
-          width: 0.25rem !important;
-          height: 0.25rem !important;
-          background: rgba(255, 255, 255, 0.4) !important;
-          border-radius: 50% !important;
-          opacity: 0.4 !important;
+        .particle {
+          position: absolute;
+          width: 0.25rem;
+          height: 0.25rem;
+          background: rgba(255, 255, 255, 0.4);
+          border-radius: 50%;
+          opacity: 0.4;
         }
         
-        .salltech-particle:nth-child(1) {
-          top: 20% !important;
-          left: 15% !important;
-          animation: floatGentle 6s ease-in-out infinite !important;
+        .particle:nth-child(1) {
+          top: 20%;
+          left: 15%;
+          animation: floatGentle 6s ease-in-out infinite;
         }
         
-        .salltech-particle:nth-child(2) {
-          top: 70% !important;
-          right: 20% !important;
-          animation: floatGentle 8s ease-in-out infinite 2s !important;
+        .particle:nth-child(2) {
+          top: 70%;
+          right: 20%;
+          animation: floatGentle 8s ease-in-out infinite 2s;
         }
         
-        .salltech-particle:nth-child(3) {
-          bottom: 30% !important;
-          left: 30% !important;
-          animation: floatGentle 7s ease-in-out infinite 4s !important;
+        .particle:nth-child(3) {
+          bottom: 30%;
+          left: 30%;
+          animation: floatGentle 7s ease-in-out infinite 4s;
         }
         
-        .salltech-particle:nth-child(4) {
-          top: 40% !important;
-          right: 15% !important;
-          animation: floatGentle 9s ease-in-out infinite 1s !important;
+        .particle:nth-child(4) {
+          top: 40%;
+          right: 15%;
+          animation: floatGentle 9s ease-in-out infinite 1s;
         }
         
         @keyframes patternFloat {
@@ -283,64 +272,51 @@ export default function SALLTECHLoader({
         }
         
         @media (max-width: 768px) {
-          .salltech-logo-letter { 
-            font-size: 4.375rem !important; 
+          .logo-letter { 
+            font-size: 4.375rem; 
           }
-          .salltech-company-name { 
-            font-size: 1.125rem !important; 
-            letter-spacing: 0.15em !important; 
+          .company-name { 
+            font-size: 1.125rem; 
+            letter-spacing: 0.15em; 
           }
-          .salltech-progress-container { 
-            width: 16.25rem !important; 
+          .progress-container { 
+            width: 16.25rem; 
           }
-          .salltech-loader-container { 
-            padding: 2.5rem 3.125rem !important;
-            margin: 1.25rem !important;
-            border-radius: 1.25rem !important;
+          .loader-container { 
+            padding: 2.5rem 3.125rem;
+            margin: 1.25rem;
+            border-radius: 1.25rem;
           }
         }
       `}</style>
-
-      <div 
-        className={`
-          fixed inset-0 z-50 
-          transition-opacity duration-500
-          ${isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'}
-          ${className}
-        `}
-      >
-        <div className="salltech-loader-styles">
-          <div className="salltech-loader-body">
-            {/* Fond avec motif subtil */}
-            <div className="salltech-background-pattern"></div>
-            
-            {/* Particules minimalistes */}
-            <div className="salltech-particle"></div>
-            <div className="salltech-particle"></div>
-            <div className="salltech-particle"></div>
-            <div className="salltech-particle"></div>
-            
-            {/* Container principal avec effet glass */}
-            <div className="salltech-loader-container">
-              <div className="salltech-loader-content">
-                {/* Section Logo */}
-                <div className="salltech-logo-section">
-                  <div className="salltech-logo-letter">S</div>
-                  <div className="salltech-company-name">SALLTECH</div>
-                </div>
-                
-                {/* Section Progress */}
-                <div className="salltech-progress-section">
-                  <div className="salltech-progress-container">
-                    <div className="salltech-progress-bar"></div>
-                  </div>
-                  <div className="salltech-loading-text">Chargement...</div>
-                </div>
-              </div>
+      
+      {/* Fond avec motif subtil */}
+      <div className="loader-background"></div>
+      
+      {/* Particules minimalistes */}
+      <div className="particle"></div>
+      <div className="particle"></div>
+      <div className="particle"></div>
+      <div className="particle"></div>
+      
+      {/* Container principal avec effet glass */}
+      <div className="loader-container">
+        <div className="loader-content">
+          {/* Section Logo */}
+          <div className="logo-section">
+            <div className="logo-letter">S</div>
+            <div className="company-name">SALLTECH</div>
+          </div>
+          
+          {/* Section Progress */}
+          <div className="progress-section">
+            <div className="progress-container">
+              <div className="progress-bar"></div>
             </div>
+            <div className="loading-text">Chargement...</div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   )
 }
