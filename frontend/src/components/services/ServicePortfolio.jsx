@@ -35,7 +35,7 @@ export default function ServicePortfolio({ projects, color = 'blue' }) {
   }
 
   // Limiter à 3 projets maximum pour cet affichage
-  const displayProjects = projects.slice(0, 3);
+  const displayProjects = projects.slice(0, 6);
 
   return (
     <section id="portfolio" className="py-20 bg-gray-50">
