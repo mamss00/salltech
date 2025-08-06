@@ -127,7 +127,7 @@ export default function SALLTECHLoader({
         .logo-letter::after {
           content: '';
           position: absolute;
-          bottom: -0.375rem;
+          bottom: -0.25rem;
           left: 50%;
           transform: translateX(-50%);
           width: 0%;
@@ -241,8 +241,8 @@ export default function SALLTECHLoader({
         }
         
         @keyframes lineExpand {
-          0%, 25% { width: 0%; }
-          60%, 100% { width: 80%; }
+          0%, 20% { width: 0%; }
+          50%, 100% { width: 75%; }
         }
         
         @keyframes textFadeIn {
