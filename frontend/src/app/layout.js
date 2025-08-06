@@ -1,7 +1,5 @@
 import './globals.css'
-// import './output.css'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+import ClientLayout from '@/components/ClientLayout'
 
 export const metadata = {
   title: 'SALLTECH - Solutions Technologiques à Nouakchott, Mauritanie',
@@ -12,9 +10,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="fr" className="scroll-smooth">
       <body className="bg-light text-dark">
-        <Header />
-        {children}
-        <Footer />
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   )
