@@ -127,14 +127,13 @@ export default function SALLTECHLoader({
         .logo-letter::after {
           content: '';
           position: absolute;
-          bottom: -0.25rem;
+          bottom: -1px;
           left: 50%;
           transform: translateX(-50%);
-          width: 0%;
-          height: 0.1875rem;
+          width: 75%;
+          height: 1.5px;
           background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);
-          border-radius: 0.125rem;
-          animation: lineExpand 3s ease-in-out infinite;
+          border-radius: 1px;
         }
         
         .company-name {
