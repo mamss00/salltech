@@ -115,11 +115,11 @@ export default function SALLTECHLoader({
           font-weight: 200;
           position: relative;
           background: linear-gradient(45deg, #3498db, #9b59b6, #e74c3c);
-          background-size: 300% 300%;
+          background-size: 200% 200%;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          animation: logoFloat 3s ease-in-out infinite, gradientShift 2s ease-in-out infinite;
+          animation: logoFloat 3s ease-in-out infinite, gradientShift 3s ease-in-out infinite;
           filter: drop-shadow(0 0 20px rgba(52, 152, 219, 0.1));
         }
         
@@ -241,7 +241,7 @@ export default function SALLTECHLoader({
         
         @keyframes lineExpand {
           0% { width: 0%; }
-          100% { width: 50%; }
+          100% { width: 60%; }
         }
         
         @keyframes textFadeIn {
