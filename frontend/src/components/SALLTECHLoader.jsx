@@ -133,7 +133,7 @@ export default function SALLTECHLoader({
           height: 0.1875rem;
           background: linear-gradient(90deg, #3498db, #9b59b6, #e74c3c);
           border-radius: 0.125rem;
-          animation: lineExpand 3s ease-in-out infinite;
+          animation: lineExpand 2s ease-out forwards;
         }
         
         .company-name {
@@ -143,7 +143,7 @@ export default function SALLTECHLoader({
           color: #64748b;
           text-transform: uppercase;
           opacity: 0;
-          animation: textFadeIn 3s ease-out infinite;
+          animation: textFadeIn 2.5s ease-out forwards;
         }
         
         .progress-section {
@@ -240,13 +240,13 @@ export default function SALLTECHLoader({
         }
         
         @keyframes lineExpand {
-          0%, 20% { width: 0%; }
-          50%, 100% { width: 70%; }
+          0% { width: 0%; }
+          100% { width: 70%; }
         }
         
         @keyframes textFadeIn {
-          0%, 15% { opacity: 0; transform: translateY(0.625rem); }
-          35%, 100% { opacity: 1; transform: translateY(0); }
+          0% { opacity: 0; transform: translateY(0.625rem); }
+          100% { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes progressLoad {
