@@ -241,7 +241,7 @@ export default function SALLTECHLoader({
         
         @keyframes lineExpand {
           0% { width: 0%; }
-          100% { width: 70%; }
+          100% { width: 50%; }
         }
         
         @keyframes textFadeIn {
