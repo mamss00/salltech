@@ -90,7 +90,7 @@ function normalizeAttributes(entry) {
 
 export async function getServices() {
   try {
-    let url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
+    let url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services][populate][fonctionnalites]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
     // Ajouter le paramètre timestamp pour éviter le cache
     url = addNoCacheParam(url);
     
@@ -121,7 +121,7 @@ export async function getServiceBySlug(slug) {
     let url = `${API_URL}/api/services?filters[slug][$eq]=${slug}` +
                 `&populate[Image]=true` +
                 `&populate[caracteristiques]=true` +
-                `&populate[types_services]=true` +
+                `&populate[types_services][populate][fonctionnalites]=true` +
                 `&populate[methodologie]=true` +
                 `&populate[technologies][populate][logo]=true` +
                 `&populate[faq]=true` +
