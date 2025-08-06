@@ -35,7 +35,6 @@ export default function SALLTECHLoader({
     return () => clearTimeout(timer)
   }, [duration, onComplete, showOnlyFirstVisit])
 
-  // Ne rien afficher côté serveur
   if (!isClient || !shouldShow) return null
 
   return (
@@ -242,7 +241,7 @@ export default function SALLTECHLoader({
         
         @keyframes lineExpand {
           0%, 20% { width: 0%; }
-          50%, 100% { width: 75%; }
+          50%, 100% { width: 70%; }
         }
         
         @keyframes textFadeIn {
