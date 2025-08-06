@@ -246,8 +246,8 @@ export default function SALLTECHLoader({
         }
         
         @keyframes textFadeIn {
-          0%, 30% { opacity: 0; transform: translateY(0.625rem); }
-          60%, 100% { opacity: 1; transform: translateY(0); }
+          0%, 15% { opacity: 0; transform: translateY(0.625rem); }
+          35%, 100% { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes progressLoad {
