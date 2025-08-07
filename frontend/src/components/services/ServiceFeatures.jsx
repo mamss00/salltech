@@ -316,7 +316,51 @@ export default function EnhancedServiceFeatures({ features, color = 'blue' }) {
                   >
                     {feature.description}
                   </motion.p>
-                  
+                  {/* Affichage des fonctionnalités */}
+                  {feature.fonctionnalites && feature.fonctionnalites.length > 0 && (
+                    <motion.div 
+                      className="mb-6 space-y-3"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={inView ? { 
+                        opacity: 1, 
+                        y: 0,
+                        transition: { 
+                          delay: cardDelay + 0.65, 
+                          duration: 0.5 
+                        }
+                      } : {}}
+                    >
+                      {feature.fonctionnalites.map((fonctionnalite, idx) => (
+                        <motion.div
+                          key={idx}
+                          className="flex items-center text-sm text-gray-600"
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={inView ? { 
+                            opacity: 1, 
+                            x: 0,
+                            transition: { 
+                              delay: cardDelay + 0.7 + (idx * 0.1),
+                              duration: 0.4 
+                            }
+                          } : {}}
+                          whileHover={{ x: 5 }}
+                        >
+                          <motion.div 
+                            className={`mr-3 w-4 h-4 rounded-full ${iconBg} flex items-center justify-center flex-shrink-0`}
+                            whileHover={{ 
+                              scale: 1.2,
+                              transition: { type: "spring", stiffness: 400, damping: 10 }
+                            }}
+                          >
+                            <svg className={`w-2 h-2 ${iconColor}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                          </motion.div>
+                          <span>{fonctionnalite.texte}</span>
+                        </motion.div>
+                      ))}
+                    </motion.div>
+                  )}                  
                   {/* Bouton avec animation d'entrée indépendante */}
                   <motion.div
                     initial={{ opacity: 0, y: 10 }}
