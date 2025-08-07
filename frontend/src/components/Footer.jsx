@@ -573,7 +573,7 @@ const Footer = () => {
                         className="text-gray-600 group-hover:text-red transition-colors duration-300 relative"
                         whileHover={{ y: -0.5, transition: { duration: 0.4 } }}
                       >
-                        46 14 76 51
+                        46147651
                         <motion.span 
                           className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red"
                           whileHover={{ width: "100%", transition: { duration: 0.5, ease: "easeInOut" } }}
