@@ -59,15 +59,36 @@ const Footer = () => {
                     <motion.a 
                       href="#home" 
                       className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
-                      whileHover={{ x: 5, transition: { type: "spring", stiffness: 200, damping: 20, duration: 0.6 } }}
+                      whileHover={{ 
+                        x: 5, 
+                        transition: { 
+                          type: "spring", 
+                          stiffness: 200, 
+                          damping: 20, 
+                          duration: 0.6 
+                        } 
+                      }}
                       whileTap={{ scale: 0.98 }}
+                      transition={{ 
+                        x: { delay: 0.2, duration: 0.4 }
+                      }}
                     >
                       <motion.svg 
                         className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
-                        whileHover={{ rotate: [0, -8, 8, 0], transition: { duration: 0.8, ease: "easeInOut" } }}
+                        whileHover={{ 
+                          rotate: [0, -8, 8, 0], 
+                          transition: { 
+                            duration: 0.8, 
+                            ease: "easeInOut",
+                            delay: 0.1
+                          } 
+                        }}
+                        transition={{
+                          rotate: { delay: 0.3, duration: 0.5 }
+                        }}
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                       </motion.svg>
@@ -75,7 +96,16 @@ const Footer = () => {
                         Accueil
                         <motion.span 
                           className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
-                          whileHover={{ width: "100%", transition: { duration: 0.5, ease: "easeInOut" } }}
+                          whileHover={{ 
+                            width: "100%", 
+                            transition: { 
+                              duration: 0.5, 
+                              ease: "easeInOut" 
+                            } 
+                          }}
+                          transition={{
+                            width: { delay: 0.2, duration: 0.4 }
+                          }}
                         />
                       </span>
                     </motion.a>
@@ -84,15 +114,39 @@ const Footer = () => {
                     <motion.a 
                       href="#services" 
                       className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
-                      whileHover={{ x: 5, transition: { type: "spring", stiffness: 200, damping: 20, duration: 0.6 } }}
+                      whileHover={{ 
+                        x: 5, 
+                        transition: { 
+                          type: "spring", 
+                          stiffness: 200, 
+                          damping: 20, 
+                          duration: 0.6 
+                        } 
+                      }}
                       whileTap={{ scale: 0.98 }}
+                      transition={{ 
+                        x: { delay: 0.2, duration: 0.4 }
+                      }}
                     >
                       <motion.svg 
                         className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
-                        whileHover={{ scale: 1.15, rotate: 12, transition: { type: "spring", stiffness: 200, damping: 15, duration: 0.6 } }}
+                        whileHover={{ 
+                          scale: 1.15, 
+                          rotate: 12, 
+                          transition: { 
+                            type: "spring", 
+                            stiffness: 200, 
+                            damping: 15, 
+                            duration: 0.6 
+                          } 
+                        }}
+                        transition={{
+                          scale: { delay: 0.3, duration: 0.4 },
+                          rotate: { delay: 0.3, duration: 0.4 }
+                        }}
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                       </motion.svg>
@@ -100,7 +154,16 @@ const Footer = () => {
                         Services
                         <motion.span 
                           className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
-                          whileHover={{ width: "100%", transition: { duration: 0.5, ease: "easeInOut" } }}
+                          whileHover={{ 
+                            width: "100%", 
+                            transition: { 
+                              duration: 0.5, 
+                              ease: "easeInOut" 
+                            } 
+                          }}
+                          transition={{
+                            width: { delay: 0.2, duration: 0.4 }
+                          }}
                         />
                       </span>
                     </motion.a>
@@ -109,15 +172,37 @@ const Footer = () => {
                     <motion.a 
                       href="#portfolio" 
                       className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
-                      whileHover={{ x: 5, transition: { type: "spring", stiffness: 200, damping: 20, duration: 0.6 } }}
+                      whileHover={{ 
+                        x: 5, 
+                        transition: { 
+                          type: "spring", 
+                          stiffness: 200, 
+                          damping: 20, 
+                          duration: 0.6 
+                        } 
+                      }}
                       whileTap={{ scale: 0.98 }}
+                      transition={{ 
+                        x: { delay: 0.2, duration: 0.4 }
+                      }}
                     >
                       <motion.svg 
                         className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
                         fill="none" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
-                        whileHover={{ y: -1.5, transition: { type: "spring", stiffness: 200, damping: 15, duration: 0.5 } }}
+                        whileHover={{ 
+                          y: -1.5, 
+                          transition: { 
+                            type: "spring", 
+                            stiffness: 200, 
+                            damping: 15, 
+                            duration: 0.5 
+                          } 
+                        }}
+                        transition={{
+                          y: { delay: 0.3, duration: 0.4 }
+                        }}
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                       </motion.svg>
@@ -125,7 +210,16 @@ const Footer = () => {
                         Portfolio
                         <motion.span 
                           className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
-                          whileHover={{ width: "100%", transition: { duration: 0.5, ease: "easeInOut" } }}
+                          whileHover={{ 
+                            width: "100%", 
+                            transition: { 
+                              duration: 0.5, 
+                              ease: "easeInOut" 
+                            } 
+                          }}
+                          transition={{
+                            width: { delay: 0.2, duration: 0.4 }
+                          }}
                         />
                       </span>
                     </motion.a>
@@ -134,8 +228,19 @@ const Footer = () => {
                     <motion.a 
                       href="#contact" 
                       className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
-                      whileHover={{ x: 5, transition: { type: "spring", stiffness: 200, damping: 20, duration: 0.6 } }}
+                      whileHover={{ 
+                        x: 5, 
+                        transition: { 
+                          type: "spring", 
+                          stiffness: 200, 
+                          damping: 20, 
+                          duration: 0.6 
+                        } 
+                      }}
                       whileTap={{ scale: 0.98 }}
+                      transition={{ 
+                        x: { delay: 0.2, duration: 0.4 }
+                      }}
                     >
                       <motion.svg 
                         className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
@@ -150,7 +255,16 @@ const Footer = () => {
                         Contact
                         <motion.span 
                           className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
-                          whileHover={{ width: "100%", transition: { duration: 0.5, ease: "easeInOut" } }}
+                          whileHover={{ 
+                            width: "100%", 
+                            transition: { 
+                              duration: 0.5, 
+                              ease: "easeInOut" 
+                            } 
+                          }}
+                          transition={{
+                            width: { delay: 0.2, duration: 0.4 }
+                          }}
                         />
                       </span>
                     </motion.a>
@@ -172,7 +286,18 @@ const Footer = () => {
                     >
                       <motion.span 
                         className="w-5 h-5 mr-2 flex-shrink-0"
-                        whileHover={{ rotate: 180, scale: 1.1, transition: { duration: 0.8, ease: "easeInOut" } }}
+                        whileHover={{ 
+                          rotate: 180, 
+                          scale: 1.1, 
+                          transition: { 
+                            duration: 0.8, 
+                            ease: "easeInOut" 
+                          } 
+                        }}
+                        transition={{
+                          rotate: { delay: 0.3, duration: 0.5 },
+                          scale: { delay: 0.3, duration: 0.5 }
+                        }}
                       >
                         ⚡
                       </motion.span>
@@ -194,7 +319,16 @@ const Footer = () => {
                     >
                       <motion.span 
                         className="w-5 h-5 mr-2 flex-shrink-0"
-                        whileHover={{ y: [-1, -4, -1], transition: { duration: 0.8, ease: "easeInOut" } }}
+                        whileHover={{ 
+                          y: [-1, -4, -1], 
+                          transition: { 
+                            duration: 0.8, 
+                            ease: "easeInOut" 
+                          } 
+                        }}
+                        transition={{
+                          y: { delay: 0.3, duration: 0.5 }
+                        }}
                       >
                         📱
                       </motion.span>
@@ -306,7 +440,18 @@ const Footer = () => {
                   <li>
                     <motion.div 
                       className="flex group"
-                      whileHover={{ x: 3, transition: { type: "spring", stiffness: 200, damping: 20, duration: 0.6 } }}
+                      whileHover={{ 
+                        x: 3, 
+                        transition: { 
+                          type: "spring", 
+                          stiffness: 200, 
+                          damping: 20, 
+                          duration: 0.6 
+                        } 
+                      }}
+                      transition={{ 
+                        x: { delay: 0.2, duration: 0.4 }
+                      }}
                     >
                       <motion.div 
                         className="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-blue/20 transition-colors duration-300"
@@ -314,7 +459,14 @@ const Footer = () => {
                           scale: 1.05, 
                           rotate: [0, -3, 3, 0],
                           backgroundColor: "rgba(59, 130, 246, 0.15)",
-                          transition: { duration: 0.6, ease: "easeInOut" }
+                          transition: { 
+                            duration: 0.6, 
+                            ease: "easeInOut" 
+                          }
+                        }}
+                        transition={{
+                          scale: { delay: 0.3, duration: 0.4 },
+                          rotate: { delay: 0.3, duration: 0.4 }
                         }}
                       >
                         <motion.svg 
@@ -322,7 +474,15 @@ const Footer = () => {
                           fill="none" 
                           stroke="currentColor" 
                           viewBox="0 0 24 24"
-                          whileHover={{ scale: 1.1, transition: { duration: 0.4 } }}
+                          whileHover={{ 
+                          scale: 1.1, 
+                          transition: { 
+                            duration: 0.4 
+                          } 
+                        }}
+                        transition={{
+                          scale: { delay: 0.2, duration: 0.3 }
+                        }}
                         >
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -362,7 +522,15 @@ const Footer = () => {
                       <motion.a 
                         href="mailto:contact@sall.technology" 
                         className="text-gray-600 group-hover:text-purple transition-colors duration-300 relative"
-                        whileHover={{ y: -0.5, transition: { duration: 0.4 } }}
+                        whileHover={{ 
+                          y: -0.5, 
+                          transition: { 
+                            duration: 0.4 
+                          } 
+                        }}
+                        transition={{
+                          y: { delay: 0.2, duration: 0.3 }
+                        }}
                       >
                         contact@sall.technology
                         <motion.span 
