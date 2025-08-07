@@ -1,5 +1,6 @@
 'use client'
 
+import { motion } from 'framer-motion'
 import SallTechLogo from './SallTechLogo'
 
 const Footer = () => {
@@ -22,6 +23,8 @@ const Footer = () => {
               Nous vous accompagnons dans votre transformation digitale avec
               expertise et passion.
             </p>
+            
+            {/* Réseaux sociaux */}
             <div className="flex space-x-4">
               <a href="#" className="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center text-blue hover:bg-blue hover:text-white transition-all duration-300">
                 <span className="sr-only">Facebook</span>
@@ -29,16 +32,10 @@ const Footer = () => {
                   <path fillRule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clipRule="evenodd"></path>
                 </svg>
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-purple/10 flex items-center justify-center text-purple hover:bg-purple hover:text-white transition-all duration-300">
-                <span className="sr-only">Twitter</span>
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
-                </svg>
-              </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-red/10 flex items-center justify-center text-red hover:bg-red hover:text-white transition-all duration-300">
+              <a href="#" className="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center text-blue hover:bg-blue hover:text-white transition-all duration-300">
                 <span className="sr-only">Instagram</span>
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd"></path>
+                  <path fillRule="evenodd" d="M12.017 0C8.396 0 7.929.013 6.71.06 5.487.107 4.65.277 3.927.525 3.166.792 2.525 1.162 1.884 1.803.887 2.8.52 3.85.273 4.926.025 6.065.013 6.532.013 12.017c0 5.485.012 5.952.06 7.091.047 1.076.277 1.916.525 2.639.267.76.637 1.401 1.278 2.042.641.641 1.282 1.011 2.042 1.278.723.248 1.563.478 2.639.525 1.139.047 1.606.06 7.091.06 5.485 0 5.952-.013 7.091-.06 1.076-.047 1.916-.277 2.639-.525.76-.267 1.401-.637 2.042-1.278.641-.641 1.011-1.282 1.278-2.042.248-.723.478-1.563.525-2.639.047-1.139.06-1.606.06-7.091 0-5.485-.013-5.952-.06-7.091-.047-1.076-.277-1.916-.525-2.639C21.533 1.928 21.163 1.287 20.522.646c-.997-.997-2.047-1.364-3.123-1.612C16.265.025 15.798.013 12.017.013h.002zm-.025 1.802h.023c2.309 0 2.584.012 3.637.06.876.04 1.351.187 1.667.31.419.163.717.358 1.03.671.314.314.508.611.671 1.03.123.316.27.791.31 1.667.048 1.053.06 1.328.06 3.637 0 2.309-.012 2.584-.06 3.637-.04.876-.187 1.351-.31 1.667-.163.419-.358.717-.671 1.03a2.764 2.764 0 01-1.03.671c-.316.123-.791.27-1.667.31-1.053.048-1.328.06-3.637.06s-2.584-.012-3.637-.06c-.876-.04-1.351-.187-1.667-.31a2.764 2.764 0 01-1.03-.671 2.764 2.764 0 01-.671-1.03c-.123-.316-.27-.791-.31-1.667-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd"></path>
                 </svg>
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-blue/10 flex items-center justify-center text-blue hover:bg-blue hover:text-white transition-all duration-300">
@@ -59,36 +56,104 @@ const Footer = () => {
                 <div className="h-0.5 w-16 bg-gradient-to-r from-blue to-transparent mb-6"></div>
                 <ul className="space-y-3">
                   <li>
-                    <a href="#home" className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group">
-                      <svg className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <motion.a 
+                      href="#home" 
+                      className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.svg 
+                        className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                        whileHover={{ rotate: [0, -10, 10, 0], transition: { duration: 0.5 } }}
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                      </svg>
-                      Accueil
-                    </a>
+                      </motion.svg>
+                      <span className="relative">
+                        Accueil
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#services" className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group">
-                      <svg className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <motion.a 
+                      href="#services" 
+                      className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.svg 
+                        className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                        whileHover={{ scale: 1.2, rotate: 15, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                      </svg>
-                      Services
-                    </a>
+                      </motion.svg>
+                      <span className="relative">
+                        Services
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#portfolio" className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group">
-                      <svg className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <motion.a 
+                      href="#portfolio" 
+                      className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.svg 
+                        className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                        whileHover={{ y: -2, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                      </svg>
-                      Portfolio
-                    </a>
+                      </motion.svg>
+                      <span className="relative">
+                        Portfolio
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#contact" className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group">
-                      <svg className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <motion.a 
+                      href="#contact" 
+                      className="text-gray-600 hover:text-blue transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.svg 
+                        className="w-4 h-4 mr-2 text-gray-400 group-hover:text-blue transition-colors duration-300" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                        whileHover={{ scale: [1, 1.3, 1], transition: { duration: 0.4 } }}
+                      >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                      </svg>
-                      Contact
-                    </a>
+                      </motion.svg>
+                      <span className="relative">
+                        Contact
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                 </ul>
               </div>
@@ -99,40 +164,136 @@ const Footer = () => {
                 <div className="h-0.5 w-16 bg-gradient-to-r from-purple to-transparent mb-6"></div>
                 <ul className="space-y-3">
                   <li>
-                    <a href="#services" className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center">
-                      <span className="w-5 h-5 mr-2 flex-shrink-0">⚡</span>
-                      Sites Internet
-                    </a>
+                    <motion.a 
+                      href="#services" 
+                      className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.span 
+                        className="w-5 h-5 mr-2 flex-shrink-0"
+                        whileHover={{ rotate: 360, scale: 1.2, transition: { duration: 0.5 } }}
+                      >
+                        ⚡
+                      </motion.span>
+                      <span className="relative">
+                        Sites Internet
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#services" className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center">
-                      <span className="w-5 h-5 mr-2 flex-shrink-0">📱</span>
-                      Applications Mobiles
-                    </a>
+                    <motion.a 
+                      href="#services" 
+                      className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.span 
+                        className="w-5 h-5 mr-2 flex-shrink-0"
+                        whileHover={{ y: [-2, -8, -2], transition: { duration: 0.6 } }}
+                      >
+                        📱
+                      </motion.span>
+                      <span className="relative">
+                        Applications Mobiles
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#services" className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center">
-                      <span className="w-5 h-5 mr-2 flex-shrink-0">🔍</span>
-                      Solutions Odoo
-                    </a>
+                    <motion.a 
+                      href="#services" 
+                      className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.span 
+                        className="w-5 h-5 mr-2 flex-shrink-0"
+                        whileHover={{ scale: [1, 1.3, 1], transition: { duration: 0.4 } }}
+                      >
+                        🔍
+                      </motion.span>
+                      <span className="relative">
+                        Solutions Odoo
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#services" className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center">
-                      <span className="w-5 h-5 mr-2 flex-shrink-0">🚀</span>
-                      Consulting DevOps
-                    </a>
+                    <motion.a 
+                      href="#services" 
+                      className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.span 
+                        className="w-5 h-5 mr-2 flex-shrink-0"
+                        whileHover={{ rotate: [0, 15, -15, 0], transition: { duration: 0.5 } }}
+                      >
+                        🚀
+                      </motion.span>
+                      <span className="relative">
+                        Consulting DevOps
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#services" className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center">
-                      <span className="w-5 h-5 mr-2 flex-shrink-0">🌐</span>
-                      Hébergement Web
-                    </a>
+                    <motion.a 
+                      href="#services" 
+                      className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.span 
+                        className="w-5 h-5 mr-2 flex-shrink-0"
+                        whileHover={{ rotate: 360, transition: { duration: 0.6 } }}
+                      >
+                        🌐
+                      </motion.span>
+                      <span className="relative">
+                        Hébergement Web
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                   <li>
-                    <a href="#services" className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center">
-                      <span className="w-5 h-5 mr-2 flex-shrink-0">📈</span>
-                      SEO & Référencement
-                    </a>
+                    <motion.a 
+                      href="#services" 
+                      className="text-gray-600 hover:text-purple transition-colors duration-300 flex items-center group"
+                      whileHover={{ x: 8, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <motion.span 
+                        className="w-5 h-5 mr-2 flex-shrink-0"
+                        whileHover={{ y: [-1, -4, -1], scale: [1, 1.1, 1], transition: { duration: 0.5 } }}
+                      >
+                        📈
+                      </motion.span>
+                      <span className="relative">
+                        SEO & Référencement
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </span>
+                    </motion.a>
                   </li>
                 </ul>
               </div>
@@ -142,38 +303,115 @@ const Footer = () => {
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Contact</h3>
                 <div className="h-0.5 w-16 bg-gradient-to-r from-red to-transparent mb-6"></div>
                 <ul className="space-y-4">
-                  <li className="flex group">
-                    <div className="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-blue/20 transition-colors duration-300">
-                      <svg className="w-4 h-4 text-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                      </svg>
-                    </div>
-                    <span className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
-                      Immeuble Zein, 4ème étage<br />
-                      Rue des Ambassades<br />
-                      Nouakchott, Mauritanie
-                    </span>
+                  <li>
+                    <motion.div 
+                      className="flex group"
+                      whileHover={{ x: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                    >
+                      <motion.div 
+                        className="w-8 h-8 rounded-lg bg-blue/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-blue/20 transition-colors duration-300"
+                        whileHover={{ 
+                          scale: 1.1, 
+                          rotate: [0, -5, 5, 0],
+                          backgroundColor: "rgba(59, 130, 246, 0.15)",
+                          transition: { duration: 0.4 }
+                        }}
+                      >
+                        <motion.svg 
+                          className="w-4 h-4 text-blue" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          whileHover={{ scale: 1.2 }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                        </motion.svg>
+                      </motion.div>
+                      <span className="text-gray-600 group-hover:text-gray-900 transition-colors duration-300">
+                        Immeuble Zein, 4ème étage<br />
+                        Rue des Ambassades<br />
+                        Nouakchott, Mauritanie
+                      </span>
+                    </motion.div>
                   </li>
-                  <li className="flex items-center group">
-                    <div className="w-8 h-8 rounded-lg bg-purple/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-purple/20 transition-colors duration-300">
-                      <svg className="w-4 h-4 text-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                      </svg>
-                    </div>
-                    <a href="mailto:contact@salltech.mr" className="text-gray-600 group-hover:text-purple transition-colors duration-300">
-                      contact@salltech.mr
-                    </a>
+                  <li>
+                    <motion.div 
+                      className="flex items-center group"
+                      whileHover={{ x: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                    >
+                      <motion.div 
+                        className="w-8 h-8 rounded-lg bg-purple/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-purple/20 transition-colors duration-300"
+                        whileHover={{ 
+                          scale: 1.1,
+                          rotate: [0, 10, -10, 0],
+                          backgroundColor: "rgba(147, 51, 234, 0.15)",
+                          transition: { duration: 0.4 }
+                        }}
+                      >
+                        <motion.svg 
+                          className="w-4 h-4 text-purple" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          whileHover={{ y: [-1, -3, -1], transition: { duration: 0.3 } }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </motion.svg>
+                      </motion.div>
+                      <motion.a 
+                        href="mailto:contact@sall.technology" 
+                        className="text-gray-600 group-hover:text-purple transition-colors duration-300 relative"
+                        whileHover={{ y: -1 }}
+                      >
+                        contact@sall.technology
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-purple"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </motion.a>
+                    </motion.div>
                   </li>
-                  <li className="flex items-center group">
-                    <div className="w-8 h-8 rounded-lg bg-red/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-red/20 transition-colors duration-300">
-                      <svg className="w-4 h-4 text-red" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                      </svg>
-                    </div>
-                    <a href="tel:+22245251632" className="text-gray-600 group-hover:text-red transition-colors duration-300">
-                      +222 45 25 16 32
-                    </a>
+                  <li>
+                    <motion.div 
+                      className="flex items-center group"
+                      whileHover={{ x: 5, transition: { type: "spring", stiffness: 400, damping: 10 } }}
+                    >
+                      <motion.div 
+                        className="w-8 h-8 rounded-lg bg-red/10 flex items-center justify-center mr-3 flex-shrink-0 group-hover:bg-red/20 transition-colors duration-300"
+                        whileHover={{ 
+                          scale: 1.1,
+                          rotate: [0, -8, 8, 0],
+                          backgroundColor: "rgba(239, 68, 68, 0.15)",
+                          transition: { duration: 0.4 }
+                        }}
+                      >
+                        <motion.svg 
+                          className="w-4 h-4 text-red" 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                          whileHover={{ 
+                            scale: [1, 1.2, 1], 
+                            rotate: [0, 5, -5, 0],
+                            transition: { duration: 0.5 }
+                          }}
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                        </motion.svg>
+                      </motion.div>
+                      <motion.a 
+                        href="tel:46147651" 
+                        className="text-gray-600 group-hover:text-red transition-colors duration-300 relative"
+                        whileHover={{ y: -1 }}
+                      >
+                        46 14 76 51
+                        <motion.span 
+                          className="absolute -bottom-1 left-0 w-0 h-0.5 bg-red"
+                          whileHover={{ width: "100%", transition: { duration: 0.3 } }}
+                        />
+                      </motion.a>
+                    </motion.div>
                   </li>
                 </ul>
               </div>
