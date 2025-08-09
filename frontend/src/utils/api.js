@@ -1,4 +1,3 @@
-// frontend/src/utils/api.js - FIXED VERSION
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend.sall.technology';
 
 export function titreToSlug(titre) {
@@ -21,7 +20,6 @@ function normalizeAttributes(entry) {
   
   const attrs = { ...entry.attributes };
   
-  // Normalisation sécurisée avec fallbacks
   if (attrs.seo?.data) {
     attrs.seo = attrs.seo.data.attributes || {};
   }
@@ -72,23 +70,21 @@ function normalizeAttributes(entry) {
   return { id: entry.id || Math.random(), ...attrs };
 }
 
+// --------- Projects ---------
+
 export async function getProjects() {
   try {
     let url = `${API_URL}/api/projets?populate=*`;
     url = addNoCacheParam(url);
     
     const res = await fetch(url, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      // Add timeout for build process
-      signal: AbortSignal.timeout(10000) // 10 seconds timeout
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(10000)
     });
     
     if (!res.ok) {
       console.warn(`API request failed: ${res.status} ${res.statusText}`);
-      return []; // Return empty array instead of throwing
+      return [];
     }
     
     const data = await res.json();
@@ -100,8 +96,6 @@ export async function getProjects() {
     
     return data.data.map(project => {
       const normalized = normalizeAttributes(project);
-      
-      // Ensure required fields have safe defaults
       return {
         ...normalized,
         Titre: normalized.Titre || 'Projet sans titre',
@@ -110,44 +104,15 @@ export async function getProjects() {
         Datederealisation: normalized.Datederealisation || new Date().toISOString(),
         slug: normalized.slug || titreToSlug(normalized.Titre),
         technologies: normalized.technologies || [],
-        // Ensure string fields are actually strings
         Description: Array.isArray(normalized.Description) ? normalized.Description : []
       };
     });
   } catch (e) {
     console.error("getProjects error:", e.message);
-    // During build, return empty array instead of throwing
     if (process.env.NODE_ENV === 'production' || process.env.CI) {
       console.warn('Returning empty projects array due to API error during build');
       return [];
     }
-    return [];
-  }
-}
-
-// Rest of the API functions with similar error handling...
-export async function getServices() {
-  try {
-    let url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services][populate][fonctionnalites]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
-    url = addNoCacheParam(url);
-    
-    const res = await fetch(url, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      signal: AbortSignal.timeout(10000)
-    });
-    
-    if (!res.ok) {
-      console.warn(`Services API request failed: ${res.status}`);
-      return [];
-    }
-    
-    const data = await res.json();
-    return (data.data || []).map(normalizeAttributes);
-  } catch (e) {
-    console.error("getServices error:", e.message);
     return [];
   }
 }
@@ -165,26 +130,20 @@ export async function getAllProjetSlugs() {
 }
 
 export async function getProjetBySlug(slug) {
-  if (!slug || typeof slug !== 'string') {
-    return null;
-  }
+  if (!slug || typeof slug !== 'string') return null;
   
   try {
     let url = `${API_URL}/api/projets?filters[slug][$eq]=${encodeURIComponent(slug)}` +
-                `&populate[Imageprincipale]=true` +
-                `&populate[Imagesadditionnelles]=true` +
-                `&populate[technologies]=true` +
-                `&populate[caracteristiques]=true` +
-                `&populate[services]=true` +
-                `&populate[seo]=true`;
-    
+              `&populate[Imageprincipale]=true` +
+              `&populate[Imagesadditionnelles]=true` +
+              `&populate[technologies]=true` +
+              `&populate[caracteristiques]=true` +
+              `&populate[services]=true` +
+              `&populate[seo]=true`;
     url = addNoCacheParam(url);
     
     const res = await fetch(url, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
       signal: AbortSignal.timeout(10000)
     });
     
@@ -194,12 +153,9 @@ export async function getProjetBySlug(slug) {
     }
     
     const data = await res.json();
-    
     if (!data.data?.[0]) return null;
     
     const project = normalizeAttributes(data.data[0]);
-    
-    // Ensure safe defaults
     return {
       ...project,
       Titre: project.Titre || 'Projet sans titre',
@@ -214,6 +170,87 @@ export async function getProjetBySlug(slug) {
     return null;
   }
 }
+
+// --------- Services ---------
+
+export async function getServices() {
+  try {
+    let url = `${API_URL}/api/services?populate[Image]=true&populate[caracteristiques]=true&populate[types_services][populate][fonctionnalites]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
+    url = addNoCacheParam(url);
+    
+    const res = await fetch(url, {
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(10000)
+    });
+    
+    if (!res.ok) {
+      console.warn(`Services API request failed: ${res.status}`);
+      return [];
+    }
+    
+    const data = await res.json();
+    return (data.data || []).map(normalizeAttributes);
+  } catch (e) {
+    console.error("getServices error:", e.message);
+    return [];
+  }
+}
+
+export async function getAllServiceSlugs() {
+  try {
+    const services = await getServices();
+    return services
+      .filter(service => service.slug && typeof service.slug === 'string')
+      .map(service => ({ slug: service.slug }));
+  } catch (error) {
+    console.error("getAllServiceSlugs error:", error);
+    return [];
+  }
+}
+
+export async function getServiceBySlug(slug) {
+  if (!slug || typeof slug !== 'string') return null;
+  
+  try {
+    let url = `${API_URL}/api/services?filters[slug][$eq]=${encodeURIComponent(slug)}` +
+              `&populate[Image]=true&populate[caracteristiques]=true&populate[types_services][populate][fonctionnalites]=true&populate[methodologie]=true&populate[technologies][populate][logo]=true&populate[faq]=true&populate[seo]=true&populate[projets_lies][populate]=*`;
+    url = addNoCacheParam(url);
+    
+    const res = await fetch(url, {
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(10000)
+    });
+    
+    if (!res.ok) {
+      console.warn(`Service by slug API request failed: ${res.status}`);
+      return null;
+    }
+    
+    const data = await res.json();
+    if (!data.data?.[0]) return null;
+    
+    const service = normalizeAttributes(data.data[0]);
+    return {
+      ...service,
+      Titre: service.Titre || 'Service sans titre',
+      slug: service.slug || slug,
+      Description: Array.isArray(service.Description) ? service.Description : [],
+      caracteristiques: service.caracteristiques || [],
+      types_services: service.types_services || [],
+      methodologie: service.methodologie || {},
+      technologies: service.technologies || [],
+      faq: service.faq || [],
+      seo: service.seo || {},
+      projets_lies: service.projets_lies || [],
+      Image: service.Image || []
+    };
+  } catch (e) {
+    console.error(`getServiceBySlug error for slug "${slug}":`, e.message);
+    return null;
+  }
+}
+
+// --------- Helpers ---------
 
 export function getStrapiMediaUrl(url) {
   if (!url || typeof url !== 'string') return null;
