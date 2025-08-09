@@ -1,9 +1,7 @@
-// frontend/src/app/projets/[slug]/page.js - SANS DOUBLE FOOTER
+// frontend/src/app/projets/[slug]/page.js - VERSION CLEAN
 import { notFound } from 'next/navigation'
-import Header from '@/components/Header'
-// PAS DE FOOTER ICI - il est déjà dans ClientLayout !
 
-// Composants simplifiés
+// Composants projet seulement
 import ProjectHero from '@/components/projects/ProjectHero'
 import ProjectIntroduction from '@/components/projects/ProjectIntroduction'
 import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
@@ -82,55 +80,49 @@ export default async function ProjetPage({ params }) {
         : 'blue'
 
   return (
-    <>
-      <Header />
+    <main className="pt-24">
+      {/* Hero du projet - SIMPLIFIÉ */}
+      <ProjectHero 
+        title={titreFinal}
+        category={Categorie}
+        description={resumeFinal}
+        image={Imageprincipale}
+        client={Client}
+        date={Datederealisation}
+        projectUrl={URLduprojet}
+        color={color}
+      />
       
-      <main className="pt-24">
-        {/* Hero du projet */}
-        <ProjectHero 
-          title={titreFinal}
-          category={Categorie}
-          description={resumeFinal}
-          image={Imageprincipale}
-          client={Client}
-          date={Datederealisation}
-          projectUrl={URLduprojet}
-          color={color}
-        />
-        
-        {/* Contenu principal avec description + caractéristiques fusionnées */}
-        <ProjectIntroduction 
-          content={introduction || Description}
-          features={caracteristiques}
-          color={color}
-        />
-        
-        {/* Technologies - seulement si il y en a */}
-        {technologies && technologies.length > 0 && (
-          <ProjectTechnologies 
-            technologies={technologies}
-            color={color}
-          />
-        )}
-        
-        {/* Galerie - seulement si il y a plusieurs images */}
-        {Imagesadditionnelles && Imagesadditionnelles.length > 0 && (
-          <ProjectGallery 
-            images={[Imageprincipale, ...Imagesadditionnelles].filter(Boolean)}
-            projectTitle={titreFinal}
-            color={color}
-          />
-        )}
-        
-        {/* Call-To-Action final */}
-        <ProjectCTA 
-          projectName={titreFinal}
-          projectUrl={URLduprojet}
-          color={color}
-        />
-      </main>
+      {/* Contenu principal */}
+      <ProjectIntroduction 
+        content={introduction || Description}
+        features={caracteristiques}
+        color={color}
+      />
       
-      {/* PAS DE FOOTER ICI - il est dans ClientLayout ! */}
-    </>
+      {/* Technologies - seulement si il y en a */}
+      {technologies && technologies.length > 0 && (
+        <ProjectTechnologies 
+          technologies={technologies}
+          color={color}
+        />
+      )}
+      
+      {/* Galerie - seulement si il y a plusieurs images */}
+      {Imagesadditionnelles && Imagesadditionnelles.length > 0 && (
+        <ProjectGallery 
+          images={[Imageprincipale, ...Imagesadditionnelles].filter(Boolean)}
+          projectTitle={titreFinal}
+          color={color}
+        />
+      )}
+      
+      {/* CTA final - SIMPLIFIÉ */}
+      <ProjectCTA 
+        projectName={titreFinal}
+        projectUrl={URLduprojet}
+        color={color}
+      />
+    </main>
   )
 }

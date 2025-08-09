@@ -1,189 +1,136 @@
-// frontend/src/components/projects/ProjectCTA.jsx - BOUTONS CORRIGÉS
+// frontend/src/components/projects/ProjectCTA.jsx - VERSION SIMPLIFIÉE
 'use client'
 
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Link from 'next/link'
 import CTAButton from '@/components/CTAButton'
-import { FaRocket, FaHeart, FaLightbulb, FaExternalLinkAlt } from 'react-icons/fa'
+import { FaRocket, FaExternalLinkAlt } from 'react-icons/fa'
 
 export default function ProjectCTA({ projectName, projectUrl, color = 'blue' }) {
-  // Animation au défilement
-  const sectionRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  })
-  
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8])
-  
-  // Animation d'apparition
   const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
 
   return (
-    <motion.section 
-      ref={sectionRef}
-      style={{ opacity: sectionOpacity }}
-      className={`py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-${color}/20 text-white relative overflow-hidden`}
-    >
-      {/* Effet de particules dynamiques - réduit pour éviter les zones sombres */}
+    <section className={`py-20 bg-gradient-to-br from-gray-900 to-${color}/20 text-white relative overflow-hidden`}>
+      {/* Particules discrètes */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => ( // Réduit de 50 à 15
+        {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-white/10 rounded-full" // Réduit l'opacité
+            className="absolute w-1 h-1 bg-white/10 rounded-full"
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${20 + (i * 10)}%`,
+              top: `${20 + (i * 8)}%`,
             }}
             animate={{
-              y: [0, -30, 0], // Réduit le mouvement
-              opacity: [0.05, 0.3, 0.05], // Plus discret
-              scale: [1, 1.2, 1],
+              y: [0, -20, 0],
+              opacity: [0.1, 0.3, 0.1],
             }}
             transition={{
-              duration: 10 + Math.random() * 4,
+              duration: 6 + i,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: i * 0.8,
             }}
           />
         ))}
-        
-        {/* Formes géométriques plus discrètes */}
-        <motion.div
-          className={`absolute top-10 right-10 w-32 h-32 border border-${color}/20 rounded-full`} // Plus petit et discret
-          animate={{ 
-            rotate: 360,
-            scale: [1, 1.1, 1]
-          }}
-          transition={{ 
-            rotate: { duration: 30, repeat: Infinity, ease: "linear" },
-            scale: { duration: 12, repeat: Infinity }
-          }}
-        />
       </div>
 
       <div className="container relative z-10">
         <motion.div
           ref={contentRef}
-          initial={{ opacity: 0, y: 50 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={contentInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8 }}
-          className="max-w-4xl mx-auto text-center"
+          transition={{ duration: 0.6 }}
+          className="max-w-3xl mx-auto text-center"
         >
-          {/* Icône principale */}
+          {/* Icône */}
           <motion.div
             initial={{ opacity: 0, scale: 0 }}
             animate={contentInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className={`w-20 h-20 bg-${color}/20 rounded-full flex items-center justify-center mx-auto mb-8 backdrop-blur-sm`}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className={`w-16 h-16 bg-${color}/20 rounded-full flex items-center justify-center mx-auto mb-6`}
           >
-            <FaRocket className={`w-10 h-10 text-${color}`} />
+            <FaRocket className={`w-8 h-8 text-${color}`} />
           </motion.div>
           
-          {/* Titre principal */}
+          {/* Titre */}
           <motion.h2
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="text-4xl md:text-5xl font-bold mb-6"
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-3xl md:text-4xl font-bold mb-4"
           >
-            Prêt pour votre{' '}
-            <span className={`text-${color}`}>prochain projet</span> ?
+            Un projet similaire en tête ?
           </motion.h2>
           
-          {/* Sous-titre */}
+          {/* Description */}
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-xl text-gray-300 mb-8 leading-relaxed max-w-3xl mx-auto"
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="text-lg text-gray-300 mb-8 leading-relaxed"
           >
-            Comme pour <strong className={`text-${color}`}>{projectName}</strong>, 
-            nous pouvons transformer vos idées en solutions digitales exceptionnelles. 
-            Parlons de votre vision !
+            Nous créons des solutions sur mesure adaptées à vos besoins spécifiques.
           </motion.p>
           
           {/* Ligne décorative */}
           <motion.div 
             initial={{ width: 0 }}
-            animate={contentInView ? { width: "6rem" } : {}}
-            transition={{ duration: 0.8, delay: 0.8 }}
-            className={`h-1 bg-${color} mx-auto mb-12`}
+            animate={contentInView ? { width: "4rem" } : {}}
+            transition={{ duration: 0.6, delay: 0.5 }}
+            className={`h-1 bg-${color} mx-auto mb-8`}
           ></motion.div>
           
-          {/* Points de valeur */}
+          {/* Boutons d'action - SIMPLIFIÉS */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 1 }}
-            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
+            transition={{ duration: 0.6, delay: 0.6 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
-            <div className="flex items-center justify-center gap-3">
-              <FaLightbulb className={`w-6 h-6 text-${color}`} />
-              <span className="text-gray-300">Solutions sur mesure</span>
-            </div>
-            <div className="flex items-center justify-center gap-3">
-              <FaHeart className={`w-6 h-6 text-${color}`} />
-              <span className="text-gray-300">Accompagnement expert</span>
-            </div>
-            <div className="flex items-center justify-center gap-3">
-              <FaRocket className={`w-6 h-6 text-${color}`} />
-              <span className="text-gray-300">Résultats garantis</span>
-            </div>
-          </motion.div>
-          
-          {/* Boutons d'action - CORRIGÉS */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 1.2 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-6"
-          >
-            {/* Bouton principal - utilise variant="primary" correctement */}
+            {/* Bouton principal */}
             <CTAButton 
               href="/contact" 
               variant="primary"
               showDots={true}
             >
-              Démarrer mon projet
+              Discutons de votre projet
             </CTAButton>
             
-            {/* Bouton secondaire - utilise variant="secondary" correctement */}
+            {/* Bouton secondaire */}
             <CTAButton 
               href="/portfolio" 
               variant="secondary"
               showDots={false}
             >
-              Voir d'autres projets
+              Voir d'autres réalisations
             </CTAButton>
             
-            {/* Lien externe - reste comme Link simple */}
+            {/* Lien externe - seulement si disponible */}
             {projectUrl && (
               <Link
                 href={projectUrl}
                 target="_blank"
-                className={`inline-flex items-center gap-2 text-${color} hover:text-${color}/80 transition-colors font-medium px-4 py-2 rounded-lg hover:bg-white/10`}
+                className={`inline-flex items-center gap-2 text-${color} hover:text-${color}/80 transition-colors font-medium px-4 py-2 rounded-lg hover:bg-white/5`}
               >
-                <FaExternalLinkAlt className="w-4 h-4" />
-                Visiter le site
+                <FaExternalLinkAlt className="w-3 h-3" />
+                Site en ligne
               </Link>
             )}
           </motion.div>
           
-          {/* Message de contact rapide */}
+          {/* Contact rapide */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 1.4 }}
-            className="mt-12 pt-8 border-t border-white/10"
+            initial={{ opacity: 0 }}
+            animate={contentInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.6, delay: 0.8 }}
+            className="mt-8 pt-6 border-t border-white/10"
           >
             <p className="text-gray-400 text-sm">
-              💬 Une question ? Contactez-nous directement :{' '}
+              💬 Besoin d'un devis ?{' '}
               <a 
                 href="mailto:contact@sall.technology" 
-                className={`text-${color} hover:text-${color}/80 transition-colors font-medium`}
+                className={`text-${color} hover:text-${color}/80 transition-colors font-medium underline`}
               >
                 contact@sall.technology
               </a>
@@ -191,6 +138,6 @@ export default function ProjectCTA({ projectName, projectUrl, color = 'blue' }) 
           </motion.div>
         </motion.div>
       </div>
-    </motion.section>
+    </section>
   )
 }
