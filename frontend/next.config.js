@@ -1,3 +1,5 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable experimental features for better error handling
@@ -30,7 +32,6 @@ const nextConfig = {
         pathname: '/uploads/**',
       }
     ],
-    // Add fallback for missing images
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
@@ -41,13 +42,16 @@ const nextConfig = {
   },
   
   // Better error handling for static generation
-  staticPageGenerationTimeout: 60, // 60 seconds timeout
+  staticPageGenerationTimeout: 60,
   
   // Configure output for better deployment
   output: 'standalone',
   
-  // Add custom webpack config for better error handling
+  // Add custom webpack config for alias and error handling
   webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+    // Alias @ vers src
+    config.resolve.alias['@'] = path.resolve(__dirname, 'src');
+
     // Better error handling in production
     if (!dev && isServer) {
       config.optimization.minimize = false;
@@ -95,7 +99,6 @@ const nextConfig = {
   
   // Configure build output
   generateBuildId: async () => {
-    // Return a build ID based on timestamp to ensure uniqueness
     return `build-${Date.now()}`;
   },
   
