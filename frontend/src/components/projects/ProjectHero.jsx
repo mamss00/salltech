@@ -1,4 +1,4 @@
-// frontend/src/components/projects/ProjectHero.jsx - VERSION SIMPLIFIÉE
+// frontend/src/components/projects/ProjectHero.jsx - VERSION CORRIGÉE
 'use client'
 
 import { motion } from 'framer-motion'
@@ -19,6 +19,10 @@ export default function ProjectHero({
   color = 'blue' 
 }) {
   const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  
+  // SÉCURISER le titre
+  const safeTitle = title || 'Projet'
+  const titleWords = safeTitle.split(' ')
   
   // Gérer l'image
   const imageUrl = image ? 
@@ -67,7 +71,7 @@ export default function ProjectHero({
               )}
             </div>
             
-            {/* Titre principal */}
+            {/* Titre principal - SÉCURISÉ */}
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -75,11 +79,11 @@ export default function ProjectHero({
               className="text-3xl md:text-5xl font-extrabold leading-tight"
             >
               <span className={`text-${color}`}>
-                {title.split(' ')[0]}
+                {titleWords[0]}
               </span>
-              {title.split(' ').slice(1).length > 0 && (
+              {titleWords.length > 1 && (
                 <span className="text-gray-900 ml-2">
-                  {title.split(' ').slice(1).join(' ')}
+                  {titleWords.slice(1).join(' ')}
                 </span>
               )}
             </motion.h1>
@@ -99,7 +103,7 @@ export default function ProjectHero({
               transition={{ duration: 0.6, delay: 0.4 }}
               className="text-lg text-gray-600 leading-relaxed"
             >
-              {description}
+              {description || 'Description du projet'}
             </motion.p>
             
             {/* Informations du projet - Version compacte */}
@@ -136,7 +140,7 @@ export default function ProjectHero({
             <div className="relative h-[400px] md:h-[500px] rounded-xl overflow-hidden shadow-xl">
               <Image
                 src={imageUrl}
-                alt={title}
+                alt={safeTitle}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
