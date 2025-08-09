@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react'
 import Image from 'next/image'
-import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Link from 'next/link'
 import CTAButton from '@/components/CTAButton'
@@ -31,14 +31,11 @@ const Portfolio = () => {
   const particles = generateParticles(30, 'purple')
   
   // États
-  const [hasScrolled, setHasScrolled] = useState(false)
   const [activeFilter, setActiveFilter] = useState('Tous')
   const [projects, setProjects] = useState([])
   const [filteredProjects, setFilteredProjects] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [selectedProject, setSelectedProject] = useState(null)
   
   // Charger les projets depuis Strapi
   useEffect(() => {
@@ -46,9 +43,8 @@ const Portfolio = () => {
       try {
         setIsLoading(true)
         const projectsData = await getProjects()
-        console.log('Projets chargés:', projectsData) // Debug
         setProjects(projectsData)
-        setFilteredProjects(projectsData) // Afficher tous les projets par défaut
+        setFilteredProjects(projectsData)
       } catch (err) {
         console.error('Erreur lors du chargement des projets:', err)
         setError('Erreur lors du chargement des projets.')
@@ -69,21 +65,7 @@ const Portfolio = () => {
     }
   }, [activeFilter, projects])
   
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.pageYOffset
-      if (scrollTop < (hasScrolled ? window.innerHeight * 0.5 : window.innerHeight)) {
-        setHasScrolled(true)
-      }
-    }
-    
-    window.addEventListener('scroll', handleScroll)
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-    }
-  }, [hasScrolled])
-  
-  // Couleurs des cartes - progression subtile
+  // Couleurs des cartes
   const getCardColor = (index) => {
     switch (index % 5) {
       case 0: return "from-purple/20 to-purple/5";
@@ -118,7 +100,7 @@ const Portfolio = () => {
     }
   }
 
-  // Fonctions utilitaires pour extraire les données des projets
+  // Fonctions utilitaires
   const getProjectDescription = (project) => {
     return project.Resume || extractFirstParagraph(project.Description) || 'Description du projet'
   }
@@ -130,7 +112,7 @@ const Portfolio = () => {
     if (project.Imageprincipale?.formats?.medium?.url) {
       return getStrapiMediaUrl(project.Imageprincipale.formats.medium.url)
     }
-    return '/images/projects/default-project.jpg' // Image par défaut
+    return '/images/projects/default-project.jpg'
   }
 
   const getProjectTechnologies = (project) => {
@@ -143,16 +125,6 @@ const Portfolio = () => {
     }
     
     return []
-  }
-
-  const openModal = (project) => {
-    setSelectedProject(project)
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-    setSelectedProject(null)
   }
 
   if (isLoading) {
@@ -198,7 +170,7 @@ const Portfolio = () => {
         {particles.map((particle, index) => (
           <motion.div
             key={index}
-            className={`absolute w-1 h-1 bg-gradient-to-r from-purple/30 to-transparent rounded-full`}
+            className="absolute w-1 h-1 bg-gradient-to-r from-purple/30 to-transparent rounded-full"
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
@@ -274,7 +246,7 @@ const Portfolio = () => {
           animate={projectsInView ? "visible" : "hidden"}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {filteredProjects.slice(0, 9).map((project, index) => {
+          {filteredProjects.slice(0, 6).map((project, index) => {
             const projectImage = getProjectImage(project)
             const projectDescription = getProjectDescription(project)
             const projectTechnologies = getProjectTechnologies(project)
@@ -283,70 +255,70 @@ const Portfolio = () => {
               <motion.div
                 key={project.id || index}
                 variants={itemVariants}
-                className="group cursor-pointer"
-                onClick={() => openModal(project)}
+                className="group"
               >
-                <motion.div 
-                  className={`bg-gradient-to-br ${getCardColor(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-                >
-                  {/* Image du projet */}
-                  <div className="relative h-48 overflow-hidden">
-                    <Image
-                      src={projectImage}
-                      alt={project.Titre || 'Projet'}
-                      fill
-                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                      unoptimized
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    
-                    {/* Badge catégorie */}
-                    {project.Categorie && (
-                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700">
-                        {project.Categorie}
-                      </div>
-                    )}
-                  </div>
-                  
-                  {/* Contenu de la carte */}
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
-                      {project.Titre || 'Projet'}
-                    </h3>
-                    
-                    {/* Ligne décorative */}
-                    <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
-                    
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {projectDescription}
-                    </p>
-                    
-                    {/* Client */}
-                    {project.Client && (
-                      <p className="text-xs text-gray-500 mb-3 font-medium">
-                        Client: {project.Client}
-                      </p>
-                    )}
-                    
-                    {/* Technologies */}
-                    <div className="flex flex-wrap gap-2">
-                      {projectTechnologies.slice(0, 3).map((tech, techIndex) => (
-                        <span
-                          key={techIndex}
-                          className="text-xs px-2 py-1 bg-white/70 text-gray-700 rounded-full border border-gray-200"
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                      {projectTechnologies.length > 3 && (
-                        <span className="text-xs px-2 py-1 bg-white/70 text-gray-500 rounded-full border border-gray-200">
-                          +{projectTechnologies.length - 3}
-                        </span>
+                <Link href={`/projets/${project.slug}`}>
+                  <motion.div 
+                    className={`bg-gradient-to-br ${getCardColor(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full cursor-pointer`}
+                  >
+                    {/* Image du projet */}
+                    <div className="relative h-48 overflow-hidden">
+                      <Image
+                        src={projectImage}
+                        alt={project.Titre || 'Projet'}
+                        fill
+                        className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                      
+                      {/* Badge catégorie */}
+                      {project.Categorie && (
+                        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700">
+                          {project.Categorie}
+                        </div>
                       )}
                     </div>
-                  </div>
-                </motion.div>
+                    
+                    {/* Contenu de la carte */}
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
+                        {project.Titre || 'Projet'}
+                      </h3>
+                      
+                      {/* Ligne décorative */}
+                      <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
+                      
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                        {projectDescription}
+                      </p>
+                      
+                      {/* Client */}
+                      {project.Client && (
+                        <p className="text-xs text-gray-500 mb-3 font-medium">
+                          Client: {project.Client}
+                        </p>
+                      )}
+                      
+                      {/* Technologies */}
+                      <div className="flex flex-wrap gap-2">
+                        {projectTechnologies.slice(0, 3).map((tech, techIndex) => (
+                          <span
+                            key={techIndex}
+                            className="text-xs px-2 py-1 bg-white/70 text-gray-700 rounded-full border border-gray-200"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                        {projectTechnologies.length > 3 && (
+                          <span className="text-xs px-2 py-1 bg-white/70 text-gray-500 rounded-full border border-gray-200">
+                            +{projectTechnologies.length - 3}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
               </motion.div>
             )
           })}
@@ -371,116 +343,6 @@ const Portfolio = () => {
           </CTAButton>
         </div>
       </motion.div>
-
-      {/* Modal pour afficher les détails du projet */}
-      <AnimatePresence>
-        {isModalOpen && selectedProject && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-            onClick={closeModal}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="relative">
-                {/* Image du projet */}
-                <div className="relative h-64 overflow-hidden rounded-t-2xl">
-                  <Image
-                    src={getProjectImage(selectedProject)}
-                    alt={selectedProject.Titre || 'Projet'}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    unoptimized
-                  />
-                  <button
-                    onClick={closeModal}
-                    className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors"
-                  >
-                    <span className="text-gray-600">✕</span>
-                  </button>
-                </div>
-                
-                {/* Contenu du modal */}
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-4 text-gray-900">
-                    {selectedProject.Titre}
-                  </h3>
-                  
-                  {selectedProject.Categorie && (
-                    <span className="inline-block bg-purple/10 text-purple px-3 py-1 rounded-full text-sm font-medium mb-4">
-                      {selectedProject.Categorie}
-                    </span>
-                  )}
-                  
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    {getProjectDescription(selectedProject)}
-                  </p>
-                  
-                  {/* Informations du projet */}
-                  <div className="space-y-4">
-                    {selectedProject.Client && (
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Client</h4>
-                        <p className="text-gray-600">{selectedProject.Client}</p>
-                      </div>
-                    )}
-                    
-                    {selectedProject.Datederealisation && (
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Date de réalisation</h4>
-                        <p className="text-gray-600">
-                          {new Date(selectedProject.Datederealisation).toLocaleDateString('fr-FR', {
-                            year: 'numeric',
-                            month: 'long'
-                          })}
-                        </p>
-                      </div>
-                    )}
-                    
-                    {getProjectTechnologies(selectedProject).length > 0 && (
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-2">Technologies utilisées</h4>
-                        <div className="flex flex-wrap gap-2">
-                          {getProjectTechnologies(selectedProject).map((tech, index) => (
-                            <span
-                              key={index}
-                              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
-                            >
-                              {tech}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {selectedProject.URLduprojet && (
-                      <div>
-                        <a
-                          href={selectedProject.URLduprojet}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center px-6 py-3 bg-purple text-white rounded-lg hover:bg-purple/90 transition-colors"
-                        >
-                          Voir le projet
-                          <span className="ml-2">→</span>
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.section>
   )
 }

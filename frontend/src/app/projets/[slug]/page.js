@@ -3,13 +3,11 @@ import { notFound } from 'next/navigation'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 
-// Composants de projet
+// Composants simplifiés
 import ProjectHero from '@/components/projects/ProjectHero'
-import ProjectIntroduction from '@/components/projects/ProjectIntroduction'
-import ProjectFeatures from '@/components/projects/ProjectFeatures'
+import ProjectContent from '@/components/projects/ProjectContent'
 import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
 import ProjectGallery from '@/components/projects/ProjectGallery'
-import ProjectTestimonial from '@/components/projects/ProjectTestimonial'
 import ProjectCTA from '@/components/projects/ProjectCTA'
 
 import { getProjetBySlug, getAllProjetSlugs } from '@/utils/api'
@@ -100,24 +98,15 @@ export default async function ProjetPage({ params }) {
           color={color}
         />
         
-        {/* Introduction détaillée */}
-        {(introduction || Description) && (
-          <ProjectIntroduction 
-            content={introduction || Description}
-            features={caracteristiques || []}
-            color={color}
-          />
-        )}
+        {/* Contenu principal avec description + caractéristiques fusionnées */}
+        <ProjectContent 
+          description={introduction || Description}
+          features={caracteristiques}
+          client={Client}
+          color={color}
+        />
         
-        {/* Caractéristiques/Fonctionnalités */}
-        {caracteristiques && caracteristiques.length > 0 && (
-          <ProjectFeatures 
-            features={caracteristiques}
-            color={color}
-          />
-        )}
-        
-        {/* Technologies utilisées */}
+        {/* Technologies - seulement si il y en a */}
         {technologies && technologies.length > 0 && (
           <ProjectTechnologies 
             technologies={technologies}
@@ -125,7 +114,7 @@ export default async function ProjetPage({ params }) {
           />
         )}
         
-        {/* Galerie d'images */}
+        {/* Galerie - seulement si il y a plusieurs images */}
         {Imagesadditionnelles && Imagesadditionnelles.length > 0 && (
           <ProjectGallery 
             images={[Imageprincipale, ...Imagesadditionnelles].filter(Boolean)}
@@ -134,16 +123,7 @@ export default async function ProjetPage({ params }) {
           />
         )}
         
-        {/* Témoignage client (si applicable) */}
-        {Client && (
-          <ProjectTestimonial 
-            client={Client}
-            projectTitle={titreFinal}
-            color={color}
-          />
-        )}
-        
-        {/* Call-To-Action */}
+        {/* Call-To-Action final */}
         <ProjectCTA 
           projectName={titreFinal}
           projectUrl={URLduprojet}
