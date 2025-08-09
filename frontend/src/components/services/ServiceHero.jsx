@@ -144,7 +144,7 @@ export default function EnhancedServiceHero({ title, description, image, icon, c
   }, [color])
 
   // Liste des mots-clés pour l'animation de texte
-  const keywords = title.split(' ').filter(word => word.length > 3).slice(0, 3)
+  const keywords = (title || '').split(' ').filter(word => word.length > 3).slice(0, 3)
   
   return (
     <section ref={containerRef} className="min-h-screen py-20 relative overflow-hidden flex items-center">
@@ -182,7 +182,7 @@ export default function EnhancedServiceHero({ title, description, image, icon, c
               transition={{ duration: 0.8 }}
               className="text-4xl md:text-6xl font-extrabold mb-6"
             >
-              {title.split(' ').map((word, i) => (
+              {(title || 'Service').split(' ').map((word, i) => (
                 <motion.span
                   key={i}
                   initial={{ opacity: 0, y: 20 }}
