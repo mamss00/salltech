@@ -1,7 +1,8 @@
+// frontend/src/components/projects/ProjectHero.jsx - CORRIGÉ
 'use client'
 
-import { useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef } from 'react'
+import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,21 +20,9 @@ export default function ProjectHero({
   projectUrl, 
   color = 'blue' 
 }) {
-  // Animation avec plusieurs effets
+  // Simplifier les animations - juste l'apparition
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  
-  // Animation au défilement
-  const containerRef = useRef(null)
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end start"]
-  })
-  
-  // Transformations basées sur le défilement
-  const imageScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1])
-  const imageBrightness = useTransform(scrollYProgress, [0, 0.5], [1, 0.8])
-  const contentOpacity = useTransform(scrollYProgress, [0, 0.2], [1, 0.8])
   
   // Gérer l'image
   const imageUrl = image ? 
@@ -50,51 +39,46 @@ export default function ProjectHero({
   }
 
   return (
-    <motion.section 
-      ref={containerRef}
-      style={{ opacity: contentOpacity }}
-      className="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 overflow-hidden"
-    >
-      {/* Particules d'arrière-plan */}
-      <div className="absolute inset-0 overflow-hidden">
-        {Array.from({ length: 20 }).map((_, i) => (
+    <section className="relative min-h-[90vh] bg-white overflow-hidden">
+      {/* Arrière-plan simplifié - plus de gradients sombres */}
+      <div className="absolute inset-0 bg-gradient-to-br from-gray-50/30 to-white"></div>
+      
+      {/* Quelques particules légères - BEAUCOUP moins */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 6 }).map((_, i) => ( // Réduit de 20 à 6
           <motion.div
             key={i}
-            className={`absolute w-2 h-2 bg-${color}/20 rounded-full`}
+            className={`absolute w-1 h-1 bg-${color}/10 rounded-full`} // Plus petites et plus légères
             style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+              left: `${20 + (i * 15)}%`, // Distribution plus contrôlée
+              top: `${20 + (i * 10)}%`,
             }}
             animate={{
-              y: [0, -30, 0],
-              opacity: [0.3, 0.8, 0.3],
+              y: [0, -15, 0],
+              opacity: [0.1, 0.3, 0.1], // Très discrètes
             }}
             transition={{
-              duration: 3 + Math.random() * 2,
+              duration: 4 + Math.random(),
               repeat: Infinity,
-              delay: Math.random() * 2,
+              delay: i * 0.5,
             }}
           />
         ))}
       </div>
 
-      <div className="container relative z-10 min-h-screen flex items-center">
+      <div className="container relative z-10 min-h-[90vh] flex items-center py-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
           
-          {/* Contenu textuel */}
+          {/* Contenu textuel - Suppression des animations complexes */}
           <motion.div 
+            ref={contentRef}
             className="space-y-8"
-            initial={{ opacity: 0, x: -50 }}
-            animate={contentInView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.8 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }} // Animation simple sans conditions
+            transition={{ duration: 0.6 }}
           >
             {/* Badge catégorie */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={titleInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-4"
-            >
+            <div className="flex items-center gap-4">
               <span className={`inline-block px-4 py-2 bg-${color}/10 text-${color} font-semibold rounded-full text-sm uppercase tracking-wider`}>
                 {category || 'Projet'}
               </span>
@@ -108,47 +92,39 @@ export default function ProjectHero({
                   Voir le site
                 </Link>
               )}
-            </motion.div>
+            </div>
             
-            {/* Titre principal */}
+            {/* Titre principal - Animation simplifiée */}
             <motion.h1
               ref={titleRef}
-              initial={{ opacity: 0 }}
-              animate={titleInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.8 }}
-              className="text-4xl md:text-6xl font-extrabold leading-tight"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }} // Simple sans conditions
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="text-4xl md:text-6xl font-extrabold leading-tight text-gray-900"
             >
-              {title.split(' ').map((word, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={titleInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ 
-                    duration: 0.5, 
-                    delay: 0.1 * i,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  className={`inline-block mr-3 ${i === 0 ? `text-${color}` : 'text-gray-900'}`}
-                >
-                  {word}
-                </motion.span>
-              ))}
+              <span className={`text-${color}`}>
+                {title.split(' ')[0]} {/* Premier mot coloré */}
+              </span>
+              {title.split(' ').slice(1).length > 0 && (
+                <span className="text-gray-900 ml-2">
+                  {title.split(' ').slice(1).join(' ')}
+                </span>
+              )}
             </motion.h1>
             
             {/* Ligne décorative */}
             <motion.div 
               initial={{ width: 0 }}
-              animate={titleInView ? { width: "6rem" } : {}}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              animate={{ width: "6rem" }}
+              transition={{ duration: 0.8, delay: 0.4 }}
               className={`h-1 bg-${color}`}
             ></motion.div>
             
             {/* Description */}
             <motion.p 
-              initial={{ opacity: 0, y: 20 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.4 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
               className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-xl"
             >
               {description}
@@ -156,112 +132,78 @@ export default function ProjectHero({
             
             {/* Informations du projet */}
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="grid grid-cols-1 sm:grid-cols-2 gap-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+              className="flex flex-wrap gap-6 text-sm text-gray-500"
             >
               {client && (
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 bg-${color}/10 rounded-lg flex items-center justify-center`}>
-                    <FaBuilding className={`w-4 h-4 text-${color}`} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 font-medium">Client</p>
-                    <p className="font-semibold text-gray-900">{client}</p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <FaBuilding className={`w-4 h-4 text-${color}`} />
+                  <span>Client: {client}</span>
                 </div>
               )}
-              
               {date && (
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 bg-${color}/10 rounded-lg flex items-center justify-center`}>
-                    <FaCalendarAlt className={`w-4 h-4 text-${color}`} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 font-medium">Réalisé en</p>
-                    <p className="font-semibold text-gray-900">{formatDate(date)}</p>
-                  </div>
+                <div className="flex items-center gap-2">
+                  <FaCalendarAlt className={`w-4 h-4 text-${color}`} />
+                  <span>{formatDate(date)}</span>
                 </div>
               )}
             </motion.div>
             
-            {/* Boutons d'action */}
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="flex flex-wrap gap-4"
-            >
-              <CTAButton 
-                href="/contact" 
-                variant="primary" 
-                showDots={true}
+            {/* CTA - si URL du projet disponible */}
+            {projectUrl && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.7 }}
               >
-                Projet similaire ?
-              </CTAButton>
-              
-              {projectUrl && (
                 <CTAButton 
                   href={projectUrl}
-                  target="_blank"
-                  variant="secondary" 
-                  showDots={false}
+                  variant="primary"
+                  showDots={true}
+                  className="inline-flex"
                 >
-                  Voir le site live
+                  Découvrir le projet
                 </CTAButton>
-              )}
-            </motion.div>
+              </motion.div>
+            )}
           </motion.div>
           
-          {/* Image du projet */}
+          {/* Image du projet - Animation simplifiée */}
           <motion.div 
             className="relative"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={contentInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="relative">
-              {/* Image principale avec effets */}
-              <motion.div
-                style={{ 
-                  scale: imageScale,
-                  filter: `brightness(${imageBrightness})`
-                }}
-                className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-2xl"
-              >
-                <Image
-                  src={imageUrl}
-                  alt={title}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  priority
-                />
-                
-                {/* Overlay décoratif */}
-                <div className={`absolute inset-0 bg-gradient-to-tr from-${color}/20 via-transparent to-transparent`}></div>
-              </motion.div>
+            <div className="relative h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+              <Image
+                src={imageUrl}
+                alt={title}
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                priority
+              />
               
-              {/* Élément décoratif */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0 }}
-                animate={contentInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.6, delay: 0.8 }}
-                className={`absolute -bottom-6 -right-6 w-24 h-24 bg-${color} rounded-2xl shadow-lg flex items-center justify-center`}
-              >
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                  className="text-white text-2xl font-bold"
-                >
-                  ✨
-                </motion.div>
-              </motion.div>
+              {/* Overlay léger pour améliorer la lisibilité */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+              
+              {/* Badge flottant */}
+              <div className="absolute top-6 left-6">
+                <div className={`px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-${color} font-semibold text-sm shadow-lg`}>
+                  {category || 'Projet'}
+                </div>
+              </div>
             </div>
+            
+            {/* Effet décoratif subtle */}
+            <div className={`absolute -bottom-6 -right-6 w-24 h-24 bg-${color}/10 rounded-full blur-xl`}></div>
+            <div className={`absolute -top-6 -left-6 w-16 h-16 bg-${color}/5 rounded-full blur-lg`}></div>
           </motion.div>
         </div>
       </div>
-    </motion.section>
+    </section>
   )
 }
