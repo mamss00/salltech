@@ -233,6 +233,8 @@ export function getStrapiMediaUrl(url) {
   return addNoCacheParam(mediaUrl);
 }
 
+// À AJOUTER à la fin de frontend/src/utils/api.js
+
 export async function getAllProjetSlugs() {
   try {
     const projets = await getProjects();
@@ -255,7 +257,6 @@ export async function getProjetBySlug(slug) {
                 `&populate[services]=true` +
                 `&populate[seo]=true`;
     
-    // Ajouter le paramètre timestamp pour éviter le cache
     url = addNoCacheParam(url);
     
     const res = await fetch(url);

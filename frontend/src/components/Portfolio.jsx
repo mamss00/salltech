@@ -8,6 +8,8 @@ import Link from 'next/link'
 import CTAButton from '@/components/CTAButton'
 import { generateParticles } from '@/components/background/GridUtils'
 import ConnectionLines from '@/components/background/ConnectionLines'
+import { getProjects } from '@/utils/api'
+import { getStrapiMediaUrl, extractFirstParagraph } from '@/utils/helpers'
 
 const Portfolio = () => {
   // Animation avec plusieurs effets
@@ -31,9 +33,41 @@ const Portfolio = () => {
   // États
   const [hasScrolled, setHasScrolled] = useState(false)
   const [activeFilter, setActiveFilter] = useState('Tous')
+  const [projects, setProjects] = useState([])
   const [filteredProjects, setFilteredProjects] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState(null)
+  
+  // Charger les projets depuis Strapi
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        setIsLoading(true)
+        const projectsData = await getProjects()
+        console.log('Projets chargés:', projectsData) // Debug
+        setProjects(projectsData)
+        setFilteredProjects(projectsData) // Afficher tous les projets par défaut
+      } catch (err) {
+        console.error('Erreur lors du chargement des projets:', err)
+        setError('Erreur lors du chargement des projets.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchProjects()
+  }, [])
+  
+  // Filtrer les projets par catégorie
+  useEffect(() => {
+    if (activeFilter === 'Tous') {
+      setFilteredProjects(projects)
+    } else {
+      setFilteredProjects(projects.filter(project => project.Categorie === activeFilter))
+    }
+  }, [activeFilter, projects])
   
   useEffect(() => {
     const handleScroll = () => {
@@ -51,7 +85,6 @@ const Portfolio = () => {
   
   // Couleurs des cartes - progression subtile
   const getCardColor = (index) => {
-    // Créer une progression plus subtile et élégante entre les couleurs
     switch (index % 5) {
       case 0: return "from-purple/20 to-purple/5";
       case 1: return "from-blue/20 to-blue/5";
@@ -62,79 +95,10 @@ const Portfolio = () => {
     }
   };
   
-  const projects = [
-    {
-      id: 1,
-      title: 'Site E-commerce SMCI',
-      category: 'E-commerce',
-      image: 'https://picsum.photos/600/400?random=1',
-      description: 'Plateforme e-commerce pour la Société Mauritanienne de Commerce International.',
-      technologies: ['Next.js', 'Tailwind', 'Stripe'],
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'Application Mobile Nouadhibou Pêche',
-      category: 'Application Mobile',
-      image: 'https://picsum.photos/600/400?random=2',
-      description: 'Application permettant aux pêcheurs de suivre les prix du marché en temps réel.',
-      technologies: ['React Native', 'Firebase', 'Redux'],
-      featured: true
-    },
-    {
-      id: 3,
-      title: 'Dashboard Administratif',
-      category: 'Web App',
-      image: 'https://picsum.photos/600/400?random=3',
-      description: 'Panneau d\'administration sur mesure pour une entreprise locale.',
-      technologies: ['Vue.js', 'Node.js', 'MongoDB'],
-      featured: true
-    },
-    {
-      id: 4,
-      title: 'Boutique en ligne Mauritanie Artisanat',
-      category: 'E-commerce',
-      image: 'https://picsum.photos/600/400?random=4',
-      description: 'Plateforme de vente en ligne pour les artisans mauritaniens.',
-      technologies: ['WordPress', 'WooCommerce', 'Elementor']
-    },
-    {
-      id: 5,
-      title: 'Site vitrine Banque BNM',
-      category: 'Site Web',
-      image: 'https://picsum.photos/600/400?random=5',
-      description: 'Site institutionnel moderne pour la Banque Nationale de Mauritanie.',
-      technologies: ['Next.js', 'TypeScript', 'Framer Motion']
-    },
-    {
-      id: 6,
-      title: 'Application de livraison Nouakchott Express',
-      category: 'Application Mobile',
-      image: 'https://picsum.photos/600/400?random=6',
-      description: 'Service de livraison à domicile pour les restaurants et commerces de Nouakchott.',
-      technologies: ['Flutter', 'Firebase', 'Stripe'],
-      featured: true
-    }
-  ]
-  
-  useEffect(() => {
-    setFilteredProjects(projects)
-  }, [])
-  
-  // Filtrer les projets par catégorie
-  const filterByCategory = (category) => {
-    setActiveFilter(category)
-    if (category === 'Tous') {
-      setFilteredProjects(projects)
-    } else {
-      setFilteredProjects(projects.filter(project => project.category === category))
-    }
-  }
-  
   // Obtenir les catégories uniques
-  const categories = ['Tous', ...Array.from(new Set(projects.map(project => project.category)))]
+  const categories = ['Tous', ...new Set(projects.map(project => project.Categorie).filter(Boolean))]
   
-  // Animation variants qui fonctionnent
+  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -154,616 +118,370 @@ const Portfolio = () => {
     }
   }
 
-  // Style personnalisé pour les animations et les gradients
-  const customStyles = `
-    @keyframes gradientMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+  // Fonctions utilitaires pour extraire les données des projets
+  const getProjectDescription = (project) => {
+    return project.Resume || extractFirstParagraph(project.Description) || 'Description du projet'
+  }
+
+  const getProjectImage = (project) => {
+    if (project.Imageprincipale?.url) {
+      return getStrapiMediaUrl(project.Imageprincipale.url)
+    }
+    if (project.Imageprincipale?.formats?.medium?.url) {
+      return getStrapiMediaUrl(project.Imageprincipale.formats.medium.url)
+    }
+    return '/images/projects/default-project.jpg' // Image par défaut
+  }
+
+  const getProjectTechnologies = (project) => {
+    if (!project.technologies) return []
+    
+    if (Array.isArray(project.technologies)) {
+      return project.technologies.map(tech => 
+        typeof tech === 'string' ? tech : tech.nom || tech.name || 'Tech'
+      )
     }
     
-    .animate-gradient-shift {
-      animation: gradientMove 4s ease infinite;
-    }
-    
-    .bg-gradient-text {
-      background-image: linear-gradient(45deg, #3498db, #9b59b6, #e74c3c);
-    }
-    
-    @keyframes float-1 {
-      0%, 100% { transform: translateY(0) rotate(0); }
-      50% { transform: translateY(-20px) rotate(5deg); }
-    }
-    
-    @keyframes float-2 {
-      0%, 100% { transform: translateY(0) rotate(0); }
-      50% { transform: translateY(20px) rotate(-5deg); }
-    }
-    
-    @keyframes float-3 {
-      0%, 100% { transform: translate(-50%, -50%) scale(1); }
-      50% { transform: translate(-50%, -50%) scale(1.1); }
-    }
-    
-    .animate-float-1 {
-      animation: float-1 15s ease-in-out infinite;
-    }
-    
-    .animate-float-2 {
-      animation: float-2 18s ease-in-out infinite;
-    }
-    
-    .animate-float-3 {
-      animation: float-3 20s ease-in-out infinite;
-    }
-    
-    @keyframes dots-pulse {
-      0%, 100% { opacity: 0; }
-      50% { opacity: 1; }
-    }
-    
-    .grid-masonry {
-      display: grid;
-      grid-template-columns: repeat(12, 1fr);
-      grid-auto-rows: minmax(100px, auto);
-      gap: 2rem;
-    }
-    
-    @media (max-width: 768px) {
-      .grid-masonry {
-        display: flex;
-        flex-direction: column;
-        gap: 2rem;
-      }
-    }
-  `;
+    return []
+  }
+
+  const openModal = (project) => {
+    setSelectedProject(project)
+    setIsModalOpen(true)
+  }
+
+  const closeModal = () => {
+    setIsModalOpen(false)
+    setSelectedProject(null)
+  }
+
+  if (isLoading) {
+    return (
+      <section id="portfolio" className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
+        <div className="container">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple mx-auto"></div>
+            <p className="mt-4 text-gray-600">Chargement des projets...</p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section id="portfolio" className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
+        <div className="container">
+          <div className="text-center">
+            <p className="text-red-600">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="mt-4 px-6 py-2 bg-purple text-white rounded-lg hover:bg-purple/90 transition-colors"
+            >
+              Réessayer
+            </button>
+          </div>
+        </div>
+      </section>
+    )
+  }
 
   return (
-    <section 
+    <motion.section 
       id="portfolio" 
       ref={containerRef}
-      className="py-32 relative overflow-hidden"
+      style={{ opacity: containerOpacity }}
+      className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden"
     >
-      <style jsx>{customStyles}</style>
-      
-      {/* Arrière-plan élaboré */}
-      <div className="absolute inset-0 overflow-hidden z-0">
-        {/* Lignes de connexion fluides */}
-        <ConnectionLines color="purple" animate={true} />
-        
-        {/* Éléments de fond animés */}
-        <div className="absolute -top-20 -right-20 w-96 h-96 bg-purple/10 rounded-full blur-3xl animate-float-1"></div>
-        <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-blue/10 rounded-full blur-3xl animate-float-2"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-5xl max-h-5xl bg-gradient-to-br from-purple/5 via-blue/5 to-red/5 rounded-full blur-3xl opacity-50 animate-float-3"></div>
-        
-        {/* Particules */}
+      {/* Particules d'arrière-plan */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {particles.map((particle, index) => (
           <motion.div
-            key={`particle-${index}`}
-            className="absolute rounded-full"
+            key={index}
+            className={`absolute w-1 h-1 bg-gradient-to-r from-purple/30 to-transparent rounded-full`}
             style={{
               left: `${particle.x}%`,
               top: `${particle.y}%`,
-              width: `${particle.size}px`,
-              height: `${particle.size}px`,
-              backgroundColor: particle.color === 'purple' ? 'rgba(155, 89, 182, 0.3)' : 
-                              particle.color === 'blue' ? 'rgba(52, 152, 219, 0.3)' : 
-                                                      'rgba(231, 76, 60, 0.3)'
             }}
             animate={{
-              x: [0, Math.random() * 20 - 10, 0],
-              y: [0, Math.random() * 20 - 10, 0],
-              opacity: [0, particle.size / 3, 0],
-              scale: [0, 1, 0]
+              y: [0, -20, 0],
+              opacity: [0.3, 0.8, 0.3],
             }}
             transition={{
               duration: particle.duration,
               repeat: Infinity,
-              ease: "easeInOut",
-              delay: particle.delay
+              delay: particle.delay,
             }}
           />
         ))}
-        
-        {/* Grille de fond subtile */}
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%">
-            <pattern id="portfolioHoneycomb" width="56" height="100" patternUnits="userSpaceOnUse">
-              <path 
-                d="M28 0L56 25L56 75L28 100L0 75L0 25Z" 
-                stroke="rgba(155, 89, 182, 0.8)" 
-                strokeWidth="1" 
-                fill="none" 
-              />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#portfolioHoneycomb)" />
-          </svg>
-        </div>
       </div>
-      
-      <motion.div 
-        className="container relative z-10"
-        style={{ opacity: containerOpacity }}
-      >
-        <motion.h2
-          ref={titleRef}
-          initial={{ opacity: 0, y: 20 }}
-          animate={titleInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-4xl md:text-5xl font-extrabold mb-6 text-center"
-        >
-          Notre <span className="gradient-text bg-clip-text text-transparent bg-[length:200%_auto] animate-gradient-shift">Portfolio</span>
-        </motion.h2>
+
+      {/* Lignes de connexion */}
+      <ConnectionLines color="purple" intensity="light" />
+
+      <motion.div className="container relative z-10">
+        {/* En-tête de section */}
+        <div className="text-center mb-16">
+          <motion.h2
+            ref={titleRef}
+            initial={{ opacity: 0, y: 50 }}
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-3xl md:text-4xl font-bold mb-6"
+          >
+            Notre <span className="text-purple">Portfolio</span>
+          </motion.h2>
+          
+          <motion.p
+            ref={descRef}
+            initial={{ opacity: 0, y: 30 }}
+            animate={descInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
+            className="text-lg text-gray-600 max-w-3xl mx-auto mb-12"
+          >
+            Découvrez nos réalisations et projets qui illustrent notre expertise 
+            dans le développement de solutions digitales innovantes.
+          </motion.p>
+
+          {/* Filtres par catégorie */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={descInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+            className="flex flex-wrap justify-center gap-4 mb-12"
+          >
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setActiveFilter(category)}
+                className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
+                  activeFilter === category
+                    ? 'bg-purple text-white shadow-lg'
+                    : 'bg-white text-gray-600 hover:bg-purple/10 hover:text-purple border border-gray-200'
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </motion.div>
+        </div>
         
-        <motion.p
-          ref={descRef}
-          initial={{ opacity: 0, y: 20 }}
-          animate={descInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg text-gray-600 max-w-3xl mx-auto text-center mb-20"
-        >
-          Découvrez nos réalisations et projets pour des entreprises mauritaniennes
-          et internationales qui reflètent notre expertise et notre savoir-faire.
-        </motion.p>
-        
-        {/* Filtres de catégories */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={descInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-wrap justify-center gap-4 mb-16"
-        >
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={descInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-wrap justify-center gap-4 mb-16"
-        >
-          {categories.map((category, index) => (
-            <CTAButton 
-              key={index}
-              onClick={() => filterByCategory(category)}
-              variant={activeFilter === category ? "primary" : "subtle"}
-              className="px-5 py-2 text-sm"
-              showDots={false}
-            >
-              {category}
-            </CTAButton>
-          ))}
-        </motion.div>
-        </motion.div>
-        
-        {/* Layout asymétrique avec une vraie disposition masonry */}
+        {/* Grille de projets */}
         <motion.div
           ref={projectsRef}
           variants={containerVariants}
           initial="hidden"
           animate={projectsInView ? "visible" : "hidden"}
-          className="grid-masonry"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
         >
-          {/* Premier projet - Grande taille */}
-          {filteredProjects.length > 0 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-8 md:row-span-2 md:col-start-1 md:row-start-1"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br ${getCardColor(0)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-                whileHover={{ 
-                  y: -8,
-                  boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
-                }}
+          {filteredProjects.slice(0, 9).map((project, index) => {
+            const projectImage = getProjectImage(project)
+            const projectDescription = getProjectDescription(project)
+            const projectTechnologies = getProjectTechnologies(project)
+            
+            return (
+              <motion.div
+                key={project.id || index}
+                variants={itemVariants}
+                className="group cursor-pointer"
+                onClick={() => openModal(project)}
               >
-                {/* Image avec overlay et badges */}
-                <div className="relative h-64 md:h-96 overflow-hidden">
-                  <Image
-                    src={filteredProjects[0].image}
-                    alt={filteredProjects[0].title}
-                    fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 66vw"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-purple font-medium rounded-full shadow-md">
-                      {filteredProjects[0].category}
-                    </span>
-                  </div>
-                  
-                  <div className="absolute bottom-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                      </svg>
-                    </a>
-                    <a href="#" className="p-2 bg-white/90 text-purple hover:text-blue rounded-full shadow-md transition-colors duration-300">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-                
-                {/* Contenu de la carte */}
-                <div className="p-6 md:p-8">
-                  <h3 className="text-2xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
-                    {filteredProjects[0].title}
-                  </h3>
-                  
-                  <div className="h-0.5 w-16 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-24 transition-all duration-300"></div>
-                  
-                  <p className="text-gray-600 mb-6 md:text-lg">{filteredProjects[0].description}</p>
-                  
-                  <div className="flex flex-wrap gap-2 mt-auto">
-                    {filteredProjects[0].technologies.map((tech, index) => (
-                      <span 
-                        key={index} 
-                        className="text-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-full transition-colors duration-300 hover:bg-purple/10 hover:text-purple"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-          
-          {/* Deuxième projet - taille moyenne, à droite du premier */}
-          {filteredProjects.length > 1 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-4 md:row-span-2 md:col-start-9 md:row-start-1"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br ${getCardColor(1)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-              >
-                <div className="relative h-56 overflow-hidden">
-                  <Image
-                    src={filteredProjects[1].image}
-                    alt={filteredProjects[1].title}
-                    fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-blue font-medium rounded-full shadow-md">
-                      {filteredProjects[1].category}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="p-6 flex flex-col h-[calc(100%-14rem)]">
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-blue transition-colors duration-300">
-                    {filteredProjects[1].title}
-                  </h3>
-                  
-                  <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
-                  
-                  <p className="text-gray-600 mb-6 flex-grow">{filteredProjects[1].description}</p>
-                  
-                  <div className="flex flex-wrap gap-2">
-                    {filteredProjects[1].technologies.map((tech, index) => (
-                      <span 
-                        key={index} 
-                        className="text-xs px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-          
-          {/* Troisième projet - horizontal en dessous du premier et deuxième */}
-          {filteredProjects.length > 2 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-12 md:col-start-1 md:row-start-3"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br ${getCardColor(2)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-              >
-                <div className="flex flex-col md:flex-row h-full">
-                  <div className="md:w-1/3 relative">
-                    <div className="h-48 md:h-full relative">
-                      <Image
-                        src={filteredProjects[2].image}
-                        alt={filteredProjects[2].title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, 33vw"
-                        unoptimized
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    </div>
-                  </div>
-                  
-                  <div className="p-6 md:w-2/3 flex flex-col justify-center">
-                    <span className="inline-block px-3 py-1 text-sm w-fit bg-red/10 text-red font-medium rounded-full mb-4">
-                      {filteredProjects[2].category}
-                    </span>
+                <motion.div 
+                  className={`bg-gradient-to-br ${getCardColor(index)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
+                >
+                  {/* Image du projet */}
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={projectImage}
+                      alt={project.Titre || 'Projet'}
+                      fill
+                      className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                     
-                    <h3 className="text-2xl font-bold mb-3 group-hover:text-red transition-colors duration-300">
-                      {filteredProjects[2].title}
+                    {/* Badge catégorie */}
+                    {project.Categorie && (
+                      <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700">
+                        {project.Categorie}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Contenu de la carte */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-bold mb-3 group-hover:text-purple transition-colors duration-300">
+                      {project.Titre || 'Projet'}
                     </h3>
                     
-                    <div className="h-0.5 w-16 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-24 transition-all duration-300"></div>
+                    {/* Ligne décorative */}
+                    <div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
                     
-                    <p className="text-gray-600 mb-6">{filteredProjects[2].description}</p>
+                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                      {projectDescription}
+                    </p>
                     
+                    {/* Client */}
+                    {project.Client && (
+                      <p className="text-xs text-gray-500 mb-3 font-medium">
+                        Client: {project.Client}
+                      </p>
+                    )}
+                    
+                    {/* Technologies */}
                     <div className="flex flex-wrap gap-2">
-                      {filteredProjects[2].technologies.map((tech, index) => (
-                        <span 
-                          key={index} 
-                          className="text-sm px-3 py-1 bg-gray-100 text-gray-700 rounded-full"
+                      {projectTechnologies.slice(0, 3).map((tech, techIndex) => (
+                        <span
+                          key={techIndex}
+                          className="text-xs px-2 py-1 bg-white/70 text-gray-700 rounded-full border border-gray-200"
                         >
                           {tech}
                         </span>
                       ))}
+                      {projectTechnologies.length > 3 && (
+                        <span className="text-xs px-2 py-1 bg-white/70 text-gray-500 rounded-full border border-gray-200">
+                          +{projectTechnologies.length - 3}
+                        </span>
+                      )}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               </motion.div>
-            </motion.div>
-          )}
-          
-          {/* Quatrième projet - petit, en dessous du troisième côté gauche */}
-          {filteredProjects.length > 3 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-4 md:col-start-1 md:row-start-4"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br ${getCardColor(3)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={filteredProjects[3].image}
-                    alt={filteredProjects[3].title}
-                    fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                
-                <div className="p-5">
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-purple transition-colors duration-300">
-                    {filteredProjects[3].title}
-                  </h3>
-                  
-                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
-                  
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{filteredProjects[3].description}</p>
-                  
-                  <div className="flex flex-wrap gap-1.5">
-                    {filteredProjects[3].technologies.slice(0, 2).map((tech, index) => (
-                      <span 
-                        key={index} 
-                        className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {filteredProjects[3].technologies.length > 2 && (
-                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full">
-                        +{filteredProjects[3].technologies.length - 2}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-          
-          {/* Cinquième projet - moyen, au milieu */}
-          {filteredProjects.length > 4 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-4 md:col-start-5 md:row-start-4 md:row-span-2"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br ${getCardColor(4)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-              >
-                <div className="relative h-56 md:h-64 overflow-hidden">
-                  <Image
-                    src={filteredProjects[4].image}
-                    alt={filteredProjects[4].title}
-                    fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-blue font-medium rounded-full shadow-md">
-                      {filteredProjects[4].category}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="p-6 flex flex-col flex-grow">
-                  <h3 className="text-xl font-bold mb-3 group-hover:text-blue transition-colors duration-300">
-                    {filteredProjects[4].title}
-                  </h3>
-                  
-<div className="h-0.5 w-12 bg-gradient-to-r from-purple via-blue to-red mb-4 opacity-60 group-hover:w-20 transition-all duration-300"></div>
-                  
-                  <p className="text-gray-600 mb-6 flex-grow">{filteredProjects[4].description}</p>
-                  
-                  <div className="flex flex-wrap gap-2 mt-auto">
-                    {filteredProjects[4].technologies.map((tech, index) => (
-                      <span 
-                        key={index} 
-                        className="text-xs px-2 py-1 bg-gray-100 text-gray-700 rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-          
-          {/* Sixième projet - à droite */}
-          {filteredProjects.length > 5 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-4 md:col-start-9 md:row-start-4"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br ${getCardColor(5)} backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={filteredProjects[5].image}
-                    alt={filteredProjects[5].title}
-                    fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  
-                  <div className="absolute top-4 left-4 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-y-2 group-hover:translate-y-0">
-                    <span className="inline-block px-3 py-1 text-sm bg-white/90 text-red font-medium rounded-full shadow-md">
-                      {filteredProjects[5].category}
-                    </span>
-                  </div>
-                </div>
-                
-                <div className="p-6">
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-red transition-colors duration-300">
-                    {filteredProjects[5].title}
-                  </h3>
-                  
-                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
-                  
-                  <p className="text-gray-600 mb-4 line-clamp-3">{filteredProjects[5].description}</p>
-                  
-                  <div className="flex flex-wrap gap-1.5">
-                    {filteredProjects[5].technologies.slice(0, 2).map((tech, index) => (
-                      <span 
-                        key={index} 
-                        className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                    {filteredProjects[5].technologies.length > 2 && (
-                      <span className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full">
-                        +{filteredProjects[5].technologies.length - 2}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-          
-          {/* Projet supplémentaire - en bas à gauche */}
-          {filteredProjects.length > 6 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-4 md:col-start-1 md:row-start-5"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br from-blue/20 to-purple/5 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={filteredProjects[6].image}
-                    alt={filteredProjects[6].title}
-                    fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                
-                <div className="p-5">
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-blue transition-colors duration-300">
-                    {filteredProjects[6].title}
-                  </h3>
-                  
-                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
-                  
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">{filteredProjects[6].description}</p>
-                  
-                  <div className="flex flex-wrap gap-1.5">
-                    {filteredProjects[6].technologies.slice(0, 2).map((tech, index) => (
-                      <span 
-                        key={index} 
-                        className="text-xs px-2 py-0.5 bg-gray-100 text-gray-700 rounded-full"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-          
-          {/* Projet supplémentaire - en bas à droite */}
-          {filteredProjects.length > 7 && (
-            <motion.div
-              variants={itemVariants}
-              className="group col-span-12 md:col-span-3 md:col-start-9 md:row-start-5"
-            >
-              <motion.div 
-                className={`bg-gradient-to-br from-red/20 to-blue/5 backdrop-blur-sm rounded-2xl overflow-hidden shadow-lg transition-all duration-500 hover:shadow-xl hover:-translate-y-2 h-full`}
-              >
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={filteredProjects[7].image}
-                    alt={filteredProjects[7].title}
-                    fill
-                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                </div>
-                
-                <div className="p-5">
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-red transition-colors duration-300">
-                    {filteredProjects[7].title}
-                  </h3>
-                  
-                  <div className="h-0.5 w-10 bg-gradient-to-r from-purple via-blue to-red mb-3 opacity-60 group-hover:w-16 transition-all duration-300"></div>
-                  
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{filteredProjects[7].description}</p>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
+            )
+          })}
         </motion.div>
+        
+        {/* Message si aucun projet */}
+        {filteredProjects.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">
+              Aucun projet trouvé pour cette catégorie.
+            </p>
+          </div>
+        )}
         
         {/* Bouton "Explorer Tous Nos Projets" */}
         <div className="text-center mt-16">
           <CTAButton 
-            href="/portfolio" 
+            href="/projets" 
             className="mx-auto inline-flex items-center justify-center"
           >
             Explorer Tous Nos Projets
           </CTAButton>
         </div>
       </motion.div>
-    </section>
+
+      {/* Modal pour afficher les détails du projet */}
+      <AnimatePresence>
+        {isModalOpen && selectedProject && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={closeModal}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-2xl max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative">
+                {/* Image du projet */}
+                <div className="relative h-64 overflow-hidden rounded-t-2xl">
+                  <Image
+                    src={getProjectImage(selectedProject)}
+                    alt={selectedProject.Titre || 'Projet'}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                    unoptimized
+                  />
+                  <button
+                    onClick={closeModal}
+                    className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                  >
+                    <span className="text-gray-600">✕</span>
+                  </button>
+                </div>
+                
+                {/* Contenu du modal */}
+                <div className="p-6">
+                  <h3 className="text-2xl font-bold mb-4 text-gray-900">
+                    {selectedProject.Titre}
+                  </h3>
+                  
+                  {selectedProject.Categorie && (
+                    <span className="inline-block bg-purple/10 text-purple px-3 py-1 rounded-full text-sm font-medium mb-4">
+                      {selectedProject.Categorie}
+                    </span>
+                  )}
+                  
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    {getProjectDescription(selectedProject)}
+                  </p>
+                  
+                  {/* Informations du projet */}
+                  <div className="space-y-4">
+                    {selectedProject.Client && (
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">Client</h4>
+                        <p className="text-gray-600">{selectedProject.Client}</p>
+                      </div>
+                    )}
+                    
+                    {selectedProject.Datederealisation && (
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-1">Date de réalisation</h4>
+                        <p className="text-gray-600">
+                          {new Date(selectedProject.Datederealisation).toLocaleDateString('fr-FR', {
+                            year: 'numeric',
+                            month: 'long'
+                          })}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {getProjectTechnologies(selectedProject).length > 0 && (
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Technologies utilisées</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {getProjectTechnologies(selectedProject).map((tech, index) => (
+                            <span
+                              key={index}
+                              className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                    
+                    {selectedProject.URLduprojet && (
+                      <div>
+                        <a
+                          href={selectedProject.URLduprojet}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-6 py-3 bg-purple text-white rounded-lg hover:bg-purple/90 transition-colors"
+                        >
+                          Voir le projet
+                          <span className="ml-2">→</span>
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.section>
   )
 }
 
