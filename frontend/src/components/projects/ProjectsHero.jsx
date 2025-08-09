@@ -1,4 +1,3 @@
-// frontend/src/components/projects/ProjectHero.jsx - VERSION FINALE CLAIRE
 'use client'
 
 import { useRef } from 'react'
@@ -22,6 +21,15 @@ export default function ProjectHero({
 }) {
   // Animations simples et propres
   const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  
+  // Sécuriser le titre pour éviter erreurs .split() sur undefined
+  let safeTitle = 'Projet'
+  if (typeof title === 'string' && title.trim().length > 0) {
+    safeTitle = title.trim()
+  } else {
+    console.warn('ProjectHero: title is missing or invalid:', title)
+  }
+  const titleWords = safeTitle.split(' ')
   
   // Gérer l'image
   const imageUrl = image ? 
@@ -101,11 +109,11 @@ export default function ProjectHero({
               className="text-4xl md:text-6xl font-extrabold leading-tight text-gray-900"
             >
               <span className={`text-${color}`}>
-                {title.split(' ')[0]}
+                {titleWords[0]}
               </span>
-              {title.split(' ').slice(1).length > 0 && (
+              {titleWords.length > 1 && (
                 <span className="text-gray-900 ml-2">
-                  {title.split(' ').slice(1).join(' ')}
+                  {titleWords.slice(1).join(' ')}
                 </span>
               )}
             </motion.h1>
@@ -178,7 +186,7 @@ export default function ProjectHero({
             <div className="relative h-[500px] lg:h-[600px] rounded-2xl overflow-hidden shadow-xl">
               <Image
                 src={imageUrl}
-                alt={title}
+                alt={safeTitle}
                 fill
                 className="object-cover"
                 sizes="(max-width: 768px) 100vw, 50vw"
