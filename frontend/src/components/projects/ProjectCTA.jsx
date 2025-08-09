@@ -1,3 +1,4 @@
+// frontend/src/components/projects/ProjectCTA.jsx - BOUTONS CORRIGÉS
 'use client'
 
 import { useRef } from 'react'
@@ -26,49 +27,40 @@ export default function ProjectCTA({ projectName, projectUrl, color = 'blue' }) 
       style={{ opacity: sectionOpacity }}
       className={`py-24 bg-gradient-to-br from-gray-900 via-gray-800 to-${color}/20 text-white relative overflow-hidden`}
     >
-      {/* Effet de particules dynamiques */}
+      {/* Effet de particules dynamiques - réduit pour éviter les zones sombres */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 50 }).map((_, i) => (
+        {Array.from({ length: 15 }).map((_, i) => ( // Réduit de 50 à 15
           <motion.div
             key={i}
-            className="absolute w-1 h-1 bg-white/20 rounded-full"
+            className="absolute w-1 h-1 bg-white/10 rounded-full" // Réduit l'opacité
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -50, 0],
-              opacity: [0.1, 0.8, 0.1],
-              scale: [1, 1.5, 1],
+              y: [0, -30, 0], // Réduit le mouvement
+              opacity: [0.05, 0.3, 0.05], // Plus discret
+              scale: [1, 1.2, 1],
             }}
             transition={{
-              duration: 8 + Math.random() * 4,
+              duration: 10 + Math.random() * 4,
               repeat: Infinity,
               delay: Math.random() * 5,
             }}
           />
         ))}
         
-        {/* Formes géométriques animées */}
+        {/* Formes géométriques plus discrètes */}
         <motion.div
-          className={`absolute top-10 right-10 w-40 h-40 border-2 border-${color}/30 rounded-full`}
+          className={`absolute top-10 right-10 w-32 h-32 border border-${color}/20 rounded-full`} // Plus petit et discret
           animate={{ 
             rotate: 360,
-            scale: [1, 1.2, 1]
+            scale: [1, 1.1, 1]
           }}
           transition={{ 
-            rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-            scale: { duration: 8, repeat: Infinity }
+            rotate: { duration: 30, repeat: Infinity, ease: "linear" },
+            scale: { duration: 12, repeat: Infinity }
           }}
-        />
-        
-        <motion.div
-          className={`absolute bottom-10 left-10 w-32 h-32 bg-${color}/10 rounded-lg`}
-          animate={{ 
-            rotate: [0, 45, 0],
-            y: [0, -20, 0]
-          }}
-          transition={{ duration: 10, repeat: Infinity }}
         />
       </div>
 
@@ -142,38 +134,37 @@ export default function ProjectCTA({ projectName, projectUrl, color = 'blue' }) 
             </div>
           </motion.div>
           
-          {/* Boutons d'action */}
+          {/* Boutons d'action - CORRIGÉS */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 1.2 }}
             className="flex flex-col sm:flex-row items-center justify-center gap-6"
           >
+            {/* Bouton principal - utilise variant="primary" correctement */}
             <CTAButton 
               href="/contact" 
-              variant="primary" 
-              size="large"
+              variant="primary"
               showDots={true}
-              className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4"
             >
               Démarrer mon projet
             </CTAButton>
             
+            {/* Bouton secondaire - utilise variant="secondary" correctement */}
             <CTAButton 
               href="/portfolio" 
-              variant="secondary" 
-              size="large"
+              variant="secondary"
               showDots={false}
-              className="border-white text-white hover:bg-white hover:text-gray-900 px-8 py-4"
             >
               Voir d'autres projets
             </CTAButton>
             
+            {/* Lien externe - reste comme Link simple */}
             {projectUrl && (
               <Link
                 href={projectUrl}
                 target="_blank"
-                className={`inline-flex items-center gap-2 text-${color} hover:text-${color}/80 transition-colors font-medium`}
+                className={`inline-flex items-center gap-2 text-${color} hover:text-${color}/80 transition-colors font-medium px-4 py-2 rounded-lg hover:bg-white/10`}
               >
                 <FaExternalLinkAlt className="w-4 h-4" />
                 Visiter le site
@@ -186,47 +177,17 @@ export default function ProjectCTA({ projectName, projectUrl, color = 'blue' }) 
             initial={{ opacity: 0, y: 30 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 1.4 }}
-            className="mt-12 pt-8 border-t border-gray-700"
+            className="mt-12 pt-8 border-t border-white/10"
           >
-            <p className="text-gray-400 mb-4">
-              Une question ? Besoin d'un devis personnalisé ?
-            </p>
-            <div className="flex flex-wrap items-center justify-center gap-6">
-              <a 
-                href="tel:+22200000000" 
-                className={`text-${color} hover:text-${color}/80 transition-colors font-medium`}
-              >
-                📞 +222 00 00 00 00
-              </a>
+            <p className="text-gray-400 text-sm">
+              💬 Une question ? Contactez-nous directement :{' '}
               <a 
                 href="mailto:contact@sall.technology" 
                 className={`text-${color} hover:text-${color}/80 transition-colors font-medium`}
               >
-                ✉️ contact@sall.technology
+                contact@sall.technology
               </a>
-              <a 
-                href="https://wa.me/22200000000" 
-                target="_blank"
-                className={`text-${color} hover:text-${color}/80 transition-colors font-medium`}
-              >
-                💬 WhatsApp
-              </a>
-            </div>
-          </motion.div>
-          
-          {/* Badge de confiance */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={contentInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.8, delay: 1.6 }}
-            className="mt-8"
-          >
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-sm rounded-full border border-white/20">
-              <div className={`w-3 h-3 bg-${color} rounded-full animate-pulse`}></div>
-              <span className="text-gray-300 text-sm font-medium">
-                Plus de 50 projets réussis • 100% satisfaction client
-              </span>
-            </div>
+            </p>
           </motion.div>
         </motion.div>
       </div>

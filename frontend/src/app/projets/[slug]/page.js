@@ -1,7 +1,7 @@
-// frontend/src/app/projets/[slug]/page.js
+// frontend/src/app/projets/[slug]/page.js - SANS DOUBLE FOOTER
 import { notFound } from 'next/navigation'
 import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+// PAS DE FOOTER ICI - il est déjà dans ClientLayout !
 
 // Composants simplifiés
 import ProjectHero from '@/components/projects/ProjectHero'
@@ -130,7 +130,7 @@ export default async function ProjetPage({ params }) {
         />
       </main>
       
-      <Footer />
+      {/* PAS DE FOOTER ICI - il est dans ClientLayout ! */}
     </>
   )
 }
