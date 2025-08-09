@@ -5,7 +5,7 @@ import Footer from '@/components/Footer'
 
 // Composants simplifiés
 import ProjectHero from '@/components/projects/ProjectHero'
-import ProjectContent from '@/components/projects/ProjectContent'
+import ProjectIntroduction from '@/components/projects/ProjectIntroduction'
 import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
 import ProjectGallery from '@/components/projects/ProjectGallery'
 import ProjectCTA from '@/components/projects/ProjectCTA'
@@ -99,10 +99,9 @@ export default async function ProjetPage({ params }) {
         />
         
         {/* Contenu principal avec description + caractéristiques fusionnées */}
-        <ProjectContent 
-          description={introduction || Description}
+        <ProjectIntroduction 
+          content={introduction || Description}
           features={caracteristiques}
-          client={Client}
           color={color}
         />
         
