@@ -232,3 +232,52 @@ export function getStrapiMediaUrl(url) {
   const mediaUrl = `${apiUrl}${url}`;
   return addNoCacheParam(mediaUrl);
 }
+
+export async function getAllProjetSlugs() {
+  try {
+    const projets = await getProjects();
+    return projets
+      .filter(projet => projet.slug)
+      .map(projet => ({ slug: projet.slug || titreToSlug(projet.Titre) }));
+  } catch (error) {
+    console.error("getAllProjetSlugs error:", error);
+    return [];
+  }
+}
+
+export async function getProjetBySlug(slug) {
+  try {
+    let url = `${API_URL}/api/projets?filters[slug][$eq]=${slug}` +
+                `&populate[Imageprincipale]=true` +
+                `&populate[Imagesadditionnelles]=true` +
+                `&populate[technologies]=true` +
+                `&populate[caracteristiques]=true` +
+                `&populate[services]=true` +
+                `&populate[seo]=true`;
+    
+    // Ajouter le paramètre timestamp pour éviter le cache
+    url = addNoCacheParam(url);
+    
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`Erreur API: ${res.status}`);
+    const data = await res.json();
+    
+    if (!data.data?.[0]) return null;
+    return normalizeAttributes(data.data[0]);
+  } catch (e) {
+    console.error(`getProjetBySlug error for slug "${slug}":`, e);
+    return null;
+  }
+}
+
+export async function getFeaturedProjects(limit = 6) {
+  try {
+    const projets = await getProjects();
+    return projets
+      .sort((a, b) => new Date(b.Datederealisation) - new Date(a.Datederealisation))
+      .slice(0, limit);
+  } catch (error) {
+    console.error("getFeaturedProjects error:", error);
+    return [];
+  }
+}
