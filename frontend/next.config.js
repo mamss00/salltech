@@ -102,11 +102,11 @@ const nextConfig = {
     return `build-${Date.now()}`;
   },
   
-  // Add error boundary for better error handling
+/*   // Add error boundary for better error handling
   onError: (err, errorInfo) => {
     console.error('Next.js error:', err);
     console.error('Error info:', errorInfo);
-  },
+  }, */
 };
 
 module.exports = nextConfig;
