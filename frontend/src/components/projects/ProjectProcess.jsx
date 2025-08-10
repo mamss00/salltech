@@ -68,43 +68,51 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     return iconMap[iconName] || FaRocket
   }
 
-  // ✅ MISE À JOUR EN TEMPS RÉEL BASÉE SUR LE SCROLL
+  // ✅ MISE À JOUR EN TEMPS RÉEL BASÉE SUR LE SCROLL - LOGIQUE CORRIGÉE
   useEffect(() => {
     const unsubscribe = scrollYProgress.onChange((value) => {
       if (timelineInView) {
         // Mettre à jour l'état de scroll pour la réactivité du JSX
         setCurrentScrollProgress(value)
         
-        // Mettre à jour l'étape active discrète
-        const newActiveStep = Math.floor(value * steps.length)
-        if (newActiveStep !== activeStep && newActiveStep >= 0 && newActiveStep < steps.length) {
+        // ✅ CALCUL CORRIGÉ - Prendre en compte le résultat final
+        const totalSections = steps.length + 1 // +1 pour le résultat final
+        const sectionProgress = value * totalSections
+        
+        // Mettre à jour l'étape active (0 à steps.length-1)
+        const newActiveStep = Math.min(steps.length - 1, Math.floor(sectionProgress))
+        if (newActiveStep !== activeStep && newActiveStep >= 0) {
           setActiveStep(newActiveStep)
         }
         
-        // Mettre à jour la progression de ligne en continu
-        const continuousProgress = value * 100
-        setLineProgress(continuousProgress)
+        // ✅ PROGRESSION DE LIGNE SYNCHRONISÉE
+        // La ligne doit être complète quand on atteint le résultat final
+        const lineProgressValue = Math.min(100, (sectionProgress / steps.length) * 100)
+        setLineProgress(lineProgressValue)
         
-        console.log(`Scroll: ${Math.round(value * 100)}% → Étape ${newActiveStep + 1}/${steps.length}`)
+        console.log(`Scroll: ${Math.round(value * 100)}% → Section: ${Math.round(sectionProgress)} → Étape ${newActiveStep + 1}/${steps.length} → Ligne: ${Math.round(lineProgressValue)}%`)
       }
     })
     
     return unsubscribe
   }, [scrollYProgress, activeStep, timelineInView, steps.length])
 
-  // ✅ INITIALISATION QUAND LA TIMELINE DEVIENT VISIBLE
+  // ✅ INITIALISATION CORRIGÉE QUAND LA TIMELINE DEVIENT VISIBLE
   useEffect(() => {
     if (timelineInView && !hasStarted) {
       console.log('Timeline visible - mode scroll activé')
       setHasStarted(true)
       
-      // Initialiser selon la position actuelle
+      // Initialiser selon la position actuelle avec la nouvelle logique
       const currentValue = scrollYProgress.get()
       setCurrentScrollProgress(currentValue)
-      const currentProgress = currentValue * 100
-      const currentStep = Math.floor(currentValue * steps.length)
       
-      setLineProgress(currentProgress)
+      const totalSections = steps.length + 1
+      const sectionProgress = currentValue * totalSections
+      const currentStep = Math.min(steps.length - 1, Math.floor(sectionProgress))
+      const lineProgressValue = Math.min(100, (sectionProgress / steps.length) * 100)
+      
+      setLineProgress(lineProgressValue)
       setActiveStep(currentStep)
     }
   }, [timelineInView, hasStarted, scrollYProgress, steps.length])
@@ -236,12 +244,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             de la conception initiale au déploiement final.
           </motion.p>
 
-          {/* ✅ INDICATEUR DE SCROLL */}
+          {/* ✅ INDICATEUR DE SCROLL SIMPLIFIÉ */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.7 }}
-            className="mt-6 flex items-center justify-center gap-3 text-sm text-gray-500"
+            className="mt-8 flex items-center justify-center gap-3 text-sm text-gray-500"
           >
             <motion.div
               animate={{ y: [0, 5, 0] }}
@@ -255,107 +263,6 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
               />
             </motion.div>
             <span>Scrollez pour découvrir chaque étape progressivement</span>
-          </motion.div>
-
-          {/* Contrôles de lecture - ✅ MODE SCROLL */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={titleInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 1, delay: 0.8 }}
-            className="flex items-center justify-center gap-6 mt-8"
-          >
-            <motion.button
-              onClick={() => {
-                setIsAutoPlaying(!isAutoPlaying)
-                console.log('Toggle mode:', !isAutoPlaying ? 'Manuel' : 'Scroll')
-              }}
-              className="flex items-center gap-3 px-6 py-3 rounded-full bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              style={{
-                background: !isAutoPlaying 
-                  ? `linear-gradient(135deg, rgba(${colors.rgb}, 0.1), white)`
-                  : 'white',
-                borderColor: !isAutoPlaying ? colors.solid : '#e5e7eb'
-              }}
-            >
-              {!isAutoPlaying ? (
-                <FaPause className="w-4 h-4" style={{ color: colors.solid }} />
-              ) : (
-                <FaPlay className="w-4 h-4" style={{ color: colors.solid }} />
-              )}
-              <span className="text-sm font-medium" style={{ color: colors.solid }}>
-                {!isAutoPlaying ? 'Mode Manuel' : 'Mode Scroll'}
-              </span>
-            </motion.button>
-            
-            <div className="flex items-center gap-2">
-              <div className="text-sm text-gray-500">
-                Scroll: {Math.round(currentScrollProgress * 100)}% | Étape {activeStep + 1}/{steps.length}
-              </div>
-              
-              <div className="w-24 h-1 bg-gray-200 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full"
-                  style={{ backgroundColor: colors.solid }}
-                  animate={{ width: `${currentScrollProgress * 100}%` }}
-                  transition={{ duration: 0.2 }}
-                />
-              </div>
-            </div>
-
-            {/* Boutons navigation manuelle - ✅ ACTIFS SEULEMENT EN MODE MANUEL */}
-            <div className="flex gap-2">
-              <motion.button
-                onClick={() => {
-                  if (!isAutoPlaying) return // Seulement si mode manuel
-                  setActiveStep(prev => prev > 0 ? prev - 1 : steps.length - 1)
-                  setIsAutoPlaying(false)
-                }}
-                className={`w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center transition-all ${
-                  isAutoPlaying ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg cursor-pointer'
-                }`}
-                whileHover={isAutoPlaying ? {} : { scale: 1.1 }}
-                whileTap={isAutoPlaying ? {} : { scale: 0.9 }}
-                title={isAutoPlaying ? "Basculer en mode manuel pour naviguer" : "Étape précédente"}
-                disabled={isAutoPlaying}
-              >
-                <span className="text-xs font-bold text-gray-600">‹</span>
-              </motion.button>
-              
-              <motion.button
-                onClick={() => {
-                  if (!isAutoPlaying) return // Seulement si mode manuel
-                  setActiveStep(prev => (prev + 1) % steps.length)
-                  setIsAutoPlaying(false)
-                }}
-                className={`w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center transition-all ${
-                  isAutoPlaying ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg cursor-pointer'
-                }`}
-                whileHover={isAutoPlaying ? {} : { scale: 1.1 }}
-                whileTap={isAutoPlaying ? {} : { scale: 0.9 }}
-                title={isAutoPlaying ? "Basculer en mode manuel pour naviguer" : "Étape suivante"}
-                disabled={isAutoPlaying}
-              >
-                <span className="text-xs font-bold text-gray-600">›</span>
-              </motion.button>
-
-              <motion.button
-                onClick={() => {
-                  setActiveStep(0)
-                  setIsAutoPlaying(true)
-                  console.log('Reset vers mode scroll')
-                  // Scroll vers le haut de la section
-                  sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                }}
-                className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                title="Recommencer depuis le début"
-              >
-                <span className="text-xs font-bold text-gray-600">↻</span>
-              </motion.button>
-            </div>
           </motion.div>
         </div>
 
@@ -373,22 +280,22 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             {/* Ligne principale continue */}
             <div className="absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 w-1 bg-gray-200 rounded-full z-0" />
             
-            {/* Ligne de progression animée - ✅ RÉACTIVE AU SCROLL */}
+            {/* Ligne de progression animée - ✅ SYNCHRONISÉE */}
             <motion.div 
               className="absolute left-1/2 top-0 transform -translate-x-1/2 w-1 rounded-full origin-top z-5"
               style={{ 
                 background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
-                height: `${currentScrollProgress * 100}%` // ✅ Utilise l'état réactif
+                height: `${lineProgress}%` // ✅ Utilise lineProgress calculé
               }}
               transition={{ duration: 0.1, ease: "easeOut" }}
             />
 
-            {/* Point pulse qui suit le scroll progress */}
+            {/* Point pulse qui suit la progression de ligne */}
             <motion.div
               className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full z-15"
               style={{ 
                 backgroundColor: colors.solid,
-                top: `${currentScrollProgress * 100}%`, // ✅ Utilise l'état réactif
+                top: `${lineProgress}%`, // ✅ Utilise lineProgress calculé
                 boxShadow: `0 0 15px ${colors.solid}`,
                 border: '2px solid white'
               }}
@@ -403,11 +310,17 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
               const IconComponent = getIcon(step.icone)
               const isLeft = index % 2 === 0
               
-              // ✅ ACTIVATION PROGRESSIVE BASÉE SUR LE SCROLL
-              const stepProgress = currentScrollProgress * steps.length
-              const isActive = stepProgress >= index
-              const isCurrentStep = Math.floor(stepProgress) === index
-              const stepOpacity = Math.min(1, Math.max(0.3, stepProgress - index + 1))
+              // ✅ ACTIVATION BASÉE SUR LA NOUVELLE LOGIQUE
+              const totalSections = steps.length + 1
+              const sectionProgress = currentScrollProgress * totalSections
+              const isActive = sectionProgress >= index
+              const isCurrentStep = Math.floor(sectionProgress) === index
+              
+              // ✅ OPACITÉ PROGRESSIVE AMÉLIORÉE
+              const baseOpacity = 0.4
+              const stepOpacity = isActive 
+                ? Math.min(1, baseOpacity + (sectionProgress - index) * 0.6)
+                : baseOpacity
               
               return (
                 <motion.div
@@ -612,22 +525,22 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
               {/* Ligne principale mobile */}
               <div className="absolute left-8 top-0 bottom-0 w-1 bg-gray-200 rounded-full z-0" />
               
-              {/* Ligne de progression mobile - ✅ BASÉE SUR LE SCROLL */}
+              {/* Ligne de progression mobile - ✅ SYNCHRONISÉE */}
               <motion.div 
                 className="absolute left-8 top-0 w-1 rounded-full origin-top z-5"
                 style={{ 
                   background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
-                  height: `${currentScrollProgress * 100}%` // ✅ Utilise l'état réactif
+                  height: `${lineProgress}%` // ✅ Utilise lineProgress calculé
                 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               />
 
-              {/* Point pulse mobile - ✅ SUIT LE SCROLL FLUIDE */}
+              {/* Point pulse mobile - ✅ SYNCHRONISÉ */}
               <motion.div
                 className="absolute left-8 transform -translate-x-1/2 w-3 h-3 rounded-full z-15"
                 style={{ 
                   backgroundColor: colors.solid,
-                  top: `${currentScrollProgress * 100}%`, // ✅ Position continue basée sur le scroll
+                  top: `${lineProgress}%`, // ✅ Utilise lineProgress calculé
                   boxShadow: `0 0 12px ${colors.solid}`,
                   border: '1px solid white'
                 }}
@@ -642,10 +555,16 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 {steps.map((step, index) => {
                   const IconComponent = getIcon(step.icone)
                   
-                  // ✅ ACTIVATION PROGRESSIVE BASÉE SUR LE SCROLL (mobile)
-                  const stepProgress = currentScrollProgress * steps.length
-                  const isActive = stepProgress >= index
-                  const stepOpacity = Math.min(1, Math.max(0.3, stepProgress - index + 1))
+                  // ✅ ACTIVATION BASÉE SUR LA NOUVELLE LOGIQUE (mobile)
+                  const totalSections = steps.length + 1
+                  const sectionProgress = currentScrollProgress * totalSections
+                  const isActive = sectionProgress >= index
+                  
+                  // ✅ OPACITÉ PROGRESSIVE AMÉLIORÉE
+                  const baseOpacity = 0.4
+                  const stepOpacity = isActive 
+                    ? Math.min(1, baseOpacity + (sectionProgress - index) * 0.6)
+                    : baseOpacity
                   
                   return (
                     <motion.div
