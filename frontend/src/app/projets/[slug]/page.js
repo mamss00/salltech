@@ -2,11 +2,11 @@
 import { notFound } from 'next/navigation'
 
 // Composants Enhanced de niveau premium
-import EnhancedProjectHero from '@/components/projects/EnhancedProjectHero'
-import EnhancedProjectIntroduction from '@/components/projects/EnhancedProjectIntroduction'
+import EnhancedProjectHero from '@/components/projects/ProjectHero'
+import EnhancedProjectIntroduction from '@/components/projects/ProjectIntroduction'
 import ProjectTechnologies from '@/components/projects/ProjectTechnologies' // Version claire déjà corrigée
 import ProjectGallery from '@/components/projects/ProjectGallery' // Version optimisée
-import EnhancedProjectCTA from '@/components/projects/EnhancedProjectCTA'
+import EnhancedProjectCTA from '@/components/projects/ProjectCTA'
 import ProjectTestimonial from '@/components/projects/ProjectTestimonial'
 import ProjectMetrics from '@/components/projects/ProjectMetrics'
 
