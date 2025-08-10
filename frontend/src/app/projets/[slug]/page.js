@@ -1,7 +1,7 @@
-// frontend/src/app/projets/[slug]/page.js - VERSION SANS RÉPÉTITIONS
+// frontend/src/app/projets/[slug]/page.js - VERSION SANS DOUBLE FOOTER
 import { notFound } from 'next/navigation'
-import Header from '@/components/Header'
-import Footer from '@/components/Footer'
+// import Header from '@/components/Header'
+// ❌ NE PAS IMPORTER Footer ici car il est déjà dans le layout
 
 // Composants projet
 import ProjectHero from '@/components/projects/ProjectHero'
@@ -81,54 +81,13 @@ export default async function ProjetPage({ params }) {
         ? 'red'
         : 'blue'
 
-  // SÉPARER les caractéristiques et technologies pour éviter les doublons
-  const separateContent = () => {
-    let cleanCaracteristiques = []
-    let cleanTechnologies = []
-    
-    // Filtrer les caractéristiques (exclure celles qui sont des technologies)
-    if (caracteristiques && Array.isArray(caracteristiques)) {
-      cleanCaracteristiques = caracteristiques.filter(carac => {
-        if (!carac.titre) return false
-        
-        // Exclure si c'est clairement une technologie
-        const techKeywords = ['react', 'next', 'node', 'php', 'javascript', 'typescript', 'vue', 'angular', 'laravel', 'wordpress', 'mysql', 'mongodb', 'api', 'rest', 'graphql']
-        const isCaracTech = techKeywords.some(keyword => 
-          carac.titre.toLowerCase().includes(keyword) || 
-          (carac.description && carac.description.toLowerCase().includes(keyword))
-        )
-        
-        return !isCaracTech
-      })
-    }
-    
-    // Utiliser les technologies dédiées
-    if (technologies && Array.isArray(technologies)) {
-      cleanTechnologies = technologies
-    }
-    
-    return { cleanCaracteristiques, cleanTechnologies }
-  }
-
-  const { cleanCaracteristiques, cleanTechnologies } = separateContent()
-
   // Préparer les images pour la galerie (éviter les doublons)
-  const prepareGalleryImages = () => {
-    const images = []
-    
-    // Ajouter les images additionnelles seulement
-    if (Imagesadditionnelles && Array.isArray(Imagesadditionnelles)) {
-      images.push(...Imagesadditionnelles.filter(Boolean))
-    }
-    
-    return images
-  }
-
-  const galleryImages = prepareGalleryImages()
+  const galleryImages = Imagesadditionnelles && Array.isArray(Imagesadditionnelles) 
+    ? Imagesadditionnelles.filter(Boolean) 
+    : []
 
   return (
     <>
-      <Header />
       
       <main className="pt-24">
         {/* Hero du projet */}
@@ -143,17 +102,17 @@ export default async function ProjetPage({ params }) {
           color={color}
         />
         
-        {/* Introduction - AVEC caractéristiques seulement (pas technologies) */}
+        {/* Introduction - Sans les features pour éviter répétition */}
         <ProjectIntroduction 
           content={introduction || Description}
-          features={cleanCaracteristiques} // Caractéristiques nettoyées
+          features={null} // ← Retirer pour éviter répétition avec technologies
           color={color}
         />
         
-        {/* Technologies - Section séparée uniquement pour les vraies technologies */}
-        {cleanTechnologies && cleanTechnologies.length > 0 && (
+        {/* Technologies - Design clair maintenant */}
+        {technologies && technologies.length > 0 && (
           <ProjectTechnologies 
-            technologies={cleanTechnologies}
+            technologies={technologies}
             color={color}
           />
         )}
@@ -167,7 +126,7 @@ export default async function ProjetPage({ params }) {
           />
         )}
         
-        {/* CTA final */}
+        {/* CTA final - Design clair maintenant */}
         <ProjectCTA 
           projectName={titreFinal}
           projectUrl={URLduprojet}
@@ -175,7 +134,7 @@ export default async function ProjetPage({ params }) {
         />
       </main>
       
-      <Footer />
+      {/* ❌ NE PAS INCLURE <Footer /> ici car il est déjà dans le layout */}
     </>
   )
 }

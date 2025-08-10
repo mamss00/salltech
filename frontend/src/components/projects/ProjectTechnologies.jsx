@@ -1,4 +1,4 @@
-// frontend/src/components/projects/ProjectTechnologies.jsx - VERSION CORRIGÉE
+// frontend/src/components/projects/ProjectTechnologies.jsx - VERSION CLAIRE
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -19,7 +19,7 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [techRef, techInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
-  // CORRECTION 1: Dédoublonner les technologies
+  // Dédoublonner les technologies
   const uniqueTechnologies = (() => {
     if (!technologies || !Array.isArray(technologies)) return []
     
@@ -27,7 +27,6 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
     return technologies.filter(tech => {
       if (!tech || !tech.nom) return false
       
-      // Utiliser le nom comme clé unique
       const key = tech.nom.toLowerCase().trim()
       if (seen.has(key)) return false
       
@@ -56,37 +55,52 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
     }
   }
 
-  // CORRECTION 2: Ne pas afficher si pas de technologies
   if (!uniqueTechnologies || uniqueTechnologies.length === 0) return null
 
   return (
     <motion.section 
       ref={sectionRef}
       style={{ opacity: sectionOpacity }}
-      className="py-20 bg-gray-900 text-white relative overflow-hidden"
+      className="py-20 bg-gradient-to-br from-white to-gray-50 relative overflow-hidden"
     >
-      {/* Effet de particules techniques - RÉDUIT */}
+      {/* Éléments décoratifs légers */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 15 }).map((_, i) => (
+        {/* Motifs géométriques légers */}
+        <div className="absolute top-10 left-10 w-32 h-32 opacity-5">
+          <svg viewBox="0 0 100 100" className="w-full h-full">
+            <circle cx="50" cy="50" r="2" fill={`var(--color-${color})`} />
+            <circle cx="30" cy="30" r="1" fill={`var(--color-${color})`} />
+            <circle cx="70" cy="70" r="1.5" fill={`var(--color-${color})`} />
+            <path d="M30,30 L50,50 L70,70" stroke={`var(--color-${color})`} strokeWidth="0.5" fill="none" />
+          </svg>
+        </div>
+        
+        <div className="absolute bottom-20 right-20 w-24 h-24 opacity-5">
+          <svg viewBox="0 0 100 100" className="w-full h-full">
+            <rect x="40" y="40" width="20" height="20" fill="none" stroke={`var(--color-${color})`} strokeWidth="1" />
+            <rect x="20" y="20" width="60" height="60" fill="none" stroke={`var(--color-${color})`} strokeWidth="0.5" />
+          </svg>
+        </div>
+        
+        {/* Particules flottantes */}
+        {Array.from({ length: 8 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute text-gray-700 font-mono text-xs opacity-20"
+            className={`absolute w-2 h-2 bg-${color}/10 rounded-full`}
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -30, 0],
-              opacity: [0.1, 0.2, 0.1],
+              y: [0, -20, 0],
+              opacity: [0.1, 0.3, 0.1],
             }}
             transition={{
-              duration: 8 + Math.random() * 4,
+              duration: 6 + Math.random() * 4,
               repeat: Infinity,
               delay: Math.random() * 3,
             }}
-          >
-            {i % 4 === 0 ? '{' : i % 4 === 1 ? '}' : i % 4 === 2 ? '<>' : '/>'}
-          </motion.div>
+          />
         ))}
       </div>
 
@@ -107,7 +121,7 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
             initial={{ opacity: 0, y: 30 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-3xl md:text-4xl font-bold mb-6"
+            className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
           >
             Technologies &{' '}
             <span className={`text-${color}`}>Expertise</span>
@@ -124,13 +138,13 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
             initial={{ opacity: 0, y: 20 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg text-gray-300 max-w-3xl mx-auto"
+            className="text-lg text-gray-600 max-w-3xl mx-auto"
           >
             Les technologies et outils utilisés pour réaliser ce projet exceptionnel.
           </motion.p>
         </div>
         
-        {/* CORRECTION 3: UNE SEULE section d'affichage - Grille propre */}
+        {/* Grille des technologies - Design clair et moderne */}
         <motion.div
           ref={techRef}
           variants={containerVariants}
@@ -140,24 +154,24 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
         >
           {uniqueTechnologies.map((tech, index) => (
             <motion.div
-              key={`tech-${tech.nom}-${index}`} // Clé unique
+              key={`tech-${tech.nom}-${index}`}
               variants={itemVariants}
               className="group"
             >
-              <div className="p-6 bg-gray-800/30 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-gray-600 hover:bg-gray-800/50 transition-all duration-300">
+              <div className="p-6 bg-white rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300">
                 <div className="flex items-center gap-4 mb-4">
                   <div className={`w-3 h-3 bg-${color} rounded-full group-hover:animate-pulse`}></div>
-                  <h4 className="text-lg font-semibold text-white">
+                  <h4 className="text-lg font-semibold text-gray-900">
                     {tech.nom}
                   </h4>
                 </div>
                 
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-600 text-sm leading-relaxed mb-4">
                   {tech.description || 'Technologie utilisée dans ce projet'}
                 </p>
                 
                 {/* Barre de progression décorative */}
-                <div className="mt-4 w-full h-1 bg-gray-700 rounded-full overflow-hidden">
+                <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
                   <motion.div
                     className={`h-full bg-${color}`}
                     initial={{ width: 0 }}
@@ -174,16 +188,16 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
           ))}
         </motion.div>
         
-        {/* Badge de performance - CORRECTION 4: Afficher le vrai nombre */}
+        {/* Badge de performance moderne */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={techInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 1 }}
           className="text-center mt-16"
         >
-          <div className="inline-flex items-center gap-4 px-8 py-4 bg-gray-800/50 backdrop-blur-sm rounded-full border border-gray-700">
+          <div className={`inline-flex items-center gap-4 px-8 py-4 bg-${color}/10 rounded-full border border-${color}/20`}>
             <div className={`w-3 h-3 bg-${color} rounded-full animate-pulse`}></div>
-            <span className="text-gray-300 font-medium">
+            <span className="text-gray-700 font-medium">
               {uniqueTechnologies.length} {uniqueTechnologies.length === 1 ? 'technologie maîtrisée' : 'technologies maîtrisées'}
             </span>
             <div className={`w-3 h-3 bg-${color} rounded-full animate-pulse`}></div>
