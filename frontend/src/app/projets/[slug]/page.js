@@ -1,7 +1,9 @@
-// frontend/src/app/projets/[slug]/page.js - VERSION CLEAN
+// frontend/src/app/projets/[slug]/page.js - VERSION SANS RÉPÉTITIONS
 import { notFound } from 'next/navigation'
+import Header from '@/components/Header'
+import Footer from '@/components/Footer'
 
-// Composants projet seulement
+// Composants projet
 import ProjectHero from '@/components/projects/ProjectHero'
 import ProjectIntroduction from '@/components/projects/ProjectIntroduction'
 import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
@@ -79,50 +81,101 @@ export default async function ProjetPage({ params }) {
         ? 'red'
         : 'blue'
 
+  // SÉPARER les caractéristiques et technologies pour éviter les doublons
+  const separateContent = () => {
+    let cleanCaracteristiques = []
+    let cleanTechnologies = []
+    
+    // Filtrer les caractéristiques (exclure celles qui sont des technologies)
+    if (caracteristiques && Array.isArray(caracteristiques)) {
+      cleanCaracteristiques = caracteristiques.filter(carac => {
+        if (!carac.titre) return false
+        
+        // Exclure si c'est clairement une technologie
+        const techKeywords = ['react', 'next', 'node', 'php', 'javascript', 'typescript', 'vue', 'angular', 'laravel', 'wordpress', 'mysql', 'mongodb', 'api', 'rest', 'graphql']
+        const isCaracTech = techKeywords.some(keyword => 
+          carac.titre.toLowerCase().includes(keyword) || 
+          (carac.description && carac.description.toLowerCase().includes(keyword))
+        )
+        
+        return !isCaracTech
+      })
+    }
+    
+    // Utiliser les technologies dédiées
+    if (technologies && Array.isArray(technologies)) {
+      cleanTechnologies = technologies
+    }
+    
+    return { cleanCaracteristiques, cleanTechnologies }
+  }
+
+  const { cleanCaracteristiques, cleanTechnologies } = separateContent()
+
+  // Préparer les images pour la galerie (éviter les doublons)
+  const prepareGalleryImages = () => {
+    const images = []
+    
+    // Ajouter les images additionnelles seulement
+    if (Imagesadditionnelles && Array.isArray(Imagesadditionnelles)) {
+      images.push(...Imagesadditionnelles.filter(Boolean))
+    }
+    
+    return images
+  }
+
+  const galleryImages = prepareGalleryImages()
+
   return (
-    <main className="pt-24">
-      {/* Hero du projet - SIMPLIFIÉ */}
-      <ProjectHero 
-        title={titreFinal}
-        category={Categorie}
-        description={resumeFinal}
-        image={Imageprincipale}
-        client={Client}
-        date={Datederealisation}
-        projectUrl={URLduprojet}
-        color={color}
-      />
+    <>
+      <Header />
       
-      {/* Contenu principal */}
-      <ProjectIntroduction 
-        content={introduction || Description}
-        features={caracteristiques}
-        color={color}
-      />
-      
-      {/* Technologies - seulement si il y en a */}
-      {technologies && technologies.length > 0 && (
-        <ProjectTechnologies 
-          technologies={technologies}
+      <main className="pt-24">
+        {/* Hero du projet */}
+        <ProjectHero 
+          title={titreFinal}
+          category={Categorie}
+          description={resumeFinal}
+          image={Imageprincipale}
+          client={Client}
+          date={Datederealisation}
+          projectUrl={URLduprojet}
           color={color}
         />
-      )}
-      
-      {/* Galerie - seulement si il y a plusieurs images */}
-      {Imagesadditionnelles && Imagesadditionnelles.length > 0 && (
-        <ProjectGallery 
-          images={[Imageprincipale, ...Imagesadditionnelles].filter(Boolean)}
-          projectTitle={titreFinal}
+        
+        {/* Introduction - AVEC caractéristiques seulement (pas technologies) */}
+        <ProjectIntroduction 
+          content={introduction || Description}
+          features={cleanCaracteristiques} // Caractéristiques nettoyées
           color={color}
         />
-      )}
+        
+        {/* Technologies - Section séparée uniquement pour les vraies technologies */}
+        {cleanTechnologies && cleanTechnologies.length > 0 && (
+          <ProjectTechnologies 
+            technologies={cleanTechnologies}
+            color={color}
+          />
+        )}
+        
+        {/* Galerie - seulement s'il y a des images additionnelles */}
+        {galleryImages.length > 0 && (
+          <ProjectGallery 
+            images={galleryImages}
+            projectTitle={titreFinal}
+            color={color}
+          />
+        )}
+        
+        {/* CTA final */}
+        <ProjectCTA 
+          projectName={titreFinal}
+          projectUrl={URLduprojet}
+          color={color}
+        />
+      </main>
       
-      {/* CTA final - SIMPLIFIÉ */}
-      <ProjectCTA 
-        projectName={titreFinal}
-        projectUrl={URLduprojet}
-        color={color}
-      />
-    </main>
+      <Footer />
+    </>
   )
 }
