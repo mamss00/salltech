@@ -19,6 +19,8 @@
     "@strapi/plugin-users-permissions": "5.11.3",
     "@strapi/strapi": "5.11.3",
     "mysql2": "3.9.8",
+    "playwright": "^1.54.2",
+    "puppeteer": "^24.16.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
@@ -33,5 +35,10 @@
   },
   "strapi": {
     "uuid": "9701070d-15c6-4176-96b7-069854f5a9ee"
-  }
+  },
+  "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
 }

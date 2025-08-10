@@ -18,7 +18,8 @@ import ProjectProcess from '@/components/projects/ProjectProcess'        // ✅ 
 import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
 import ProjectTestimonial from '@/components/projects/ProjectTestimonial'
 import ProjectRelated from '@/components/projects/ProjectRelated'       
-import ProjectCTA from '@/components/projects/ProjectCTA'               
+import ProjectCTA from '@/components/projects/ProjectCTA'
+import ProjectGallery from '@/components/projects/ProjectGallery'               
 
 import { getProjetBySlug, getAllProjetSlugs } from '@/utils/api'
 
@@ -186,6 +187,14 @@ export default async function ProjetPage({ params }) {
           features={keyFeatures} // ✅ Seulement les 3 premières
           color={color}
         />
+        {/* Galerie d'images */}
+        {Imagesadditionnelles && Imagesadditionnelles.length > 0 && (
+        <ProjectGallery 
+            images={Imagesadditionnelles}
+            projectTitle={titreFinal}
+            color={color}
+        />
+        )}
 
         {/* 3. Notre processus pour ce projet */}
         <ProjectProcess 
