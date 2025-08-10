@@ -1,4 +1,4 @@
-// frontend/src/components/projects/EnhancedProjectCTA.jsx
+// frontend/src/components/projects/EnhancedProjectCTA.jsx - VERSION COMPLÈTE CORRIGÉE
 'use client'
 
 import { useRef, useEffect } from 'react'
@@ -36,6 +36,18 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
     red: '231, 76, 60'
   }
   const mainColorRGB = colorRGB[color] || colorRGB.blue
+
+  // Fonction pour obtenir les styles de couleurs
+  const getColorStyles = (colorName) => {
+    const colorMap = {
+      blue: { solid: '#3498db', rgb: '52, 152, 219' },
+      purple: { solid: '#9b59b6', rgb: '155, 89, 182' },
+      red: { solid: '#e74c3c', rgb: '231, 76, 60' }
+    }
+    return colorMap[colorName] || colorMap.blue
+  }
+
+  const colors = getColorStyles(color)
 
   // Animation séquentielle sophistiquée
   useEffect(() => {
@@ -97,11 +109,42 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
     }
   ]
 
+  // Styles pour les backgrounds - CORRIGÉS
+  const sectionBackgroundStyle = {
+    background: `linear-gradient(135deg, rgba(${mainColorRGB}, 0.05) 0%, #ffffff 50%, rgba(155, 89, 182, 0.05) 100%)`
+  }
+
+  const badgeBackgroundStyle = {
+    background: `linear-gradient(90deg, rgba(${mainColorRGB}, 0.1) 0%, #ffffff 50%, rgba(155, 89, 182, 0.1) 100%)`,
+    border: `1px solid rgba(${mainColorRGB}, 0.2)`
+  }
+
+  const iconGradientStyle = {
+    background: `linear-gradient(135deg, ${colors.solid} 0%, #9b59b6 100%)`
+  }
+
+  const underlineGradientStyle = {
+    background: `linear-gradient(90deg, rgba(${mainColorRGB}, 0.3) 0%, rgba(155, 89, 182, 0.3) 50%, rgba(231, 76, 60, 0.3) 100%)`
+  }
+
+  const linkStyle = {
+    color: colors.solid,
+    borderColor: `rgba(${mainColorRGB}, 0.2)`
+  }
+
+  const linkHoverStyle = {
+    borderColor: `rgba(${mainColorRGB}, 0.4)`,
+    backgroundColor: `rgba(${mainColorRGB}, 0.05)`
+  }
+
   return (
     <motion.section 
       ref={sectionRef}
-      style={{ opacity: sectionOpacity }}
-      className={`py-24 bg-gradient-to-br from-${color}/5 via-white to-purple/5 relative overflow-hidden`}
+      style={{ 
+        opacity: sectionOpacity,
+        ...sectionBackgroundStyle
+      }}
+      className="py-24 relative overflow-hidden"
     >
       {/* Fond décoratif premium */}
       <div className="absolute inset-0 overflow-hidden">
@@ -169,19 +212,28 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
           
           {/* En-tête sophistiqué */}
           <div className="text-center mb-16">
-            {/* Badge premium animé */}
+            {/* Badge premium animé - CORRIGÉ */}
             <motion.div
               initial={{ opacity: 0, y: -30, scale: 0.8 }}
               animate={badgeControls}
               className="inline-block mb-8"
             >
-              <div className={`px-8 py-4 bg-gradient-to-r from-${color}/10 via-white to-purple/10 rounded-full border border-${color}/20 backdrop-blur-sm shadow-lg`}>
+              <div 
+                className="px-8 py-4 rounded-full backdrop-blur-sm shadow-lg"
+                style={badgeBackgroundStyle}
+              >
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 bg-gradient-to-br from-${color} to-purple rounded-full flex items-center justify-center shadow-lg`}>
+                  <div 
+                    className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+                    style={iconGradientStyle}
+                  >
                     <FaRocket className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-left">
-                    <p className={`text-${color} font-bold text-sm uppercase tracking-wider`}>
+                    <p 
+                      className="font-bold text-sm uppercase tracking-wider"
+                      style={{ color: colors.solid }}
+                    >
                       Prêt pour le prochain défi ?
                     </p>
                     <p className="text-gray-600 text-xs">
@@ -192,17 +244,18 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
               </div>
             </motion.div>
             
-            {/* Titre sophistiqué */}
+            {/* Titre sophistiqué - CORRIGÉ */}
             <motion.h2
               initial={{ opacity: 0, y: 30 }}
               animate={titleControls}
               className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight"
             >
               Un projet similaire{' '}
-              <span className={`text-${color} relative`}>
+              <span className="relative" style={{ color: colors.solid }}>
                 en tête ?
                 <motion.div
-                  className={`absolute -bottom-3 left-0 h-2 bg-gradient-to-r from-${color}/30 via-purple/30 to-red/30 rounded-full`}
+                  className="absolute -bottom-3 left-0 h-2 rounded-full"
+                  style={underlineGradientStyle}
                   initial={{ width: 0 }}
                   animate={contentInView ? { width: "100%" } : {}}
                   transition={{ duration: 1, delay: 1 }}
@@ -250,54 +303,84 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
               </CTAButton>
             </div>
             
-            {/* Lien externe sophistiqué */}
+            {/* Lien externe sophistiqué - CORRIGÉ */}
             {projectUrl && (
               <Link
                 href={projectUrl}
                 target="_blank"
-                className={`inline-flex items-center gap-3 text-${color} hover:text-${color}/80 transition-all font-medium px-6 py-3 rounded-xl border-2 border-${color}/20 hover:border-${color}/40 hover:bg-${color}/5 backdrop-blur-sm`}
+                className="inline-flex items-center gap-3 transition-all font-medium px-6 py-3 rounded-xl border-2 backdrop-blur-sm"
+                style={linkStyle}
+                onMouseEnter={(e) => {
+                  Object.assign(e.target.style, linkHoverStyle)
+                }}
+                onMouseLeave={(e) => {
+                  Object.assign(e.target.style, linkStyle)
+                }}
               >
                 <FaExternalLinkAlt className="w-4 h-4" />
                 <span>Voir le site en ligne</span>
-                <div className={`w-2 h-2 bg-${color} rounded-full animate-pulse`}></div>
+                <div 
+                  className="w-2 h-2 rounded-full animate-pulse"
+                  style={{ backgroundColor: colors.solid }}
+                ></div>
               </Link>
             )}
           </motion.div>
           
-          {/* Statistiques impressionnantes */}
+          {/* Statistiques impressionnantes - CORRIGÉES */}
           <motion.div
             ref={statsRef}
             initial={{ opacity: 0, y: 50 }}
             animate={statsControls}
             className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
           >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                animate={statsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
-              >
-                <div className={`w-16 h-16 bg-gradient-to-br from-${stat.color}/10 to-${stat.color}/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-${stat.color}/20`}>
-                  <stat.icon className={`w-8 h-8 text-${stat.color}`} />
-                </div>
-                <div className={`text-3xl font-bold text-${stat.color} mb-2`}>
-                  {stat.number}
-                </div>
-                <div className="text-gray-600 font-medium">
-                  {stat.label}
-                </div>
-              </motion.div>
-            ))}
+            {stats.map((stat, index) => {
+              const statColors = getColorStyles(stat.color)
+              const iconBgStyle = {
+                background: `linear-gradient(135deg, rgba(${colorRGB[stat.color]}, 0.1) 0%, rgba(${colorRGB[stat.color]}, 0.05) 100%)`,
+                border: `1px solid rgba(${colorRGB[stat.color]}, 0.2)`
+              }
+              
+              return (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={statsInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
+                >
+                  <div 
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                    style={iconBgStyle}
+                  >
+                    <stat.icon 
+                      className="w-8 h-8"
+                      style={{ color: statColors.solid }}
+                    />
+                  </div>
+                  <div 
+                    className="text-3xl font-bold mb-2"
+                    style={{ color: statColors.solid }}
+                  >
+                    {stat.number}
+                  </div>
+                  <div className="text-gray-600 font-medium">
+                    {stat.label}
+                  </div>
+                </motion.div>
+              )
+            })}
           </motion.div>
           
-          {/* Contact rapide sophistiqué */}
+          {/* Contact rapide sophistiqué - CORRIGÉ */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="bg-gradient-to-r from-white via-gray-50 to-white p-8 rounded-2xl border border-gray-200 shadow-lg"
+            className="p-8 rounded-2xl border border-gray-200 shadow-lg"
+            style={{
+              background: `linear-gradient(90deg, #ffffff 0%, #f9f9f9 50%, #ffffff 100%)`
+            }}
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
@@ -312,7 +395,17 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
               <div className="flex flex-col sm:flex-row items-center gap-4">
                 <a 
                   href="mailto:contact@sall.technology" 
-                  className={`inline-flex items-center gap-3 text-${color} hover:text-${color}/80 transition-colors font-medium px-6 py-3 rounded-xl border border-${color}/20 hover:bg-${color}/5 backdrop-blur-sm flex-1 justify-center`}
+                  className="inline-flex items-center gap-3 transition-colors font-medium px-6 py-3 rounded-xl border backdrop-blur-sm flex-1 justify-center"
+                  style={{
+                    color: colors.solid,
+                    borderColor: `rgba(${mainColorRGB}, 0.2)`
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = `rgba(${mainColorRGB}, 0.05)`
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = 'transparent'
+                  }}
                 >
                   <FaEnvelope className="w-4 h-4" />
                   <span>contact@sall.technology</span>
@@ -320,7 +413,7 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
                 
                 <a 
                   href="tel:+22233445566" 
-                  className={`inline-flex items-center gap-3 text-purple hover:text-purple/80 transition-colors font-medium px-6 py-3 rounded-xl border border-purple/20 hover:bg-purple/5 backdrop-blur-sm`}
+                  className="inline-flex items-center gap-3 text-purple hover:text-purple/80 transition-colors font-medium px-6 py-3 rounded-xl border border-purple/20 hover:bg-purple/5 backdrop-blur-sm"
                 >
                   <FaPhone className="w-4 h-4" />
                   <span>+222 33 44 55 66</span>
