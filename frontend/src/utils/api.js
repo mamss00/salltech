@@ -1,29 +1,41 @@
+// frontend/src/utils/api.js - VERSION CORRIGÉE AVEC TOUS LES EXPORTS
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://backend.sall.technology';
 
-export function titreToSlug(titre) {
-  if (!titre) return '';
+// Helper function pour créer un slug à partir d'un titre
+function titreToSlug(titre) {
+  if (!titre || typeof titre !== 'string') return 'projet';
   return titre
     .toLowerCase()
-    .normalize("NFD").replace(/[̀-ͯ]/g, "")
-    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/[àáâãäå]/g, 'a')
+    .replace(/[èéêë]/g, 'e')
+    .replace(/[ìíîï]/g, 'i')
+    .replace(/[òóôõö]/g, 'o')
+    .replace(/[ùúûü]/g, 'u')
+    .replace(/[ç]/g, 'c')
+    .replace(/[^a-z0-9]/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
 }
 
+// Helper function pour ajouter un timestamp anti-cache
 function addNoCacheParam(url) {
   const separator = url.includes('?') ? '&' : '?';
   return `${url}${separator}timestamp=${Date.now()}`;
 }
 
+// Helper function pour normaliser les attributs Strapi
 function normalizeAttributes(entry) {
   if (!entry?.attributes) return entry || {};
   
   const attrs = { ...entry.attributes };
   
+  // Normaliser le SEO
   if (attrs.seo?.data) {
     attrs.seo = attrs.seo.data.attributes || {};
   }
   
+  // Normaliser les projets liés
   if (attrs.projets_lies?.data) {
     attrs.projets_lies = attrs.projets_lies.data.map(p => ({
       id: p.id || Math.random(),
@@ -31,6 +43,7 @@ function normalizeAttributes(entry) {
     }));
   }
   
+  // Normaliser les images
   if (attrs.Image?.data) {
     if (Array.isArray(attrs.Image.data)) {
       attrs.Image = attrs.Image.data.map(img => ({
@@ -45,6 +58,7 @@ function normalizeAttributes(entry) {
     }
   }
   
+  // Normaliser les technologies
   if (attrs.technologies?.data) {
     attrs.technologies = attrs.technologies.data.map(tech => {
       const techData = { id: tech.id || Math.random(), ...tech.attributes || {} };
@@ -70,8 +84,65 @@ function normalizeAttributes(entry) {
   return { id: entry.id || Math.random(), ...attrs };
 }
 
-// --------- Projects ---------
-// frontend/src/utils/api.js - SECTION PROJETS MISE À JOUR
+// ========== PROJETS ==========
+
+export async function getProjects() {
+  try {
+    let url = `${API_URL}/api/projets?populate=*`;
+    url = addNoCacheParam(url);
+    
+    const res = await fetch(url, {
+      headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(10000)
+    });
+    
+    if (!res.ok) {
+      console.warn(`API request failed: ${res.status} ${res.statusText}`);
+      return [];
+    }
+    
+    const data = await res.json();
+    
+    if (!data.data || !Array.isArray(data.data)) {
+      console.warn('API returned invalid data structure');
+      return [];
+    }
+    
+    return data.data.map(project => {
+      const normalized = normalizeAttributes(project);
+      return {
+        ...normalized,
+        Titre: normalized.Titre || 'Projet sans titre',
+        Resume: normalized.Resume || '',
+        Categorie: normalized.Categorie || 'Non catégorisé',
+        Datederealisation: normalized.Datederealisation || new Date().toISOString(),
+        slug: normalized.slug || titreToSlug(normalized.Titre),
+        technologies: normalized.technologies || [],
+        caracteristiques: normalized.caracteristiques || [],
+        Description: Array.isArray(normalized.Description) ? normalized.Description : []
+      };
+    });
+  } catch (e) {
+    console.error("getProjects error:", e.message);
+    if (process.env.NODE_ENV === 'production' || process.env.CI) {
+      console.warn('Returning empty projects array due to API error during build');
+      return [];
+    }
+    return [];
+  }
+}
+
+export async function getAllProjetSlugs() {
+  try {
+    const projets = await getProjects();
+    return projets
+      .filter(projet => projet.slug && typeof projet.slug === 'string')
+      .map(projet => ({ slug: projet.slug }));
+  } catch (error) {
+    console.error("getAllProjetSlugs error:", error);
+    return [];
+  }
+}
 
 export async function getProjetBySlug(slug) {
   if (!slug || typeof slug !== 'string') return null;
@@ -83,12 +154,7 @@ export async function getProjetBySlug(slug) {
               `&populate[technologies]=true` +
               `&populate[caracteristiques]=true` +
               `&populate[services]=true` +
-              `&populate[seo]=true` +
-              // ✅ NOUVEAUX CHAMPS AJOUTÉS
-              `&populate[methodologie]=true` +          // Processus du projet
-              `&populate[resultats]=true` +             // Résultats chiffrés  
-              `&populate[equipe]=true`;                 // Équipe projet
-    
+              `&populate[seo]=true`;
     url = addNoCacheParam(url);
     
     const res = await fetch(url, {
@@ -113,13 +179,7 @@ export async function getProjetBySlug(slug) {
       slug: project.slug || slug,
       technologies: project.technologies || [],
       caracteristiques: project.caracteristiques || [],
-      Description: Array.isArray(project.Description) ? project.Description : [],
-      // ✅ NOUVEAUX CHAMPS AVEC VALEURS PAR DÉFAUT
-      methodologie: project.methodologie || [],      // Processus du projet
-      resultats: project.resultats || null,          // Résultats chiffrés
-      defis: project.defis || '',                    // Défis techniques
-      duree_projet: project.duree_projet || '',      // Durée du projet
-      equipe: project.equipe || []                   // Équipe projet
+      Description: Array.isArray(project.Description) ? project.Description : []
     };
   } catch (e) {
     console.error(`getProjetBySlug error for slug "${slug}":`, e.message);
@@ -127,7 +187,7 @@ export async function getProjetBySlug(slug) {
   }
 }
 
-// --------- Services ---------
+// ========== SERVICES ==========
 
 export async function getServices() {
   try {
@@ -206,7 +266,7 @@ export async function getServiceBySlug(slug) {
   }
 }
 
-// --------- Helpers ---------
+// ========== HELPERS ==========
 
 export function getStrapiMediaUrl(url) {
   if (!url || typeof url !== 'string') return null;
