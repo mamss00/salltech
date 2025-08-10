@@ -14,7 +14,8 @@ import {
 export default function ProjectProcess({ steps, color = 'blue', projectTitle }) {
   // États pour les animations
   const [activeStep, setActiveStep] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(true)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false) // ✅ Démarrage manuel
+  const [hasStarted, setHasStarted] = useState(false) // ✅ Tracker si on a commencé
   
   // Animation au défilement
   const sectionRef = useRef(null)
@@ -29,8 +30,8 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [timelineRef, timelineInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
-  // Spring pour les animations fluides
-  const lineProgress = useSpring(0, { stiffness: 100, damping: 30 })
+  // État de progression simple
+  const [lineProgress, setLineProgress] = useState(0)
   
   // Fonction pour obtenir les couleurs
   const getColorStyles = (colorName) => {
@@ -66,24 +67,44 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     return iconMap[iconName] || FaRocket
   }
 
-  // Auto-play des étapes
+  // Auto-play des étapes - ✅ CORRIGÉ
   useEffect(() => {
     if (!isAutoPlaying || !steps?.length) return
     
     const interval = setInterval(() => {
-      setActiveStep(prev => (prev + 1) % steps.length)
+      setActiveStep(prev => {
+        const nextStep = (prev + 1) % steps.length
+        console.log('Auto-play: passage à l\'étape', nextStep + 1) // Debug
+        return nextStep
+      })
     }, 4000)
     
     return () => clearInterval(interval)
   }, [isAutoPlaying, steps?.length])
 
-  // Animation de la ligne progressive
+  // Animation de la ligne progressive - ✅ CORRIGÉ
   useEffect(() => {
     if (timelineInView && steps?.length) {
       const targetProgress = ((activeStep + 1) / steps.length) * 100
-      lineProgress.set(targetProgress)
+      console.log('Progression ligne:', targetProgress + '%') // Debug
+      setLineProgress(targetProgress)
     }
-  }, [activeStep, timelineInView, steps?.length, lineProgress])
+  }, [activeStep, timelineInView, steps?.length])
+
+  // ✅ DÉMARRER AUTO-PLAY QUAND LA TIMELINE DEVIENT VISIBLE
+  useEffect(() => {
+    if (timelineInView && !hasStarted) {
+      console.log('Timeline visible - démarrage auto-play')
+      setHasStarted(true)
+      setIsAutoPlaying(true)
+      
+      // Démarrer la progression de la ligne immédiatement
+      setTimeout(() => {
+        const initialProgress = ((activeStep + 1) / steps.length) * 100
+        setLineProgress(initialProgress)
+      }, 100)
+    }
+  }, [timelineInView, hasStarted, activeStep, steps.length])
 
   // Styles pour le badge animé
   const badgeStyle = {
@@ -251,27 +272,98 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             de la conception initiale au déploiement final.
           </motion.p>
 
-          {/* Contrôles de lecture */}
+          {/* Contrôles de lecture améliorés - ✅ CORRIGÉS */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 1, delay: 0.8 }}
-            className="flex items-center justify-center gap-4 mt-8"
+            className="flex items-center justify-center gap-6 mt-8"
           >
             <motion.button
-              onClick={() => setIsAutoPlaying(!isAutoPlaying)}
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all"
+              onClick={() => {
+                setIsAutoPlaying(!isAutoPlaying)
+                console.log('Toggle auto-play:', !isAutoPlaying)
+              }}
+              className="flex items-center gap-3 px-6 py-3 rounded-full bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              style={{
+                background: isAutoPlaying 
+                  ? `linear-gradient(135deg, rgba(${colors.rgb}, 0.1), white)`
+                  : 'white',
+                borderColor: isAutoPlaying ? colors.solid : '#e5e7eb'
+              }}
             >
-              {isAutoPlaying ? <FaPause className="w-3 h-3" /> : <FaPlay className="w-3 h-3" />}
-              <span className="text-sm font-medium">
+              {isAutoPlaying ? (
+                <FaPause className="w-4 h-4" style={{ color: colors.solid }} />
+              ) : (
+                <FaPlay className="w-4 h-4" style={{ color: colors.solid }} />
+              )}
+              <span className="text-sm font-medium" style={{ color: colors.solid }}>
                 {isAutoPlaying ? 'Pause' : 'Play'}
               </span>
             </motion.button>
             
-            <div className="text-sm text-gray-500">
-              Étape {activeStep + 1} sur {steps.length}
+            <div className="flex items-center gap-2">
+              <div className="text-sm text-gray-500">
+                Étape {activeStep + 1} sur {steps.length}
+              </div>
+              
+              {/* Barre de progression mini */}
+              <div className="w-20 h-1 bg-gray-200 rounded-full overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full"
+                  style={{ backgroundColor: colors.solid }}
+                  animate={{ width: `${lineProgress}%` }}
+                  transition={{ duration: 0.5 }}
+                />
+              </div>
+            </div>
+
+            {/* Boutons navigation manuelle */}
+            <div className="flex gap-2">
+              <motion.button
+                onClick={() => {
+                  setActiveStep(prev => prev > 0 ? prev - 1 : steps.length - 1)
+                  setIsAutoPlaying(false)
+                }}
+                className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                disabled={steps.length <= 1}
+                title="Étape précédente"
+              >
+                <span className="text-xs font-bold text-gray-600">‹</span>
+              </motion.button>
+              
+              <motion.button
+                onClick={() => {
+                  setActiveStep(prev => (prev + 1) % steps.length)
+                  setIsAutoPlaying(false)
+                }}
+                className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                disabled={steps.length <= 1}
+                title="Étape suivante"
+              >
+                <span className="text-xs font-bold text-gray-600">›</span>
+              </motion.button>
+
+              {/* Bouton reset */}
+              <motion.button
+                onClick={() => {
+                  setActiveStep(0)
+                  setIsAutoPlaying(true)
+                  console.log('Reset vers étape 1')
+                }}
+                className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                title="Recommencer"
+              >
+                <span className="text-xs font-bold text-gray-600">↻</span>
+              </motion.button>
             </div>
           </motion.div>
         </div>
@@ -290,24 +382,24 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             {/* ✅ LIGNE PRINCIPALE CONTINUE ET ANIMÉE */}
             <div className="absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 w-1 bg-gray-200 rounded-full" />
             
-            {/* Ligne de progression animée */}
+            {/* Ligne de progression animée - ✅ CORRIGÉE */}
             <motion.div 
               className="absolute left-1/2 top-0 transform -translate-x-1/2 w-1 rounded-full origin-top z-10"
               style={{ 
                 background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
-                scaleY: lineProgress.get() / 100
+                height: `${lineProgress}%`
               }}
-              initial={{ scaleY: 0 }}
-              animate={{ scaleY: timelineInView ? lineProgress.get() / 100 : 0 }}
-              transition={{ duration: 2, ease: "easeInOut" }}
+              initial={{ height: '0%' }}
+              animate={{ height: `${lineProgress}%` }}
+              transition={{ duration: 1, ease: "easeInOut" }}
             />
 
-            {/* Pulse animé sur la ligne active */}
+            {/* Pulse animé sur la ligne active - ✅ CORRIGÉ */}
             <motion.div
               className="absolute left-1/2 transform -translate-x-1/2 w-3 h-3 rounded-full z-20"
               style={{ 
                 backgroundColor: colors.solid,
-                top: `${(activeStep / (steps.length - 1)) * 100}%`,
+                top: `${lineProgress}%`,
                 boxShadow: `0 0 20px ${colors.solid}`
               }}
               animate={{
@@ -527,16 +619,16 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
               {/* Ligne principale mobile */}
               <div className="absolute left-8 top-0 bottom-0 w-1 bg-gray-200 rounded-full" />
               
-              {/* Ligne de progression mobile */}
+              {/* Ligne de progression mobile - ✅ CORRIGÉE */}
               <motion.div 
                 className="absolute left-8 top-0 w-1 rounded-full origin-top"
                 style={{ 
                   background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
-                  height: `${((activeStep + 1) / steps.length) * 100}%`
+                  height: `${lineProgress}%`
                 }}
-                initial={{ scaleY: 0 }}
-                animate={{ scaleY: timelineInView ? 1 : 0 }}
-                transition={{ duration: 2 }}
+                initial={{ height: '0%' }}
+                animate={{ height: `${lineProgress}%` }}
+                transition={{ duration: 1.5, ease: "easeInOut" }}
               />
 
               <div className="space-y-12">
