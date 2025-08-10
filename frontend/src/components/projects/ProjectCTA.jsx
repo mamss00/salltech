@@ -109,14 +109,15 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
     }
   ]
 
-  // Styles pour les backgrounds - CORRIGÉS
+  // Styles pour les backgrounds - NETTOYÉS
   const sectionBackgroundStyle = {
-    background: `linear-gradient(135deg, rgba(${mainColorRGB}, 0.05) 0%, #ffffff 50%, rgba(155, 89, 182, 0.05) 100%)`
+    background: `linear-gradient(135deg, #ffffff 0%, rgba(${mainColorRGB}, 0.015) 30%, #ffffff 70%, rgba(155, 89, 182, 0.015) 100%)`
   }
 
   const badgeBackgroundStyle = {
-    background: `linear-gradient(90deg, rgba(${mainColorRGB}, 0.1) 0%, #ffffff 50%, rgba(155, 89, 182, 0.1) 100%)`,
-    border: `1px solid rgba(${mainColorRGB}, 0.2)`
+    background: `rgba(255, 255, 255, 0.95)`,
+    border: `1px solid rgba(${mainColorRGB}, 0.15)`,
+    boxShadow: `0 8px 32px rgba(0, 0, 0, 0.1)`
   }
 
   const iconGradientStyle = {
@@ -124,7 +125,7 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
   }
 
   const underlineGradientStyle = {
-    background: `linear-gradient(90deg, rgba(${mainColorRGB}, 0.3) 0%, rgba(155, 89, 182, 0.3) 50%, rgba(231, 76, 60, 0.3) 100%)`
+    background: `linear-gradient(90deg, ${colors.solid} 0%, rgba(155, 89, 182, 0.8) 50%, rgba(231, 76, 60, 0.6) 100%)`
   }
 
   const linkStyle = {
@@ -146,61 +147,50 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
       }}
       className="py-24 relative overflow-hidden"
     >
-      {/* Fond décoratif premium */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Formes organiques sophistiquées */}
-        <motion.div
-          className="absolute top-20 right-20 w-80 h-80 opacity-5"
-          animate={{
-            rotate: [0, 180, 360],
-            scale: [1, 1.2, 1]
+      {/* Fond décoratif minimaliste */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Éléments décoratifs très subtils */}
+        <motion.div 
+          className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full opacity-5"
+          style={{ backgroundColor: colors.solid }}
+          animate={{ 
+            scale: [1, 1.1, 1],
+            opacity: [0.02, 0.05, 0.02]
           }}
-          transition={{
-            duration: 35,
-            repeat: Infinity,
-            ease: "linear"
+          transition={{ duration: 12, repeat: Infinity }}
+        />
+        
+        <motion.div 
+          className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full opacity-5"
+          style={{ backgroundColor: colors.solid }}
+          animate={{ 
+            scale: [1, 1.2, 1],
+            opacity: [0.02, 0.04, 0.02]
           }}
-        >
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <path
-              d="M47.2,-73.9C61.3,-66.9,73,-54.2,79.6,-39.3C86.1,-24.4,87.5,-7.2,82.7,7.8C78,22.8,66.9,35.8,55.3,47.5C43.6,59.3,31.3,69.9,16.5,75.4C1.7,80.8,-15.6,81.1,-28.9,74.4C-42.2,67.8,-51.6,54.1,-58.9,40.3C-66.3,26.5,-71.7,12.6,-73.1,-2.5C-74.6,-17.7,-72.1,-34.1,-63.3,-46.1C-54.5,-58.1,-39.6,-65.8,-24.5,-72C-9.5,-78.2,5.7,-83,20.2,-81.5C34.8,-79.9,48.8,-71.9,61.8,-61.9Z"
-              fill={`rgba(${mainColorRGB}, 0.08)`}
-            />
-          </svg>
-        </motion.div>
-
-        <motion.div
-          className="absolute bottom-20 left-20 w-64 h-64 opacity-5"
-          animate={{
-            rotate: [360, 0],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        >
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <path
-              d="M39.3,-64.8C52.8,-59.2,66.9,-51.9,71.1,-40.3C75.3,-28.6,69.7,-12.7,67.8,2.8C65.9,18.2,68,33.2,62.4,43.8C56.9,54.5,43.7,60.8,30.6,65.1C17.4,69.3,4.4,71.4,-9.1,70.7C-22.5,70,-36.4,66.5,-47.5,58.2C-58.6,49.9,-66.8,37,-71.7,22.5C-76.5,8.1,-77.9,-7.9,-73.6,-21.5C-69.3,-35.1,-59.2,-46.3,-47,-54.4C-34.8,-62.4,-20.4,-67.2,-5.3,-69.9C9.8,-72.7,25.7,-70.5,39.3,-64.8Z"
-              fill={`rgba(${mainColorRGB}, 0.06)`}
-            />
-          </svg>
-        </motion.div>
-
-        {/* Grille sophistiquée */}
-        <div className="absolute inset-0 opacity-3">
-          <svg width="100%" height="100%">
-            <pattern id="ctaPattern" patternUnits="userSpaceOnUse" width="100" height="100">
-              <circle cx="50" cy="50" r="1.5" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="25" cy="25" r="0.8" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="75" cy="75" r="0.8" fill={`rgb(${mainColorRGB})`} />
-              <path d="M25,25 Q50,40 75,25" stroke={`rgb(${mainColorRGB})`} strokeWidth="0.4" fill="none" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#ctaPattern)" />
-          </svg>
-        </div>
+          transition={{ duration: 15, repeat: Infinity, delay: 3 }}
+        />
+        
+        {/* Quelques points discrets */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={`dot-${i}`}
+            className="absolute w-1 h-1 rounded-full opacity-10"
+            style={{ 
+              backgroundColor: colors.solid,
+              left: `${20 + (i * 12)}%`,
+              top: `${30 + (i * 8)}%`
+            }}
+            animate={{ 
+              opacity: [0.1, 0.3, 0.1],
+              scale: [1, 1.2, 1]
+            }}
+            transition={{
+              duration: 8 + i * 2,
+              repeat: Infinity,
+              delay: i * 1.5
+            }}
+          />
+        ))}
       </div>
 
       <div className="container relative z-10">
@@ -377,10 +367,7 @@ export default function EnhancedProjectCTA({ projectName, projectUrl, client, co
             initial={{ opacity: 0, y: 30 }}
             animate={contentInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 1.2 }}
-            className="p-8 rounded-2xl border border-gray-200 shadow-lg"
-            style={{
-              background: `linear-gradient(90deg, #ffffff 0%, #f9f9f9 50%, #ffffff 100%)`
-            }}
+            className="p-8 rounded-2xl border border-gray-100 shadow-sm bg-white/80 backdrop-blur-sm"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
               <div>
