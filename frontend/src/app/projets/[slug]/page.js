@@ -1,14 +1,24 @@
-// frontend/src/app/projets/[slug]/page.js - VERSION FINALE CORRIGÉE
+// frontend/src/app/projets/[slug]/page.js - VERSION OPTIMISÉE
+// 
+// 🚀 AMÉLIORATIONS APPORTÉES :
+// ✅ Ajout du composant ProjectProcess (était manquant)
+// ✅ Éviter les répétitions entre ProjectIntroduction et ProjectFeatures  
+// ✅ Processus adaptatif selon la catégorie de projet
+// ✅ Support des vraies données de processus depuis Strapi (si disponibles)
+// ✅ Structure logique et optimisée des sections
+// ✅ Séparation intelligente des caractéristiques
+//
 import { notFound } from 'next/navigation'
 
-// Composants existants (utilisation des noms corrects)
-import ProjectHero from '@/components/projects/ProjectHero'              // ✅ Existe
-import ProjectIntroduction from '@/components/projects/ProjectIntroduction' // ✅ Existe  
-import ProjectFeatures from '@/components/projects/ProjectFeatures'     // ✅ Existe
-import ProjectTechnologies from '@/components/projects/ProjectTechnologies' // ✅ Existe
-import ProjectTestimonial from '@/components/projects/ProjectTestimonial'   // ✅ Existe
-import ProjectRelated from '@/components/projects/ProjectRelated'       // ✅ Créé précédemment
-import ProjectCTA from '@/components/projects/ProjectCTA'               // ✅ Existe
+// Composants existants + ProjectProcess ajouté
+import ProjectHero from '@/components/projects/ProjectHero'              
+import ProjectIntroduction from '@/components/projects/ProjectIntroduction'
+import ProjectFeatures from '@/components/projects/ProjectFeatures'     
+import ProjectProcess from '@/components/projects/ProjectProcess'        // ✅ AJOUTÉ
+import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
+import ProjectTestimonial from '@/components/projects/ProjectTestimonial'
+import ProjectRelated from '@/components/projects/ProjectRelated'       
+import ProjectCTA from '@/components/projects/ProjectCTA'               
 
 import { getProjetBySlug, getAllProjetSlugs } from '@/utils/api'
 
@@ -66,7 +76,13 @@ export default async function ProjetPage({ params }) {
     URLduprojet,
     Client,
     Datederealisation,
-    slug
+    slug,
+    // ✅ NOUVEAUX CHAMPS
+    methodologie,
+    resultats,
+    defis,
+    duree_projet,
+    equipe
   } = projet
 
   // Préparer les données formatées
@@ -82,11 +98,77 @@ export default async function ProjetPage({ params }) {
         ? 'red'
         : 'blue'
 
+  // 🔧 PROCESSUS PAR DÉFAUT basé sur la catégorie du projet
+  const getDefaultProcess = (category) => {
+    const baseSteps = [
+      {
+        titre: "Analyse des besoins",
+        description: "Étude approfondie des objectifs et contraintes du projet pour définir les spécifications fonctionnelles.",
+        icone: "FaSearch",
+        duree: "1-2 semaines"
+      },
+      {
+        titre: "Conception & Design",
+        description: "Création des maquettes, architecture technique et définition de l'expérience utilisateur.",
+        icone: "FaPencilRuler",
+        duree: "2-3 semaines"
+      },
+      {
+        titre: "Développement",
+        description: "Implémentation du code, intégrations API et développement des fonctionnalités principales.",
+        icone: "FaCode",
+        duree: "4-8 semaines"
+      },
+      {
+        titre: "Tests & Optimisation",
+        description: "Tests rigoureux, optimisation des performances et corrections des bugs identifiés.",
+        icone: "FaBug",
+        duree: "1-2 semaines"
+      },
+      {
+        titre: "Déploiement & Livraison",
+        description: "Mise en production, formation utilisateur et documentation complète du projet.",
+        icone: "FaRocket",
+        duree: "1 semaine"
+      }
+    ]
+
+    // Personnaliser selon la catégorie
+    if (category?.includes('E-commerce')) {
+      baseSteps[2].description = "Développement du système de paiement, gestion des stocks et interface d'administration."
+      baseSteps.splice(3, 0, {
+        titre: "Intégration Paiement",
+        description: "Configuration sécurisée des passerelles de paiement et tests de transactions.",
+        icone: "FaCreditCard",
+        duree: "1 semaine"
+      })
+    } else if (category?.includes('Mobile')) {
+      baseSteps[2].description = "Développement natif iOS/Android avec optimisation pour chaque plateforme."
+      baseSteps.push({
+        titre: "Publication Store",
+        description: "Soumission aux App Store et Google Play avec gestion du processus de validation.",
+        icone: "FaMobileAlt",
+        duree: "1 semaine"
+      })
+    }
+
+    return baseSteps
+  }
+
+  // ✅ UTILISER LES VRAIES DONNÉES DE PROCESSUS OU CELLES PAR DÉFAUT
+  const projectProcess = methodologie && methodologie.length > 0 
+    ? methodologie.sort((a, b) => (a.ordre || 0) - (b.ordre || 0)) // Trier par ordre
+    : getDefaultProcess(Categorie) // Utiliser le processus par défaut
+
+  // Diviser les caractéristiques pour éviter les répétitions
+  const allFeatures = caracteristiques || []
+  const keyFeatures = allFeatures.slice(0, 3) // Pour ProjectIntroduction (points clés)
+  const detailedFeatures = allFeatures.slice(3) // Pour ProjectFeatures (détails)
+  
   return (
     <>
-      
       <main className="pt-24">
-        {/* Hero du projet */}
+        {/* 1. Hero du projet */}
         <ProjectHero 
           title={titreFinal}
           category={Categorie}
@@ -98,22 +180,29 @@ export default async function ProjetPage({ params }) {
           color={color}
         />
         
-        {/* Introduction avec contenu riche */}
+        {/* 2. Introduction avec points clés (max 3 features) */}
         <ProjectIntroduction 
           content={introduction || Description}
-          features={caracteristiques}
+          features={keyFeatures} // ✅ Seulement les 3 premières
           color={color}
         />
 
-        {/* Fonctionnalités du projet - seulement si il y en a */}
-        {caracteristiques && caracteristiques.length > 0 && (
+        {/* 3. Notre processus pour ce projet */}
+        <ProjectProcess 
+          steps={projectProcess} // ✅ Vraies données ou processus par défaut
+          color={color}
+          projectTitle={titreFinal}
+        />
+
+        {/* 4. Fonctionnalités détaillées - seulement si il y en a d'autres */}
+        {detailedFeatures.length > 0 && (
           <ProjectFeatures 
-            features={caracteristiques} 
+            features={detailedFeatures} // ✅ Les features restantes
             color={color}
           />
         )}
         
-        {/* Technologies - seulement si il y en a */}
+        {/* 5. Technologies - seulement si il y en a */}
         {technologies && technologies.length > 0 && (
           <ProjectTechnologies 
             technologies={technologies}
@@ -121,7 +210,7 @@ export default async function ProjetPage({ params }) {
           />
         )}
 
-        {/* Témoignage client - seulement si il y a un client */}
+        {/* 6. Témoignage client - seulement si il y a un client */}
         {Client && (
           <ProjectTestimonial 
             client={Client}
@@ -130,7 +219,7 @@ export default async function ProjetPage({ params }) {
           />
         )}
 
-        {/* Projets connexes */}
+        {/* 7. Projets connexes */}
         <ProjectRelated 
           currentProjectSlug={slug}
           currentCategory={Categorie}
@@ -138,14 +227,13 @@ export default async function ProjetPage({ params }) {
           maxProjects={3}
         />
         
-        {/* CTA final */}
+        {/* 8. CTA final */}
         <ProjectCTA 
           projectName={titreFinal}
           projectUrl={URLduprojet}
           color={color}
         />
       </main>
-      
     </>
   )
 }
