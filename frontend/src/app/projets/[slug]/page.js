@@ -1,18 +1,16 @@
-// frontend/src/app/projets/[slug]/page.js - VERSION PREMIUM COMPLÈTE
+// frontend/src/app/projets/[slug]/page.js - VERSION FINALE CORRIGÉE
 import { notFound } from 'next/navigation'
 
-// Composants projet premium inspirés des services
-import EnhancedProjectHero from '@/components/projects/ProjectHero'
-import ProjectIntroduction from '@/components/projects/ProjectIntroduction'
-import EnhancedProjectFeatures from '@/components/projects/ProjectFeatures'
-import ProjectProcess from '@/components/projects/ProjectProcess'
-import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
-import ProjectTestimonial from '@/components/projects/ProjectTestimonial'
-import ProjectRelated from '@/components/projects/ProjectRelated'
-import ProjectMetrics from '@/components/projects/ProjectMetrics'
-import EnhancedProjectCTA from '@/components/projects/ProjectCTA'
+// Composants existants (utilisation des noms corrects)
+import ProjectHero from '@/components/projects/ProjectHero'              // ✅ Existe
+import ProjectIntroduction from '@/components/projects/ProjectIntroduction' // ✅ Existe  
+import ProjectFeatures from '@/components/projects/ProjectFeatures'     // ✅ Existe
+import ProjectTechnologies from '@/components/projects/ProjectTechnologies' // ✅ Existe
+import ProjectTestimonial from '@/components/projects/ProjectTestimonial'   // ✅ Existe
+import ProjectRelated from '@/components/projects/ProjectRelated'       // ✅ Créé précédemment
+import ProjectCTA from '@/components/projects/ProjectCTA'               // ✅ Existe
 
-import { getProjetBySlug, getAllProjetSlugs, getProjects } from '@/utils/api'
+import { getProjetBySlug, getAllProjetSlugs } from '@/utils/api'
 
 export async function generateStaticParams() {
   const slugs = await getAllProjetSlugs()
@@ -48,16 +46,10 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function EnhancedProjetPage({ params }) {
+export default async function ProjetPage({ params }) {
   const projet = await getProjetBySlug(params.slug)
 
   if (!projet) return notFound()
-
-  // Récupérer les projets liés pour la section "Projets similaires"
-  const allProjects = await getProjects()
-  const relatedProjects = allProjects
-    .filter(p => p.Categorie === projet.Categorie && p.id !== projet.id)
-    .slice(0, 3)
 
   // Extraire les données du projet
   const {
@@ -74,9 +66,7 @@ export default async function EnhancedProjetPage({ params }) {
     URLduprojet,
     Client,
     Datederealisation,
-    methodologie,
-    resultats,
-    metrics
+    slug
   } = projet
 
   // Préparer les données formatées
@@ -92,112 +82,70 @@ export default async function EnhancedProjetPage({ params }) {
         ? 'red'
         : 'blue'
 
-  // Processus par défaut si pas de méthodologie
-  const defaultProcess = [
-    {
-      titre: "Analyse & Stratégie",
-      description: "Étude approfondie des besoins client et définition de la stratégie technique",
-      icone: "FaSearchengin"
-    },
-    {
-      titre: "Design & Prototypage", 
-      description: "Création des maquettes et prototypes pour validation du concept",
-      icone: "FaPalette"
-    },
-    {
-      titre: "Développement",
-      description: "Implémentation technique avec les meilleures pratiques de développement",
-      icone: "FaCode"
-    },
-    {
-      titre: "Tests & Optimisation",
-      description: "Tests complets et optimisations pour une performance maximale",
-      icone: "FaRocket"
-    },
-    {
-      titre: "Déploiement & Suivi",
-      description: "Mise en production et accompagnement post-lancement",
-      icone: "FaCloudUploadAlt"
-    }
-  ]
-
   return (
-    <main className="pt-24">
-      {/* Hero premium avec parallax et animations sophistiquées */}
-      <EnhancedProjectHero 
-        title={titreFinal}
-        category={Categorie}
-        description={resumeFinal}
-        image={Imageprincipale}
-        images={Imagesadditionnelles}
-        client={Client}
-        date={Datederealisation}
-        projectUrl={URLduprojet}
-        color={color}
-      />
+    <>
       
-      {/* Introduction sophistiquée avec contenu riche */}
-      <ProjectIntroduction 
-        content={introduction || Description}
-        features={caracteristiques}
-        color={color}
-      />
-
-      {/* Fonctionnalités avancées du projet */}
-      {caracteristiques && caracteristiques.length > 0 && (
-        <EnhancedProjectFeatures 
-          features={caracteristiques} 
-          color={color}
-          projectTitle={titreFinal}
-        />
-      )}
-
-      {/* Processus/Méthodologie du projet */}
-      <ProjectProcess 
-        steps={methodologie || defaultProcess}
-        color={color}
-        projectTitle={titreFinal}
-      />
-
-      {/* Technologies avec design premium */}
-      {technologies && technologies.length > 0 && (
-        <ProjectTechnologies 
-          technologies={technologies}
+      <main className="pt-24">
+        {/* Hero du projet */}
+        <ProjectHero 
+          title={titreFinal}
+          category={Categorie}
+          description={resumeFinal}
+          image={Imageprincipale}
+          client={Client}
+          date={Datederealisation}
+          projectUrl={URLduprojet}
           color={color}
         />
-      )}
+        
+        {/* Introduction avec contenu riche */}
+        <ProjectIntroduction 
+          content={introduction || Description}
+          features={caracteristiques}
+          color={color}
+        />
 
-      {/* Métriques et résultats du projet */}
-      <ProjectMetrics 
-        metrics={metrics}
-        results={resultats}
-        color={color}
-        projectUrl={URLduprojet}
-      />
+        {/* Fonctionnalités du projet - seulement si il y en a */}
+        {caracteristiques && caracteristiques.length > 0 && (
+          <ProjectFeatures 
+            features={caracteristiques} 
+            color={color}
+          />
+        )}
+        
+        {/* Technologies - seulement si il y en a */}
+        {technologies && technologies.length > 0 && (
+          <ProjectTechnologies 
+            technologies={technologies}
+            color={color}
+          />
+        )}
 
-      {/* Témoignage client */}
-      <ProjectTestimonial 
-        client={Client}
-        projectTitle={titreFinal}
-        color={color}
-      />
+        {/* Témoignage client - seulement si il y a un client */}
+        {Client && (
+          <ProjectTestimonial 
+            client={Client}
+            projectTitle={titreFinal}
+            color={color}
+          />
+        )}
 
-      {/* Projets similaires/liés */}
-      {relatedProjects.length > 0 && (
+        {/* Projets connexes */}
         <ProjectRelated 
-          projects={relatedProjects}
+          currentProjectSlug={slug}
           currentCategory={Categorie}
           color={color}
+          maxProjects={3}
         />
-      )}
+        
+        {/* CTA final */}
+        <ProjectCTA 
+          projectName={titreFinal}
+          projectUrl={URLduprojet}
+          color={color}
+        />
+      </main>
       
-      {/* CTA final sophistiqué avec statistiques */}
-      <EnhancedProjectCTA 
-        projectName={titreFinal}
-        projectUrl={URLduprojet}
-        client={Client}
-        color={color}
-      />
-    </main>
+    </>
   )
 }
