@@ -2,7 +2,7 @@
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useMotionValue } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { 
   FaSearch, FaPencilRuler, FaCode, FaBug, FaRocket, 
@@ -14,21 +14,22 @@ import {
 export default function ProjectProcess({ steps, color = 'blue', projectTitle }) {
   // États pour les animations
   const [activeStep, setActiveStep] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false)
+  const [isAutoPlaying, setIsAutoPlaying] = useState(true) // ✅ Mode scroll par défaut
   const [hasStarted, setHasStarted] = useState(false)
+  const [currentScrollProgress, setCurrentScrollProgress] = useState(0) // ✅ Pour réactivité du JSX
   
-  // Animation au défilement
+  // Animation au défilement - ✅ PROGRESSION BASÉE SUR LE SCROLL
   const sectionRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: sectionRef,
-    offset: ["start end", "end start"]
+    offset: ["start center", "end center"] // ✅ Déclenche quand la section entre/sort du centre
   })
   
-  const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8])
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [0.8, 1, 1, 0.8])
   
   // Animation d'apparition
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  const [timelineRef, timelineInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  const [timelineRef, timelineInView] = useInView({ triggerOnce: false, threshold: 0.1 }) // ✅ triggerOnce: false pour réactivité continue
   
   // État de progression simple
   const [lineProgress, setLineProgress] = useState(0)
@@ -67,46 +68,46 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     return iconMap[iconName] || FaRocket
   }
 
-  // Auto-play des étapes
+  // ✅ MISE À JOUR EN TEMPS RÉEL BASÉE SUR LE SCROLL
   useEffect(() => {
-    if (!isAutoPlaying || !steps?.length) return
+    const unsubscribe = scrollYProgress.onChange((value) => {
+      if (timelineInView) {
+        // Mettre à jour l'état de scroll pour la réactivité du JSX
+        setCurrentScrollProgress(value)
+        
+        // Mettre à jour l'étape active discrète
+        const newActiveStep = Math.floor(value * steps.length)
+        if (newActiveStep !== activeStep && newActiveStep >= 0 && newActiveStep < steps.length) {
+          setActiveStep(newActiveStep)
+        }
+        
+        // Mettre à jour la progression de ligne en continu
+        const continuousProgress = value * 100
+        setLineProgress(continuousProgress)
+        
+        console.log(`Scroll: ${Math.round(value * 100)}% → Étape ${newActiveStep + 1}/${steps.length}`)
+      }
+    })
     
-    const interval = setInterval(() => {
-      setActiveStep(prev => {
-        const nextStep = (prev + 1) % steps.length
-        console.log('Auto-play: passage à l\'étape', nextStep + 1)
-        return nextStep
-      })
-    }, 4000)
-    
-    return () => clearInterval(interval)
-  }, [isAutoPlaying, steps?.length])
+    return unsubscribe
+  }, [scrollYProgress, activeStep, timelineInView, steps.length])
 
-  // Animation de la ligne progressive
-  useEffect(() => {
-    if (timelineInView && steps?.length) {
-      const targetProgress = steps.length > 1 
-        ? (activeStep / (steps.length - 1)) * 100 
-        : 100
-      
-      console.log(`Étape ${activeStep + 1}/${steps.length} - Progression: ${targetProgress}%`)
-      setLineProgress(targetProgress)
-    }
-  }, [activeStep, timelineInView, steps?.length])
-
-  // Démarrer auto-play quand la timeline devient visible
+  // ✅ INITIALISATION QUAND LA TIMELINE DEVIENT VISIBLE
   useEffect(() => {
     if (timelineInView && !hasStarted) {
-      console.log('Timeline visible - démarrage auto-play')
+      console.log('Timeline visible - mode scroll activé')
       setHasStarted(true)
       
-      setTimeout(() => {
-        setIsAutoPlaying(true)
-        const initialProgress = steps.length > 1 ? 0 : 100
-        setLineProgress(initialProgress)
-      }, 500)
+      // Initialiser selon la position actuelle
+      const currentValue = scrollYProgress.get()
+      setCurrentScrollProgress(currentValue)
+      const currentProgress = currentValue * 100
+      const currentStep = Math.floor(currentValue * steps.length)
+      
+      setLineProgress(currentProgress)
+      setActiveStep(currentStep)
     }
-  }, [timelineInView, hasStarted, steps.length])
+  }, [timelineInView, hasStarted, scrollYProgress, steps.length])
 
   // Styles pour le badge animé
   const badgeStyle = {
@@ -235,7 +236,28 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             de la conception initiale au déploiement final.
           </motion.p>
 
-          {/* Contrôles de lecture */}
+          {/* ✅ INDICATEUR DE SCROLL */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 1, delay: 0.7 }}
+            className="mt-6 flex items-center justify-center gap-3 text-sm text-gray-500"
+          >
+            <motion.div
+              animate={{ y: [0, 5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="w-5 h-8 border-2 border-gray-400 rounded-full flex justify-center"
+            >
+              <motion.div
+                animate={{ y: [0, 8, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                className="w-1 h-2 bg-gray-400 rounded-full mt-1"
+              />
+            </motion.div>
+            <span>Scrollez pour découvrir chaque étape progressivement</span>
+          </motion.div>
+
+          {/* Contrôles de lecture - ✅ MODE SCROLL */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
@@ -245,66 +267,75 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             <motion.button
               onClick={() => {
                 setIsAutoPlaying(!isAutoPlaying)
-                console.log('Toggle auto-play:', !isAutoPlaying)
+                console.log('Toggle mode:', !isAutoPlaying ? 'Manuel' : 'Scroll')
               }}
               className="flex items-center gap-3 px-6 py-3 rounded-full bg-white shadow-lg border border-gray-200 hover:shadow-xl transition-all"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               style={{
-                background: isAutoPlaying 
+                background: !isAutoPlaying 
                   ? `linear-gradient(135deg, rgba(${colors.rgb}, 0.1), white)`
                   : 'white',
-                borderColor: isAutoPlaying ? colors.solid : '#e5e7eb'
+                borderColor: !isAutoPlaying ? colors.solid : '#e5e7eb'
               }}
             >
-              {isAutoPlaying ? (
+              {!isAutoPlaying ? (
                 <FaPause className="w-4 h-4" style={{ color: colors.solid }} />
               ) : (
                 <FaPlay className="w-4 h-4" style={{ color: colors.solid }} />
               )}
               <span className="text-sm font-medium" style={{ color: colors.solid }}>
-                {isAutoPlaying ? 'Pause' : 'Play'}
+                {!isAutoPlaying ? 'Mode Manuel' : 'Mode Scroll'}
               </span>
             </motion.button>
             
             <div className="flex items-center gap-2">
               <div className="text-sm text-gray-500">
-                Étape {activeStep + 1} sur {steps.length}
+                Scroll: {Math.round(currentScrollProgress * 100)}% | Étape {activeStep + 1}/{steps.length}
               </div>
               
-              <div className="w-20 h-1 bg-gray-200 rounded-full overflow-hidden">
+              <div className="w-24 h-1 bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   className="h-full rounded-full"
                   style={{ backgroundColor: colors.solid }}
-                  animate={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
-                  transition={{ duration: 0.5 }}
+                  animate={{ width: `${currentScrollProgress * 100}%` }}
+                  transition={{ duration: 0.2 }}
                 />
               </div>
             </div>
 
+            {/* Boutons navigation manuelle - ✅ ACTIFS SEULEMENT EN MODE MANUEL */}
             <div className="flex gap-2">
               <motion.button
                 onClick={() => {
+                  if (!isAutoPlaying) return // Seulement si mode manuel
                   setActiveStep(prev => prev > 0 ? prev - 1 : steps.length - 1)
                   setIsAutoPlaying(false)
                 }}
-                className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                title="Étape précédente"
+                className={`w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center transition-all ${
+                  isAutoPlaying ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg cursor-pointer'
+                }`}
+                whileHover={isAutoPlaying ? {} : { scale: 1.1 }}
+                whileTap={isAutoPlaying ? {} : { scale: 0.9 }}
+                title={isAutoPlaying ? "Basculer en mode manuel pour naviguer" : "Étape précédente"}
+                disabled={isAutoPlaying}
               >
                 <span className="text-xs font-bold text-gray-600">‹</span>
               </motion.button>
               
               <motion.button
                 onClick={() => {
+                  if (!isAutoPlaying) return // Seulement si mode manuel
                   setActiveStep(prev => (prev + 1) % steps.length)
                   setIsAutoPlaying(false)
                 }}
-                className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                title="Étape suivante"
+                className={`w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center transition-all ${
+                  isAutoPlaying ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg cursor-pointer'
+                }`}
+                whileHover={isAutoPlaying ? {} : { scale: 1.1 }}
+                whileTap={isAutoPlaying ? {} : { scale: 0.9 }}
+                title={isAutoPlaying ? "Basculer en mode manuel pour naviguer" : "Étape suivante"}
+                disabled={isAutoPlaying}
               >
                 <span className="text-xs font-bold text-gray-600">›</span>
               </motion.button>
@@ -313,12 +344,14 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 onClick={() => {
                   setActiveStep(0)
                   setIsAutoPlaying(true)
-                  console.log('Reset vers étape 1')
+                  console.log('Reset vers mode scroll')
+                  // Scroll vers le haut de la section
+                  sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
                 }}
                 className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                title="Recommencer"
+                title="Recommencer depuis le début"
               >
                 <span className="text-xs font-bold text-gray-600">↻</span>
               </motion.button>
@@ -340,24 +373,22 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             {/* Ligne principale continue */}
             <div className="absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 w-1 bg-gray-200 rounded-full z-0" />
             
-            {/* Ligne de progression animée */}
+            {/* Ligne de progression animée - ✅ RÉACTIVE AU SCROLL */}
             <motion.div 
               className="absolute left-1/2 top-0 transform -translate-x-1/2 w-1 rounded-full origin-top z-5"
               style={{ 
                 background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
-                height: `${lineProgress}%`
+                height: `${currentScrollProgress * 100}%` // ✅ Utilise l'état réactif
               }}
-              initial={{ height: '0%' }}
-              animate={{ height: `${lineProgress}%` }}
-              transition={{ duration: 1, ease: "easeInOut" }}
+              transition={{ duration: 0.1, ease: "easeOut" }}
             />
 
-            {/* Point pulse qui suit l'étape active */}
+            {/* Point pulse qui suit le scroll progress */}
             <motion.div
               className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full z-15"
               style={{ 
                 backgroundColor: colors.solid,
-                top: `${(activeStep / Math.max(steps.length - 1, 1)) * 100}%`,
+                top: `${currentScrollProgress * 100}%`, // ✅ Utilise l'état réactif
                 boxShadow: `0 0 15px ${colors.solid}`,
                 border: '2px solid white'
               }}
@@ -371,7 +402,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             {steps.map((step, index) => {
               const IconComponent = getIcon(step.icone)
               const isLeft = index % 2 === 0
-              const isActive = index <= activeStep
+              
+              // ✅ ACTIVATION PROGRESSIVE BASÉE SUR LE SCROLL
+              const stepProgress = currentScrollProgress * steps.length
+              const isActive = stepProgress >= index
+              const isCurrentStep = Math.floor(stepProgress) === index
+              const stepOpacity = Math.min(1, Math.max(0.3, stepProgress - index + 1))
               
               return (
                 <motion.div
@@ -389,11 +425,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                           style={{
                             boxShadow: isActive 
                               ? `0 20px 40px rgba(${colors.rgb}, 0.15)` 
-                              : "0 10px 30px rgba(0,0,0,0.1)"
+                              : "0 10px 30px rgba(0,0,0,0.1)",
+                            opacity: stepOpacity // ✅ Opacité progressive
                           }}
                           animate={{
-                            scale: isActive ? 1.02 : 1,
-                            y: isActive ? -5 : 0
+                            scale: isCurrentStep ? 1.05 : (isActive ? 1.02 : 1),
+                            y: isCurrentStep ? -8 : (isActive ? -5 : 0)
                           }}
                           whileHover={{ y: -10, scale: 1.03 }}
                           transition={{ duration: 0.3 }}
@@ -466,7 +503,10 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                         
                         <motion.div 
                           className="w-16 h-16 rounded-full flex items-center justify-center border-4 border-white shadow-xl cursor-pointer z-50"
-                          style={{ backgroundColor: colors.solid }}
+                          style={{ 
+                            backgroundColor: colors.solid,
+                            opacity: stepOpacity // ✅ Opacité progressive pour les icônes
+                          }}
                           whileHover={{ 
                             scale: 1.2,
                             boxShadow: `0 0 30px ${colors.solid}`
@@ -476,9 +516,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                             setIsAutoPlaying(false)
                           }}
                           animate={{
-                            boxShadow: isActive 
-                              ? `0 0 25px ${colors.solid}` 
-                              : "0 10px 20px rgba(0,0,0,0.2)"
+                            boxShadow: isCurrentStep 
+                              ? `0 0 30px ${colors.solid}` 
+                              : isActive
+                                ? `0 0 25px ${colors.solid}` 
+                                : "0 10px 20px rgba(0,0,0,0.2)",
+                            scale: isCurrentStep ? 1.15 : (isActive ? 1.1 : 1)
                           }}
                         >
                           <motion.div
@@ -499,11 +542,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                           style={{
                             boxShadow: isActive 
                               ? `0 20px 40px rgba(${colors.rgb}, 0.15)` 
-                              : "0 10px 30px rgba(0,0,0,0.1)"
+                              : "0 10px 30px rgba(0,0,0,0.1)",
+                            opacity: stepOpacity // ✅ Opacité progressive
                           }}
                           animate={{
-                            scale: isActive ? 1.02 : 1,
-                            y: isActive ? -5 : 0
+                            scale: isCurrentStep ? 1.05 : (isActive ? 1.02 : 1),
+                            y: isCurrentStep ? -8 : (isActive ? -5 : 0)
                           }}
                           whileHover={{ y: -10, scale: 1.03 }}
                           transition={{ duration: 0.3 }}
@@ -568,24 +612,22 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
               {/* Ligne principale mobile */}
               <div className="absolute left-8 top-0 bottom-0 w-1 bg-gray-200 rounded-full z-0" />
               
-              {/* Ligne de progression mobile */}
+              {/* Ligne de progression mobile - ✅ BASÉE SUR LE SCROLL */}
               <motion.div 
                 className="absolute left-8 top-0 w-1 rounded-full origin-top z-5"
                 style={{ 
                   background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
-                  height: `${lineProgress}%`
+                  height: `${currentScrollProgress * 100}%` // ✅ Utilise l'état réactif
                 }}
-                initial={{ height: '0%' }}
-                animate={{ height: `${lineProgress}%` }}
-                transition={{ duration: 1.5, ease: "easeInOut" }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               />
 
-              {/* Point pulse mobile */}
+              {/* Point pulse mobile - ✅ SUIT LE SCROLL FLUIDE */}
               <motion.div
                 className="absolute left-8 transform -translate-x-1/2 w-3 h-3 rounded-full z-15"
                 style={{ 
                   backgroundColor: colors.solid,
-                  top: `${(activeStep * 96) + 32}px`,
+                  top: `${currentScrollProgress * 100}%`, // ✅ Position continue basée sur le scroll
                   boxShadow: `0 0 12px ${colors.solid}`,
                   border: '1px solid white'
                 }}
@@ -599,7 +641,11 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
               <div className="space-y-12">
                 {steps.map((step, index) => {
                   const IconComponent = getIcon(step.icone)
-                  const isActive = index <= activeStep
+                  
+                  // ✅ ACTIVATION PROGRESSIVE BASÉE SUR LE SCROLL (mobile)
+                  const stepProgress = currentScrollProgress * steps.length
+                  const isActive = stepProgress >= index
+                  const stepOpacity = Math.min(1, Math.max(0.3, stepProgress - index + 1))
                   
                   return (
                     <motion.div
@@ -614,7 +660,10 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                       <div className="relative z-50">
                         <motion.div 
                           className="w-16 h-16 rounded-full flex items-center justify-center border-4 border-white shadow-xl"
-                          style={{ backgroundColor: colors.solid }}
+                          style={{ 
+                            backgroundColor: colors.solid,
+                            opacity: stepOpacity // ✅ Opacité progressive mobile
+                          }}
                           animate={{
                             scale: isActive ? 1.1 : 1,
                             boxShadow: isActive 
@@ -638,7 +687,8 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                           style={{
                             boxShadow: isActive 
                               ? `0 15px 30px rgba(${colors.rgb}, 0.15)` 
-                              : "0 8px 20px rgba(0,0,0,0.1)"
+                              : "0 8px 20px rgba(0,0,0,0.1)",
+                            opacity: stepOpacity // ✅ Opacité progressive mobile
                           }}
                           animate={{
                             scale: isActive ? 1.02 : 1,
