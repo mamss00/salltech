@@ -1,51 +1,124 @@
-// frontend/src/components/projects/EnhancedProjectHero.jsx
+// frontend/src/components/projects/EnhancedProjectHero.jsx - VERSION CORRIGÉE
 'use client'
 
-import { useEffect, useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useRef, useEffect } from 'react'
+import { motion, useScroll, useTransform, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Image from 'next/image'
 import Link from 'next/link'
-import CTAButton from '@/components/CTAButton'
 import { getStrapiMediaUrl } from '@/utils/helpers'
-import { FaExternalLinkAlt, FaCalendarAlt, FaBuilding, FaCode, FaMedal } from 'react-icons/fa'
+import { FaExternalLinkAlt, FaCalendarAlt, FaBuilding, FaPlay, FaArrowRight, FaAward } from 'react-icons/fa'
 
 export default function EnhancedProjectHero({ 
   title, 
   category, 
   description, 
   image, 
+  images = [],
   client, 
   date, 
   projectUrl, 
   color = 'blue' 
 }) {
-  // Animation avec plusieurs effets
-  const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
-  
-  // Animation au défilement avec parallax
+  // Animation au défilement pour effets parallax
   const containerRef = useRef(null)
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"]
   })
   
-  // Transformations sophistiquées basées sur le défilement
-  const imageScale = useTransform(scrollYProgress, [0, 0.6], [1, 1.15])
-  const imageY = useTransform(scrollYProgress, [0, 0.6], [0, -100])
+  // Transformations parallax
+  const backgroundY = useTransform(scrollYProgress, [0, 1], [0, 300])
   const contentOpacity = useTransform(scrollYProgress, [0, 0.3], [1, 0.8])
-  const contentY = useTransform(scrollYProgress, [0, 0.4], [0, -50])
+  const imageScale = useTransform(scrollYProgress, [0, 0.5], [1, 1.1])
   
-  // Gérer l'image avec fallback intelligent
-  const imageUrl = image ? 
-    getStrapiMediaUrl(image.url || (image.formats?.large?.url || image.formats?.medium?.url || image.formats?.small?.url)) : 
+  // Animation d'apparition
+  const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  const [badgeRef, badgeInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  
+  // Contrôles d'animation séquentielle
+  const badgeControls = useAnimation()
+  const titleControls = useAnimation()
+  const descControls = useAnimation()
+  const ctaControls = useAnimation()
+  
+  // ✅ SOLUTION : Fonction pour obtenir les couleurs ET les classes CSS
+  const getColorStyles = (colorName) => {
+    const colorMap = {
+      blue: { 
+        solid: '#3498db', 
+        rgb: '52, 152, 219',
+        // ✅ Classes CSS statiques définies explicitement
+        textClass: 'text-blue-500',
+        bgClass: 'bg-blue-500',
+        borderClass: 'border-blue-500',
+        bgOpacityClass: 'bg-blue-500/10'
+      },
+      purple: { 
+        solid: '#9b59b6', 
+        rgb: '155, 89, 182',
+        textClass: 'text-purple-500',
+        bgClass: 'bg-purple-500',
+        borderClass: 'border-purple-500',
+        bgOpacityClass: 'bg-purple-500/10'
+      },
+      red: { 
+        solid: '#e74c3c', 
+        rgb: '231, 76, 60',
+        textClass: 'text-red-500',
+        bgClass: 'bg-red-500',
+        borderClass: 'border-red-500',
+        bgOpacityClass: 'bg-red-500/10'
+      }
+    }
+    return colorMap[colorName] || colorMap.blue
+  }
+
+  const colors = getColorStyles(color)
+  
+  // Animation séquentielle
+  useEffect(() => {
+    if (contentInView) {
+      const sequence = async () => {
+        await badgeControls.start({
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: { duration: 0.6, type: "spring" }
+        })
+        
+        await titleControls.start({
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.8, delay: 0.1 }
+        })
+        
+        await descControls.start({
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.6, delay: 0.2 }
+        })
+        
+        await ctaControls.start({
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.6, delay: 0.3 }
+        })
+      }
+      sequence()
+    }
+  }, [contentInView, badgeControls, titleControls, descControls, ctaControls])
+  
+  // Préparer les images
+  const mainImage = image ? 
+    getStrapiMediaUrl(image.url || (image.formats?.large?.url || image.formats?.medium?.url)) : 
     '/images/projects/default-project.jpg'
+    
+  const additionalImages = images?.slice(0, 3).map(img => 
+    getStrapiMediaUrl(img.url || (img.formats?.medium?.url || img.formats?.small?.url))
+  ) || []
   
-  // Mots-clés pour la coloration dynamique
-  const keywords = ['App', 'Site', 'E-commerce', 'Web', 'Mobile', 'Digital', 'Platform']
-  
-  // Formater la date avec style
+  // Formater la date
   const formatDate = (dateString) => {
     if (!dateString) return ''
     return new Date(dateString).toLocaleDateString('fr-FR', {
@@ -54,227 +127,227 @@ export default function EnhancedProjectHero({
     })
   }
 
-  // RGB values pour les effets
-  const colorRGB = {
-    blue: '52, 152, 219',
-    purple: '155, 89, 182', 
-    red: '231, 76, 60'
+  // ✅ Styles pour les backgrounds avec les couleurs CSS
+  const sectionStyle = {
+    background: `linear-gradient(135deg, #ffffff 0%, rgba(${colors.rgb}, 0.02) 30%, #ffffff 70%, rgba(${colors.rgb}, 0.01) 100%)`
   }
 
-  const mainColorRGB = colorRGB[color] || colorRGB.blue
+  const badgeStyle = {
+    background: `rgba(${colors.rgb}, 0.1)`,
+    border: `1px solid rgba(${colors.rgb}, 0.2)`,
+    color: colors.solid
+  }
 
   return (
-    <section 
+    <motion.section 
       ref={containerRef}
-      className="relative min-h-screen bg-gradient-to-br from-white via-gray-50 to-white overflow-hidden"
+      className="relative min-h-screen overflow-hidden"
+      style={sectionStyle}
     >
-      {/* Fond décoratif sophistiqué */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Formes organiques animées */}
-        <motion.div
-          className="absolute -top-32 -right-32 w-96 h-96 opacity-10"
-          animate={{
-            rotate: [0, 180, 360],
-            scale: [1, 1.1, 1]
+      {/* Background décoratif avec parallax */}
+      <motion.div 
+        style={{ y: backgroundY }}
+        className="absolute inset-0 overflow-hidden pointer-events-none"
+      >
+        {/* Formes géométriques subtiles */}
+        <motion.div 
+          className="absolute top-1/4 right-1/4 w-96 h-96 rounded-full opacity-5"
+          style={{ backgroundColor: colors.solid }}
+          animate={{ 
+            scale: [1, 1.1, 1],
+            rotate: [0, 180, 360]
           }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: "linear"
+          transition={{ duration: 20, repeat: Infinity }}
+        />
+        
+        <motion.div 
+          className="absolute bottom-1/4 left-1/4 w-64 h-64 rounded-full opacity-5"
+          style={{ backgroundColor: colors.solid }}
+          animate={{ 
+            scale: [1, 1.2, 1],
+            rotate: [360, 180, 0]
           }}
-        >
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            <path
-              d="M47.2,-73.9C61.3,-66.9,73,-54.2,79.6,-39.3C86.1,-24.4,87.5,-7.2,82.7,7.8C78,22.8,66.9,35.8,55.3,47.5C43.6,59.3,31.3,69.9,16.5,75.4C1.7,80.8,-15.6,81.1,-28.9,74.4C-42.2,67.8,-51.6,54.1,-58.9,40.3C-66.3,26.5,-71.7,12.6,-73.1,-2.5C-74.6,-17.7,-72.1,-34.1,-63.3,-46.1C-54.5,-58.1,-39.6,-65.8,-24.5,-72C-9.5,-78.2,5.7,-83,20.2,-81.5C34.8,-79.9,48.8,-71.9,61.8,-61.9Z"
-              fill={`rgba(${mainColorRGB}, 0.1)`}
-            />
-          </svg>
-        </motion.div>
-
-        {/* Grille de points sophistiquée */}
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%">
-            <pattern id="projectDots" patternUnits="userSpaceOnUse" width="60" height="60">
-              <circle cx="30" cy="30" r="1" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="10" cy="10" r="0.5" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="50" cy="50" r="0.5" fill={`rgb(${mainColorRGB})`} />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#projectDots)" />
-          </svg>
-        </div>
-
-        {/* Particules flottantes */}
-        {Array.from({ length: 15 }).map((_, i) => (
+          transition={{ duration: 25, repeat: Infinity }}
+        />
+        
+        {/* Points décoratifs flottants */}
+        {[...Array(12)].map((_, i) => (
           <motion.div
-            key={i}
-            className={`absolute w-1 h-1 bg-${color}/20 rounded-full`}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
+            key={`floating-${i}`}
+            className="absolute w-2 h-2 rounded-full opacity-20"
+            style={{ 
+              backgroundColor: colors.solid,
+              left: `${10 + (i * 7)}%`,
+              top: `${20 + (i * 5)}%`
             }}
             animate={{
               y: [0, -30, 0],
-              opacity: [0.2, 0.8, 0.2],
-              scale: [1, 1.2, 1]
+              opacity: [0.1, 0.4, 0.1]
             }}
             transition={{
-              duration: 8 + Math.random() * 4,
+              duration: 6 + i * 0.5,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: i * 0.8
             }}
           />
         ))}
-      </div>
+      </motion.div>
 
-      <div className="container relative z-10 min-h-screen flex items-center py-20">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+      <div className="container relative z-10 min-h-screen flex items-center py-24">
+        <motion.div 
+          style={{ opacity: contentOpacity }}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-center w-full"
+        >
           
-          {/* Contenu textuel sophistiqué */}
+          {/* Contenu principal - 7 colonnes */}
           <motion.div 
             ref={contentRef}
-            style={{ opacity: contentOpacity, y: contentY }}
-            className="space-y-8 lg:pr-8"
+            className="lg:col-span-7 space-y-8"
           >
-            {/* Badge premium avec icône */}
+            {/* Badge premium animé */}
             <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-4"
+              ref={badgeRef}
+              initial={{ opacity: 0, y: -30, scale: 0.8 }}
+              animate={badgeControls}
+              className="inline-flex items-center gap-3 px-6 py-3 rounded-full backdrop-blur-sm shadow-lg"
+              style={badgeStyle}
             >
-              <div className={`px-4 py-2 bg-gradient-to-r from-${color}/10 to-${color}/5 rounded-full border border-${color}/20 flex items-center gap-2`}>
-                <FaMedal className={`w-3 h-3 text-${color}`} />
-                <span className={`text-${color} font-semibold text-sm uppercase tracking-wider`}>
-                  {category || 'Projet Premium'}
-                </span>
+              <div 
+                className="w-8 h-8 rounded-full flex items-center justify-center"
+                style={{ backgroundColor: colors.solid }}
+              >
+                <FaAward className="w-4 h-4 text-white" />
+              </div>
+              <div className="text-left">
+                <div className="font-bold text-sm uppercase tracking-wider">
+                  {category || 'Projet'}
+                </div>
+                <div className="text-xs opacity-80">
+                  Réalisation SALLTECH
+                </div>
               </div>
               
+              {/* Lien externe dans le badge */}
               {projectUrl && (
                 <Link 
                   href={projectUrl} 
                   target="_blank"
-                  className={`inline-flex items-center gap-2 text-${color} hover:text-${color}/80 transition-colors font-medium px-3 py-1.5 rounded-lg border border-${color}/20 hover:bg-${color}/5`}
+                  className="ml-2 p-2 hover:bg-white/20 rounded-full transition-colors"
                 >
                   <FaExternalLinkAlt className="w-3 h-3" />
-                  <span className="text-sm">Voir en ligne</span>
                 </Link>
               )}
             </motion.div>
             
-            {/* Titre avec animation sophistiquée */}
+            {/* Titre principal sophistiqué */}
             <motion.h1
-              ref={titleRef}
-              initial={{ opacity: 0 }}
-              animate={titleInView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.8 }}
+              initial={{ opacity: 0, y: 30 }}
+              animate={titleControls}
               className="text-4xl md:text-6xl font-extrabold leading-tight"
             >
-              {(title || 'Projet').split(' ').map((word, i) => (
-                <motion.span
-                  key={i}
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={titleInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ 
-                    duration: 0.6, 
-                    delay: 0.1 * i,
-                    type: "spring",
-                    stiffness: 100
-                  }}
-                  className={`inline-block mr-3 ${keywords.some(keyword => word.includes(keyword)) ? `text-${color}` : 'text-gray-900'}`}
-                >
-                  {word}
-                </motion.span>
-              ))}
+              {/* ✅ Utilisation de style inline au lieu de classes dynamiques */}
+              <span style={{ color: colors.solid }}>
+                {title?.split(' ')[0] || 'Projet'}
+              </span>
+              {title?.split(' ').length > 1 && (
+                <span className="text-gray-900 block md:inline md:ml-4">
+                  {title.split(' ').slice(1).join(' ')}
+                </span>
+              )}
             </motion.h1>
             
             {/* Ligne décorative animée */}
             <motion.div 
               initial={{ width: 0 }}
-              animate={titleInView ? { width: "8rem" } : {}}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className={`h-1 bg-gradient-to-r from-${color} via-purple to-red rounded-full`}
-            ></motion.div>
+              animate={contentInView ? { width: "5rem" } : {}}
+              transition={{ duration: 1, delay: 0.8 }}
+              className="h-1 rounded-full"
+              style={{ 
+                background: `linear-gradient(90deg, ${colors.solid} 0%, rgba(155, 89, 182, 0.6) 100%)`
+              }}
+            />
             
-            {/* Description enrichie */}
+            {/* Description premium */}
             <motion.p 
               initial={{ opacity: 0, y: 20 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="text-lg md:text-xl text-gray-600 leading-relaxed max-w-2xl"
+              animate={descControls}
+              className="text-xl text-gray-600 leading-relaxed max-w-2xl"
             >
-              {description || 'Un projet exceptionnel qui démontre notre expertise technique et notre capacité à créer des solutions innovantes.'}
+              {description || 'Description du projet'}
             </motion.p>
             
-            {/* Informations du projet avec design moderne */}
+            {/* Informations du projet */}
             {(client || date) && (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={contentInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.6, delay: 0.6 }}
-                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+                transition={{ duration: 0.6, delay: 1 }}
+                className="flex flex-wrap gap-6 text-gray-500"
               >
                 {client && (
-                  <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
-                    <div className={`w-10 h-10 bg-${color}/10 rounded-lg flex items-center justify-center`}>
-                      <FaBuilding className={`w-4 h-4 text-${color}`} />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">Client</p>
-                      <p className="font-semibold text-gray-900">{client}</p>
-                    </div>
+                  <div className="flex items-center gap-3 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-lg">
+                    {/* ✅ Icône avec couleur inline */}
+                    <FaBuilding className="w-4 h-4" style={{ color: colors.solid }} />
+                    <span className="font-medium">Client: {client}</span>
                   </div>
                 )}
-                
                 {date && (
-                  <div className="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow">
-                    <div className={`w-10 h-10 bg-${color}/10 rounded-lg flex items-center justify-center`}>
-                      <FaCalendarAlt className={`w-4 h-4 text-${color}`} />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">Réalisé en</p>
-                      <p className="font-semibold text-gray-900">{formatDate(date)}</p>
-                    </div>
+                  <div className="flex items-center gap-3 px-4 py-2 bg-white/60 backdrop-blur-sm rounded-lg">
+                    {/* ✅ Icône avec couleur inline */}
+                    <FaCalendarAlt className="w-4 h-4" style={{ color: colors.solid }} />
+                    <span className="font-medium">{formatDate(date)}</span>
                   </div>
                 )}
               </motion.div>
             )}
             
-            {/* CTA Buttons sophistiqués */}
+            {/* CTA sophistiqué */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
-              animate={contentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              className="flex flex-wrap gap-4"
+              animate={ctaControls}
+              className="flex flex-wrap gap-4 pt-4"
             >
-              <CTAButton 
-                href="/contact" 
-                variant="primary" 
-                showDots={true}
-              >
-                Projet similaire ?
-              </CTAButton>
+              {projectUrl && (
+                <Link
+                  href={projectUrl}
+                  target="_blank"
+                  className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  style={{ backgroundColor: colors.solid }}
+                >
+                  <FaPlay className="w-4 h-4" />
+                  Voir le projet
+                  <FaArrowRight className="w-4 h-4" />
+                </Link>
+              )}
               
-              <CTAButton 
-                href="/projets" 
-                variant="secondary" 
-                showDots={false}
+              <Link
+                href="#details"
+                className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold border-2 hover:bg-white/50 transition-all duration-300"
+                style={{ 
+                  borderColor: colors.solid,
+                  color: colors.solid 
+                }}
               >
-                Autres réalisations
-              </CTAButton>
+                Découvrir les détails
+                <FaArrowRight className="w-4 h-4" />
+              </Link>
             </motion.div>
           </motion.div>
           
-          {/* Image avec effets sophistiqués */}
+          {/* Galerie d'images - 5 colonnes */}
           <motion.div 
-            className="relative lg:h-[700px] h-[500px]"
-            style={{ y: imageY }}
+            className="lg:col-span-5 relative"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <motion.div
+            {/* Image principale avec parallax */}
+            <motion.div 
               style={{ scale: imageScale }}
-              className="relative h-full w-full rounded-2xl overflow-hidden shadow-2xl"
+              className="relative h-[500px] lg:h-[600px] rounded-3xl overflow-hidden shadow-2xl"
             >
               <Image
-                src={imageUrl}
+                src={mainImage}
                 alt={title}
                 fill
                 className="object-cover"
@@ -282,53 +355,47 @@ export default function EnhancedProjectHero({
                 priority
               />
               
-              {/* Overlay sophistiqué */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
-              
-              {/* Badge catégorie flottant */}
-              <div className="absolute top-6 left-6">
-                <div className={`px-4 py-2 bg-white/95 backdrop-blur-sm rounded-full shadow-lg border border-white/20`}>
-                  <div className="flex items-center gap-2">
-                    <FaCode className={`w-3 h-3 text-${color}`} />
-                    <span className={`text-${color} font-semibold text-sm`}>
-                      {category || 'Digital'}
-                    </span>
-                  </div>
-                </div>
-              </div>
+              {/* Overlay gradient subtil */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent" />
             </motion.div>
             
-            {/* Effets décoratifs sophistiqués */}
-            <div className={`absolute -bottom-8 -right-8 w-32 h-32 bg-${color}/5 rounded-full blur-2xl`}></div>
-            <div className={`absolute -top-8 -left-8 w-24 h-24 bg-purple/5 rounded-full blur-xl`}></div>
+            {/* Images supplémentaires flottantes */}
+            {additionalImages.map((imgUrl, index) => (
+              <motion.div
+                key={`additional-${index}`}
+                className="absolute w-24 h-24 md:w-32 md:h-32 rounded-2xl overflow-hidden shadow-xl border-4 border-white"
+                style={{
+                  top: `${20 + index * 15}%`,
+                  right: index % 2 === 0 ? '-10%' : '-15%',
+                  zIndex: 10 + index
+                }}
+                initial={{ opacity: 0, x: 50, y: 30 }}
+                animate={{ opacity: 1, x: 0, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 + index * 0.2 }}
+                whileHover={{ scale: 1.1, zIndex: 20 }}
+              >
+                <Image
+                  src={imgUrl}
+                  alt={`${title} - Image ${index + 2}`}
+                  fill
+                  className="object-cover"
+                  sizes="150px"
+                />
+              </motion.div>
+            ))}
             
-            {/* Indicateur de défilement */}
-            <motion.div
-              className="absolute -bottom-16 left-1/2 transform -translate-x-1/2"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
-              <div className="w-6 h-10 border-2 border-gray-300 rounded-full flex justify-center">
-                <div className="w-1 h-3 bg-gray-400 rounded-full mt-2"></div>
-              </div>
-            </motion.div>
+            {/* Effets décoratifs */}
+            <div 
+              className="absolute -bottom-8 -right-8 w-32 h-32 rounded-full opacity-10 blur-3xl"
+              style={{ backgroundColor: colors.solid }}
+            />
+            <div 
+              className="absolute -top-8 -left-8 w-24 h-24 rounded-full opacity-10 blur-2xl"
+              style={{ backgroundColor: colors.solid }}
+            />
           </motion.div>
-        </div>
+        </motion.div>
       </div>
-
-      {/* Trame visuelle au bas avec motif sophistiqué */}
-      <div className="absolute bottom-0 left-0 w-full h-20 overflow-hidden">
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%">
-            <pattern id="bottomProjectPattern" patternUnits="userSpaceOnUse" width="40" height="40">
-              <circle cx="20" cy="20" r="1" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="10" cy="30" r="0.5" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="30" cy="10" r="0.5" fill={`rgb(${mainColorRGB})`} />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#bottomProjectPattern)" />
-          </svg>
-        </div>
-      </div>
-    </section>
+    </motion.section>
   )
 }

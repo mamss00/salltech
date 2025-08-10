@@ -2,11 +2,15 @@
 'use client'
 
 import { useRef, useEffect, useState } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useScroll, useTransform, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { FaRocket, FaClock, FaCheckCircle, FaShieldAlt, FaMobile, FaChartLine } from 'react-icons/fa'
+import Link from 'next/link'
+import { 
+  FaChartLine, FaUsers, FaRocket, FaTachometerAlt, FaSearchengin, 
+  FaMobile, FaShieldAlt, FaExternalLinkAlt, FaAward, FaThumbsUp 
+} from 'react-icons/fa'
 
-export default function ProjectMetrics({ metrics, color = 'blue' }) {
+export default function ProjectMetrics({ metrics, results, color = 'blue', projectUrl }) {
   // Animation au défilement
   const sectionRef = useRef(null)
   const { scrollYProgress } = useScroll({
@@ -17,96 +21,103 @@ export default function ProjectMetrics({ metrics, color = 'blue' }) {
   const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8])
   
   // Animation d'apparition
+  const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [metricsRef, metricsInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
   // État pour l'animation des compteurs
-  const [counters, setCounters] = useState({
-    performance: 0,
-    satisfaction: 0,
-    delivery: 0,
-    maintenance: 0
-  })
-
-  // RGB values pour les effets
-  const colorRGB = {
-    blue: '52, 152, 219',
-    purple: '155, 89, 182', 
-    red: '231, 76, 60'
+  const [counters, setCounters] = useState({})
+  
+  // Fonction pour obtenir les couleurs
+  const getColorStyles = (colorName) => {
+    const colorMap = {
+      blue: { solid: '#3498db', rgb: '52, 152, 219' },
+      purple: { solid: '#9b59b6', rgb: '155, 89, 182' },
+      red: { solid: '#e74c3c', rgb: '231, 76, 60' }
+    }
+    return colorMap[colorName] || colorMap.blue
   }
-  const mainColorRGB = colorRGB[color] || colorRGB.blue
+
+  const colors = getColorStyles(color)
+
+  // Métriques par défaut basées sur des projets réels
+  const defaultMetrics = [
+    {
+      label: "Performance",
+      value: "98",
+      unit: "%",
+      description: "Score de performance Google PageSpeed",
+      icon: FaTachometerAlt,
+      color: "green"
+    },
+    {
+      label: "Temps de chargement",
+      value: "1.2",
+      unit: "s",
+      description: "Temps de chargement initial",
+      icon: FaRocket,
+      color: color
+    },
+    {
+      label: "SEO Score",
+      value: "95",
+      unit: "/100",
+      description: "Score d'optimisation SEO",
+      icon: FaSearchengin,
+      color: color
+    },
+    {
+      label: "Responsive",
+      value: "100",
+      unit: "%",
+      description: "Compatibilité mobile parfaite",
+      icon: FaMobile,
+      color: "blue"
+    },
+    {
+      label: "Sécurité",
+      value: "A+",
+      unit: "",
+      description: "Niveau de sécurité SSL Labs",
+      icon: FaShieldAlt,
+      color: "green"
+    },
+    {
+      label: "Satisfaction client",
+      value: "100",
+      unit: "%",
+      description: "Retour client très positif",
+      icon: FaThumbsUp,
+      color: color
+    }
+  ]
+
+  const finalMetrics = metrics && metrics.length > 0 ? metrics : defaultMetrics
 
   // Animation des compteurs
   useEffect(() => {
     if (metricsInView) {
-      const targets = {
-        performance: 98,
-        satisfaction: 100,
-        delivery: 100,
-        maintenance: 100
-      }
-      
-      Object.keys(targets).forEach((key, index) => {
-        setTimeout(() => {
-          let current = 0
-          const target = targets[key]
-          const increment = target / 50 // 50 étapes d'animation
+      finalMetrics.forEach((metric, index) => {
+        const target = parseFloat(metric.value) || 0
+        let current = 0
+        const increment = target / 60 // Animation sur ~1 seconde
+        
+        const timer = setInterval(() => {
+          current += increment
+          if (current >= target) {
+            current = target
+            clearInterval(timer)
+          }
           
-          const timer = setInterval(() => {
-            current += increment
-            if (current >= target) {
-              current = target
-              clearInterval(timer)
-            }
-            
-            setCounters(prev => ({
-              ...prev,
-              [key]: Math.round(current)
-            }))
-          }, 30)
-        }, index * 200)
+          setCounters(prev => ({
+            ...prev,
+            [index]: metric.value.includes('.') ? current.toFixed(1) : Math.round(current)
+          }))
+        }, 16) // ~60fps
+        
+        return () => clearInterval(timer)
       })
     }
-  }, [metricsInView])
-
-  // Données des métriques avec icônes
-  const metricsData = [
-    {
-      key: 'performance',
-      icon: FaRocket,
-      label: 'Performance',
-      value: counters.performance,
-      suffix: '%',
-      description: 'Score PageSpeed Insights',
-      color: color
-    },
-    {
-      key: 'satisfaction',
-      icon: FaCheckCircle,
-      label: 'Satisfaction Client',
-      value: counters.satisfaction,
-      suffix: '%',
-      description: 'Retours clients positifs',
-      color: 'purple'
-    },
-    {
-      key: 'delivery',
-      icon: FaClock,
-      label: 'Livraison',
-      value: counters.delivery,
-      suffix: '%',
-      description: 'Respect des délais',
-      color: 'red'
-    },
-    {
-      key: 'maintenance',
-      icon: FaShieldAlt,
-      label: 'Disponibilité',
-      value: counters.maintenance,
-      suffix: '%',
-      description: 'Uptime du service',
-      color: color
-    }
-  ]
+  }, [metricsInView, finalMetrics])
 
   // Animation variants
   const containerVariants = {
@@ -114,97 +125,94 @@ export default function ProjectMetrics({ metrics, color = 'blue' }) {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
+        staggerChildren: 0.1
       }
     }
   }
   
   const itemVariants = {
-    hidden: { y: 30, opacity: 0, scale: 0.9 },
+    hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
-      scale: 1,
       transition: { duration: 0.6, ease: "easeOut" }
     }
+  }
+
+  // Styles pour les backgrounds
+  const sectionStyle = {
+    background: `linear-gradient(135deg, rgba(${colors.rgb}, 0.03) 0%, #ffffff 50%, rgba(${colors.rgb}, 0.01) 100%)`
+  }
+
+  const badgeStyle = {
+    background: `rgba(${colors.rgb}, 0.1)`,
+    border: `1px solid rgba(${colors.rgb}, 0.15)`,
+    color: colors.solid
   }
 
   return (
     <motion.section 
       ref={sectionRef}
-      style={{ opacity: sectionOpacity }}
-      className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden"
+      style={{ 
+        opacity: sectionOpacity,
+        ...sectionStyle
+      }}
+      className="py-24 relative overflow-hidden"
     >
-      {/* Fond décoratif */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Grille sophistiquée */}
-        <div className="absolute inset-0 opacity-5">
-          <svg width="100%" height="100%">
-            <pattern id="metricsPattern" patternUnits="userSpaceOnUse" width="60" height="60">
-              <circle cx="30" cy="30" r="1" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="15" cy="15" r="0.5" fill={`rgb(${mainColorRGB})`} />
-              <circle cx="45" cy="45" r="0.5" fill={`rgb(${mainColorRGB})`} />
-              <path d="M15,15 L30,30 L45,45" stroke={`rgb(${mainColorRGB})`} strokeWidth="0.3" fill="none" />
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#metricsPattern)" />
-          </svg>
-        </div>
-
-        {/* Formes géométriques */}
-        <motion.div
-          className="absolute top-20 right-20 w-32 h-32 opacity-5"
-          animate={{
-            rotate: [0, 360],
-            scale: [1, 1.1, 1]
+      {/* Background décoratif */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <motion.div 
+          className="absolute top-1/3 right-1/4 w-40 h-40 rounded-full opacity-5"
+          style={{ backgroundColor: colors.solid }}
+          animate={{ 
+            scale: [1, 1.1, 1],
+            rotate: [0, 360]
           }}
-          transition={{
-            duration: 20,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        >
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <polygon points="50,10 90,50 50,90 10,50" fill={`rgb(${mainColorRGB})`} />
-          </svg>
-        </motion.div>
+          transition={{ duration: 20, repeat: Infinity }}
+        />
       </div>
 
       <div className="container relative z-10">
+        
         {/* En-tête */}
-        <div className="text-center mb-16">
-          <motion.span
-            initial={{ opacity: 0, y: 20 }}
-            animate={metricsInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className={`inline-block text-${color} font-semibold tracking-wider uppercase text-sm mb-4`}
+        <div className="text-center mb-20">
+          <motion.div
+            ref={titleRef}
+            initial={{ opacity: 0, y: -30, scale: 0.8 }}
+            animate={titleInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+            transition={{ duration: 0.6, type: "spring" }}
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full backdrop-blur-sm shadow-lg mb-8"
+            style={badgeStyle}
           >
-            Résultats Mesurables
-          </motion.span>
+            <div 
+              className="w-8 h-8 rounded-full flex items-center justify-center"
+              style={{ backgroundColor: colors.solid }}
+            >
+              <FaChartLine className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-sm uppercase tracking-wider">
+              Résultats & Performance
+            </span>
+          </motion.div>
           
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
-            animate={metricsInView ? { opacity: 1, y: 0 } : {}}
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-3xl md:text-4xl font-bold text-gray-900 mb-6"
+            className="text-3xl md:text-5xl font-bold text-gray-900 mb-6"
           >
-            Performance &{' '}
-            <span className={`text-${color}`}>Excellence</span>
+            Des résultats qui parlent{' '}
+            <span style={{ color: colors.solid }}>d'eux-mêmes</span>
           </motion.h2>
-          
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={metricsInView ? { width: "6rem" } : {}}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className={`h-1 bg-${color} mx-auto mb-8`}
-          ></motion.div>
           
           <motion.p
             initial={{ opacity: 0, y: 20 }}
-            animate={metricsInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.8, delay: 0.6 }}
-            className="text-lg text-gray-600 max-w-3xl mx-auto"
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed"
           >
-            Des chiffres qui parlent d'eux-mêmes et démontrent notre engagement vers l'excellence.
+            Découvrez les performances exceptionnelles obtenues grâce à notre 
+            approche technique rigoureuse et nos optimisations poussées.
           </motion.p>
         </div>
 
@@ -214,81 +222,122 @@ export default function ProjectMetrics({ metrics, color = 'blue' }) {
           variants={containerVariants}
           initial="hidden"
           animate={metricsInView ? "visible" : "hidden"}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
         >
-          {metricsData.map((metric, index) => (
-            <motion.div
-              key={metric.key}
-              variants={itemVariants}
-              className="group"
-            >
-              <div className="relative p-8 bg-white rounded-2xl border border-gray-100 hover:border-gray-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-2 text-center">
-                {/* Icône */}
-                <div className={`w-16 h-16 bg-gradient-to-br from-${metric.color}/10 to-${metric.color}/5 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:from-${metric.color}/20 group-hover:to-${metric.color}/10 transition-colors border border-${metric.color}/10`}>
-                  <metric.icon className={`w-8 h-8 text-${metric.color}`} />
-                </div>
-                
-                {/* Valeur avec animation */}
-                <div className={`text-4xl font-extrabold text-${metric.color} mb-2`}>
-                  {metric.value}
-                  <span className="text-2xl">{metric.suffix}</span>
-                </div>
-                
-                {/* Label */}
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  {metric.label}
-                </h3>
-                
-                {/* Description */}
-                <p className="text-sm text-gray-600">
-                  {metric.description}
-                </p>
-                
-                {/* Barre de progression */}
-                <div className="mt-4 w-full h-2 bg-gray-100 rounded-full overflow-hidden">
-                  <motion.div
-                    className={`h-full bg-gradient-to-r from-${metric.color} to-${metric.color}/70`}
-                    initial={{ width: 0 }}
-                    animate={metricsInView ? { width: `${metric.value}%` } : {}}
-                    transition={{ 
-                      duration: 1.5, 
-                      delay: 0.5 + (index * 0.2),
-                      ease: "easeOut"
-                    }}
-                  ></motion.div>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Section bonus - Certifications/Technologies */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={metricsInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.8, delay: 1 }}
-          className="mt-16 text-center"
-        >
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { icon: FaMobile, label: "Responsive Design" },
-              { icon: FaShieldAlt, label: "Sécurité SSL" },
-              { icon: FaChartLine, label: "SEO Optimisé" },
-              { icon: FaRocket, label: "Performance+" }
-            ].map((feature, index) => (
+          {finalMetrics.map((metric, index) => {
+            const IconComponent = metric.icon || FaChartLine
+            const currentValue = counters[index] || 0
+            
+            return (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={metricsInView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ duration: 0.5, delay: 1.2 + (index * 0.1) }}
-                className="flex flex-col items-center p-4 bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow"
+                variants={itemVariants}
+                className="group"
               >
-                <feature.icon className={`w-6 h-6 text-${color} mb-2`} />
-                <span className="text-sm font-medium text-gray-700">{feature.label}</span>
+                <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 h-full">
+                  {/* Icône */}
+                  <div 
+                    className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300"
+                    style={{ backgroundColor: `rgba(${colors.rgb}, 0.1)` }}
+                  >
+                    <IconComponent 
+                      className="w-8 h-8"
+                      style={{ color: colors.solid }}
+                    />
+                  </div>
+                  
+                  {/* Valeur animée */}
+                  <div className="mb-4">
+                    <div className="flex items-baseline gap-1">
+                      <span 
+                        className="text-4xl font-bold"
+                        style={{ color: colors.solid }}
+                      >
+                        {currentValue}
+                      </span>
+                      <span 
+                        className="text-xl font-semibold opacity-70"
+                        style={{ color: colors.solid }}
+                      >
+                        {metric.unit}
+                      </span>
+                    </div>
+                  </div>
+                  
+                  {/* Label et description */}
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    {metric.label}
+                  </h3>
+                  
+                  <div 
+                    className="w-12 h-1 rounded-full mb-4"
+                    style={{ backgroundColor: colors.solid }}
+                  />
+                  
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    {metric.description}
+                  </p>
+                </div>
               </motion.div>
-            ))}
-          </div>
+            )
+          })}
         </motion.div>
+
+        {/* Section résultats textuels */}
+        {results && (
+          <motion.div
+            variants={itemVariants}
+            className="bg-white p-8 md:p-12 rounded-3xl shadow-lg border border-gray-100 max-w-4xl mx-auto mb-16"
+          >
+            <div className="text-center mb-8">
+              <div 
+                className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-6"
+                style={{ backgroundColor: `rgba(${colors.rgb}, 0.1)` }}
+              >
+                <FaAward 
+                  className="w-8 h-8"
+                  style={{ color: colors.solid }}
+                />
+              </div>
+              
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                Impact & Bénéfices
+              </h3>
+            </div>
+            
+            <div className="prose prose-lg max-w-none text-gray-600 text-center">
+              {typeof results === 'string' ? (
+                <p className="leading-relaxed">{results}</p>
+              ) : (
+                <div className="space-y-4">
+                  {results.map((result, index) => (
+                    <p key={index} className="leading-relaxed">
+                      {result}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          </motion.div>
+        )}
+
+        {/* CTA vers le projet */}
+        {projectUrl && (
+          <motion.div
+            variants={itemVariants}
+            className="text-center"
+          >
+            <Link
+              href={projectUrl}
+              target="_blank"
+              className="inline-flex items-center gap-3 px-8 py-4 rounded-xl font-semibold text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+              style={{ backgroundColor: colors.solid }}
+            >
+              <FaExternalLinkAlt className="w-5 h-5" />
+              Voir le projet en action
+            </Link>
+          </motion.div>
+        )}
       </div>
     </motion.section>
   )
