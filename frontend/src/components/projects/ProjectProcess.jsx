@@ -1,12 +1,13 @@
-// frontend/src/components/projects/ProjectProcess.jsx
+// frontend/src/components/projects/ProjectProcess.jsx - VERSION CORRIGÉE
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef } from 'react'
 import { motion, useScroll, useTransform, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { 
-  FaSearchengin, FaPalette, FaCode, FaRocket, FaCloudUploadAlt,
-  FaCheckCircle, FaArrowRight, FaClock, FaUsers, FaCog
+  FaSearch, FaPencilRuler, FaCode, FaBug, FaRocket, 
+  FaCreditCard, FaMobileAlt, FaDatabase, FaShieldAlt, 
+  FaChartLine, FaCheckCircle, FaClock, FaUsers, FaCog
 } from 'react-icons/fa'
 
 export default function ProjectProcess({ steps, color = 'blue', projectTitle }) {
@@ -39,60 +40,60 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
 
   const colors = getColorStyles(color)
 
-  // Mapping des icônes
+  // Mapping des icônes - ✅ CORRIGÉ
   const iconMap = {
-    'FaSearchengin': FaSearchengin,
-    'FaPalette': FaPalette,
+    'FaSearch': FaSearch,
+    'FaPencilRuler': FaPencilRuler,
     'FaCode': FaCode,
+    'FaBug': FaBug,
     'FaRocket': FaRocket,
-    'FaCloudUploadAlt': FaCloudUploadAlt,
+    'FaCreditCard': FaCreditCard,
+    'FaMobileAlt': FaMobileAlt,
+    'FaDatabase': FaDatabase,
+    'FaShieldAlt': FaShieldAlt,
+    'FaChartLine': FaChartLine,
     'FaCheckCircle': FaCheckCircle,
     'FaClock': FaClock,
-    'FaUsers': FaUsers
+    'FaUsers': FaUsers,
+    'FaCog': FaCog
   }
 
   const getIcon = (iconName) => {
     return iconMap[iconName] || FaRocket
   }
 
-  // Animation séquentielle du titre
-  useEffect(() => {
-    if (titleInView) {
-      const sequence = async () => {
-        await badgeControls.start({
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          transition: { duration: 0.6, type: "spring" }
-        })
-        
-        await titleControls.start({
-          opacity: 1,
-          y: 0,
-          transition: { duration: 0.8, delay: 0.1 }
-        })
-      }
-      sequence()
-    }
-  }, [titleInView, titleControls, badgeControls])
+  // Styles pour le badge animé
+  const badgeStyle = {
+    background: `linear-gradient(135deg, rgba(${colors.rgb}, 0.1) 0%, rgba(${colors.rgb}, 0.05) 100%)`,
+    border: `1px solid rgba(${colors.rgb}, 0.2)`
+  }
 
-  // Animation variants pour les étapes
+  // Variantes d'animation
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2
+        staggerChildren: 0.2,
+        delayChildren: 0.1
       }
     }
   }
-  
+
   const stepVariants = {
-    hidden: { opacity: 0, x: -50 },
+    hidden: { 
+      opacity: 0, 
+      y: 50,
+      scale: 0.9
+    },
     visible: {
       opacity: 1,
-      x: 0,
-      transition: { duration: 0.8, ease: "easeOut" }
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: "easeOut"
+      }
     }
   }
 
@@ -100,61 +101,55 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     hidden: { scaleY: 0 },
     visible: {
       scaleY: 1,
-      transition: { duration: 1.5, ease: "easeInOut" }
+      transition: {
+        duration: 1.5,
+        ease: "easeOut"
+      }
     }
   }
 
-  // Styles pour les backgrounds
-  const sectionStyle = {
-    background: `linear-gradient(180deg, #ffffff 0%, rgba(${colors.rgb}, 0.02) 50%, #ffffff 100%)`
-  }
-
-  const badgeStyle = {
-    background: `rgba(${colors.rgb}, 0.1)`,
-    border: `1px solid rgba(${colors.rgb}, 0.15)`,
-    color: colors.solid
+  // Valider que steps existe
+  if (!steps || !Array.isArray(steps) || steps.length === 0) {
+    return null
   }
 
   return (
     <motion.section 
       ref={sectionRef}
-      id="details"
-      style={{ 
-        opacity: sectionOpacity,
-        ...sectionStyle
-      }}
-      className="py-24 relative overflow-hidden"
+      className="py-20 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden"
+      style={{ opacity: sectionOpacity }}
     >
-      {/* Background décoratif subtil */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {/* Éléments décoratifs d'arrière-plan */}
+      <div className="absolute inset-0 pointer-events-none">
         <motion.div 
-          className="absolute top-1/4 right-10 w-32 h-32 rounded-full opacity-5"
+          className="absolute top-10 right-20 w-32 h-32 rounded-full opacity-5"
           style={{ backgroundColor: colors.solid }}
           animate={{ 
             scale: [1, 1.1, 1],
             rotate: [0, 180, 360]
           }}
-          transition={{ duration: 15, repeat: Infinity }}
+          transition={{ duration: 20, repeat: Infinity }}
         />
         <motion.div 
-          className="absolute bottom-1/4 left-10 w-24 h-24 rounded-full opacity-5"
+          className="absolute bottom-20 left-16 w-24 h-24 rounded-full opacity-5"
           style={{ backgroundColor: colors.solid }}
           animate={{ 
             scale: [1, 1.2, 1],
             rotate: [360, 180, 0]
           }}
-          transition={{ duration: 18, repeat: Infinity }}
+          transition={{ duration: 25, repeat: Infinity }}
         />
       </div>
 
       <div className="container relative z-10">
         
-        {/* En-tête de section */}
-        <div className="text-center mb-20">
+        {/* En-tête de section - ✅ AMÉLIORÉ */}
+        <div className="text-center mb-16">
           <motion.div
             ref={titleRef}
             initial={{ opacity: 0, y: -30, scale: 0.8 }}
-            animate={badgeControls}
+            animate={titleInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+            transition={{ duration: 0.8, delay: 0.2 }}
             className="inline-flex items-center gap-3 px-6 py-3 rounded-full backdrop-blur-sm shadow-lg mb-8"
             style={badgeStyle}
           >
@@ -171,7 +166,8 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
           
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
-            animate={titleControls}
+            animate={titleInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 0.4 }}
             className="text-3xl md:text-5xl font-bold text-gray-900 mb-6"
           >
             Notre approche pour{' '}
@@ -191,23 +187,30 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
           </motion.p>
         </div>
 
-        {/* Timeline des étapes */}
+        {/* Timeline des étapes - ✅ DESIGN CORRIGÉ */}
         <motion.div
           ref={timelineRef}
           variants={containerVariants}
           initial="hidden"
           animate={timelineInView ? "visible" : "hidden"}
-          className="relative max-w-4xl mx-auto"
+          className="relative max-w-6xl mx-auto"
         >
-          {/* Ligne centrale de la timeline */}
+          {/* Ligne centrale de la timeline - ✅ POSITIONNEMENT CORRIGÉ */}
           <motion.div
             variants={lineVariants}
-            className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 origin-top transform md:-translate-x-1/2 rounded-full"
+            className="absolute left-1/2 top-0 bottom-0 w-1 origin-top transform -translate-x-1/2 rounded-full hidden md:block"
             style={{ backgroundColor: `rgba(${colors.rgb}, 0.2)` }}
           />
 
-          {/* Étapes */}
-          <div className="space-y-12">
+          {/* Ligne mobile - ✅ AJOUTÉE */}
+          <motion.div
+            variants={lineVariants}
+            className="absolute left-8 top-0 bottom-0 w-1 origin-top rounded-full md:hidden"
+            style={{ backgroundColor: `rgba(${colors.rgb}, 0.2)` }}
+          />
+
+          {/* Étapes - ✅ ALIGNEMENT PARFAIT */}
+          <div className="space-y-16">
             {steps.map((step, index) => {
               const IconComponent = getIcon(step.icone)
               const isEven = index % 2 === 0
@@ -216,12 +219,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 <motion.div
                   key={index}
                   variants={stepVariants}
-                  className={`relative flex items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} flex-row`}
+                  className="relative"
                 >
-                  {/* Numéro de l'étape */}
-                  <div className="absolute left-8 md:left-1/2 transform md:-translate-x-1/2 z-10">
+                  {/* Icône centrale - ✅ CENTRAGE PARFAIT */}
+                  <div className="absolute left-8 md:left-1/2 transform md:-translate-x-1/2 z-20">
                     <motion.div 
-                      className="w-16 h-16 rounded-full flex items-center justify-center border-4 border-white shadow-lg"
+                      className="w-16 h-16 rounded-full flex items-center justify-center border-4 border-white shadow-xl"
                       style={{ backgroundColor: colors.solid }}
                       whileHover={{ scale: 1.1 }}
                       transition={{ type: "spring", stiffness: 300 }}
@@ -230,59 +233,70 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                     </motion.div>
                   </div>
 
-                  {/* Contenu de l'étape */}
-                  <div className={`flex-1 ${isEven ? 'md:pr-16 pl-24' : 'md:pl-16 pl-24'} md:pl-0`}>
-                    <motion.div 
-                      className={`bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 ${isEven ? 'md:mr-8' : 'md:ml-8'}`}
-                      whileHover={{ y: -5 }}
-                    >
-                      {/* Badge numéro */}
-                      <div 
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-bold mb-4"
-                        style={{ backgroundColor: colors.solid }}
+                  {/* Contenu - ✅ RESPONSIVE AMÉLIORÉ */}
+                  <div className="flex flex-col md:flex-row md:items-center">
+                    {/* Desktop: alternance gauche/droite */}
+                    <div className={`w-full md:w-1/2 ${isEven ? 'md:order-1 md:pr-12' : 'md:order-2 md:pl-12'}`}>
+                      <motion.div 
+                        className={`bg-white p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 ml-24 md:ml-0 ${
+                          isEven ? 'md:text-right' : 'md:text-left'
+                        }`}
+                        whileHover={{ y: -5 }}
                       >
-                        {index + 1}
-                      </div>
-                      
-                      <h3 className="text-xl font-bold text-gray-900 mb-3">
-                        {step.titre}
-                      </h3>
-                      
-                      <div 
-                        className="w-12 h-1 rounded-full mb-4"
-                        style={{ backgroundColor: colors.solid }}
-                      />
-                      
-                      <p className="text-gray-600 leading-relaxed">
-                        {step.description}
-                      </p>
-                      
-                      {/* Durée estimée si disponible */}
-                      {step.duree && (
-                        <div className="flex items-center gap-2 mt-4 text-sm text-gray-500">
-                          <FaClock className="w-3 h-3" />
-                          <span>Durée: {step.duree}</span>
+                        {/* Badge numéro - ✅ AMÉLIORÉ */}
+                        <div className={`flex items-center gap-3 mb-4 ${isEven ? 'md:justify-end' : 'md:justify-start'}`}>
+                          <div 
+                            className="inline-flex items-center justify-center w-8 h-8 rounded-full text-white text-sm font-bold"
+                            style={{ backgroundColor: colors.solid }}
+                          >
+                            {index + 1}
+                          </div>
+                          <div 
+                            className="h-0.5 w-12 rounded-full"
+                            style={{ backgroundColor: colors.solid }}
+                          />
                         </div>
-                      )}
-                    </motion.div>
+                        
+                        <h3 className="text-xl font-bold text-gray-900 mb-4">
+                          {step.titre}
+                        </h3>
+                        
+                        <p className="text-gray-600 leading-relaxed mb-4">
+                          {step.description}
+                        </p>
+                        
+                        {/* Durée - ✅ DESIGN AMÉLIORÉ */}
+                        {step.duree && (
+                          <div className={`flex items-center gap-2 text-sm text-gray-500 ${
+                            isEven ? 'md:justify-end' : 'md:justify-start'
+                          }`}>
+                            <FaClock className="w-3 h-3" style={{ color: colors.solid }} />
+                            <span className="font-medium">Durée: {step.duree}</span>
+                          </div>
+                        )}
+                      </motion.div>
+                    </div>
+
+                    {/* Espace vide pour l'autre côté */}
+                    <div className="hidden md:block md:w-1/2"></div>
                   </div>
                 </motion.div>
               )
             })}
           </div>
 
-          {/* Résumé final */}
+          {/* Résumé final - ✅ DESIGN AMÉLIORÉ */}
           <motion.div
             variants={stepVariants}
             className="mt-20 text-center"
           >
-            <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100 max-w-2xl mx-auto">
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-gray-100 max-w-3xl mx-auto">
               <div 
-                className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+                className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg"
                 style={{ backgroundColor: `rgba(${colors.rgb}, 0.1)` }}
               >
                 <FaCheckCircle 
-                  className="w-8 h-8"
+                  className="w-10 h-10"
                   style={{ color: colors.solid }}
                 />
               </div>
@@ -291,24 +305,30 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 Résultat final
               </h3>
               
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed mb-6">
                 Cette méthodologie rigoureuse nous a permis de livrer un projet 
                 qui dépasse les attentes initiales, dans les délais impartis et 
                 avec un niveau de qualité exceptionnel.
               </p>
               
-              <div className="flex items-center justify-center gap-6 mt-6 text-sm text-gray-500">
-                <div className="flex items-center gap-2">
-                  <FaUsers className="w-4 h-4" style={{ color: colors.solid }} />
-                  <span>Équipe dédiée</span>
+              {/* Badges de réussite - ✅ DESIGN MODERNE */}
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
+                <div className="flex items-center gap-2 px-4 py-2 bg-green-50 text-green-700 rounded-full border border-green-200">
+                  <FaUsers className="w-4 h-4" />
+                  <span className="font-medium">Équipe dédiée</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <FaClock className="w-4 h-4" style={{ color: colors.solid }} />
-                  <span>Respect des délais</span>
+                <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-full border border-blue-200">
+                  <FaClock className="w-4 h-4" />
+                  <span className="font-medium">Respect des délais</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <FaRocket className="w-4 h-4" style={{ color: colors.solid }} />
-                  <span>Performance optimisée</span>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full border" 
+                     style={{ 
+                       backgroundColor: `rgba(${colors.rgb}, 0.1)`, 
+                       color: colors.solid,
+                       borderColor: `rgba(${colors.rgb}, 0.3)`
+                     }}>
+                  <FaRocket className="w-4 h-4" />
+                  <span className="font-medium">Performance optimisée</span>
                 </div>
               </div>
             </div>
