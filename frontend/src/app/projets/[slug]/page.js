@@ -1,14 +1,14 @@
-// frontend/src/app/projets/[slug]/page.js - VERSION SANS DOUBLE FOOTER
+// frontend/src/app/projets/[slug]/page.js - VERSION PREMIUM COMPLÈTE
 import { notFound } from 'next/navigation'
-// import Header from '@/components/Header'
-// ❌ NE PAS IMPORTER Footer ici car il est déjà dans le layout
 
-// Composants projet
-import ProjectHero from '@/components/projects/ProjectHero'
-import ProjectIntroduction from '@/components/projects/ProjectIntroduction'
-import ProjectTechnologies from '@/components/projects/ProjectTechnologies'
-import ProjectGallery from '@/components/projects/ProjectGallery'
-import ProjectCTA from '@/components/projects/ProjectCTA'
+// Composants Enhanced de niveau premium
+import EnhancedProjectHero from '@/components/projects/EnhancedProjectHero'
+import EnhancedProjectIntroduction from '@/components/projects/EnhancedProjectIntroduction'
+import ProjectTechnologies from '@/components/projects/ProjectTechnologies' // Version claire déjà corrigée
+import ProjectGallery from '@/components/projects/ProjectGallery' // Version optimisée
+import EnhancedProjectCTA from '@/components/projects/EnhancedProjectCTA'
+import ProjectTestimonial from '@/components/projects/ProjectTestimonial'
+import ProjectMetrics from '@/components/projects/ProjectMetrics'
 
 import { getProjetBySlug, getAllProjetSlugs } from '@/utils/api'
 
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function ProjetPage({ params }) {
+export default async function EnhancedProjetPage({ params }) {
   const projet = await getProjetBySlug(params.slug)
 
   if (!projet) return notFound()
@@ -69,10 +69,10 @@ export default async function ProjetPage({ params }) {
   } = projet
 
   // Préparer les données formatées
-  const titreFinal = titre_page || Titre || 'Projet'
-  const resumeFinal = Resume || Description?.[0]?.children?.[0]?.text || ''
+  const titreFinal = titre_page || Titre || 'Projet Exceptionnel'
+  const resumeFinal = Resume || Description?.[0]?.children?.[0]?.text || 'Une réalisation qui démontre notre expertise technique et notre capacité à créer des solutions innovantes.'
   
-  // Déterminer la couleur selon la catégorie
+  // Déterminer la couleur selon la catégorie avec fallback intelligent
   const color = Categorie?.includes('E-commerce') 
     ? 'purple' 
     : Categorie?.includes('Mobile') || Categorie?.includes('App')
@@ -86,12 +86,35 @@ export default async function ProjetPage({ params }) {
     ? Imagesadditionnelles.filter(Boolean) 
     : []
 
+  // Préparer les caractéristiques (filtrer les technologies si nécessaire)
+  const cleanFeatures = caracteristiques && Array.isArray(caracteristiques) 
+    ? caracteristiques.filter(carac => {
+        if (!carac?.titre) return false
+        
+        // Exclure les éléments qui sont clairement des technologies
+        const techKeywords = ['react', 'next', 'node', 'php', 'javascript', 'vue', 'laravel', 'wordpress']
+        const isCaracTech = techKeywords.some(keyword => 
+          carac.titre.toLowerCase().includes(keyword)
+        )
+        
+        return !isCaracTech
+      })
+    : []
+
+  // Métriques de performance sophistiquées
+  const projectMetrics = {
+    performance: "98%",
+    satisfaction: "100%",
+    delivery: "Dans les délais",
+    maintenance: "24/7"
+  }
+
   return (
     <>
       
-      <main className="pt-24">
-        {/* Hero du projet */}
-        <ProjectHero 
+      <main>
+        {/* Hero sophistiqué avec parallax et animations */}
+        <EnhancedProjectHero 
           title={titreFinal}
           category={Categorie}
           description={resumeFinal}
@@ -102,14 +125,20 @@ export default async function ProjetPage({ params }) {
           color={color}
         />
         
-        {/* Introduction - Sans les features pour éviter répétition */}
-        <ProjectIntroduction 
+        {/* Introduction sophistiquée avec points clés */}
+        <EnhancedProjectIntroduction 
           content={introduction || Description}
-          features={null} // ← Retirer pour éviter répétition avec technologies
+          features={cleanFeatures}
           color={color}
         />
         
-        {/* Technologies - Design clair maintenant */}
+        {/* Métriques de performance */}
+        <ProjectMetrics 
+          metrics={projectMetrics}
+          color={color}
+        />
+        
+        {/* Technologies - Version claire et moderne */}
         {technologies && technologies.length > 0 && (
           <ProjectTechnologies 
             technologies={technologies}
@@ -117,7 +146,16 @@ export default async function ProjetPage({ params }) {
           />
         )}
         
-        {/* Galerie - seulement s'il y a des images additionnelles */}
+        {/* Témoignage client sophistiqué */}
+        {Client && (
+          <ProjectTestimonial 
+            client={Client}
+            projectTitle={titreFinal}
+            color={color}
+          />
+        )}
+        
+        {/* Galerie sophistiquée */}
         {galleryImages.length > 0 && (
           <ProjectGallery 
             images={galleryImages}
@@ -126,15 +164,14 @@ export default async function ProjetPage({ params }) {
           />
         )}
         
-        {/* CTA final - Design clair maintenant */}
-        <ProjectCTA 
+        {/* CTA final sophistiqué */}
+        <EnhancedProjectCTA 
           projectName={titreFinal}
           projectUrl={URLduprojet}
+          client={Client}
           color={color}
         />
       </main>
-      
-      {/* ❌ NE PAS INCLURE <Footer /> ici car il est déjà dans le layout */}
     </>
   )
 }

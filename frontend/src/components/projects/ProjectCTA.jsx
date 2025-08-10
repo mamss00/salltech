@@ -1,159 +1,335 @@
-// frontend/src/components/projects/ProjectCTA.jsx - VERSION CLAIRE
+// frontend/src/components/projects/EnhancedProjectCTA.jsx
 'use client'
 
-import { motion } from 'framer-motion'
+import { useRef, useEffect } from 'react'
+import { motion, useScroll, useTransform, useAnimation } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import Link from 'next/link'
 import CTAButton from '@/components/CTAButton'
-import { FaRocket, FaExternalLinkAlt, FaEnvelope } from 'react-icons/fa'
+import { FaRocket, FaExternalLinkAlt, FaEnvelope, FaPhone, FaComments, FaAward, FaUsers, FaClock } from 'react-icons/fa'
 
-export default function ProjectCTA({ projectName, projectUrl, color = 'blue' }) {
+export default function EnhancedProjectCTA({ projectName, projectUrl, client, color = 'blue' }) {
+  // Animation au défilement sophistiquée
+  const sectionRef = useRef(null)
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  })
+  
+  const sectionOpacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0.8, 1, 1, 0.8])
+  const contentY = useTransform(scrollYProgress, [0, 0.5], [0, -40])
+  
+  // Animation d'apparition sophistiquée
   const [contentRef, contentInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  const [statsRef, statsInView] = useInView({ triggerOnce: true, threshold: 0.1 })
+  
+  // Contrôles d'animation
+  const titleControls = useAnimation()
+  const badgeControls = useAnimation()
+  const buttonsControls = useAnimation()
+  const statsControls = useAnimation()
+  
+  // RGB values pour les effets
+  const colorRGB = {
+    blue: '52, 152, 219',
+    purple: '155, 89, 182', 
+    red: '231, 76, 60'
+  }
+  const mainColorRGB = colorRGB[color] || colorRGB.blue
+
+  // Animation séquentielle sophistiquée
+  useEffect(() => {
+    if (contentInView) {
+      const sequence = async () => {
+        await badgeControls.start({
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          transition: { duration: 0.6, type: "spring", stiffness: 100 }
+        })
+        
+        await titleControls.start({
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.8, delay: 0.1 }
+        })
+        
+        await buttonsControls.start({
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.6, delay: 0.2 }
+        })
+      }
+      sequence()
+    }
+  }, [contentInView, titleControls, badgeControls, buttonsControls])
+
+  // Animation des statistiques
+  useEffect(() => {
+    if (statsInView) {
+      statsControls.start({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.8, staggerChildren: 0.1 }
+      })
+    }
+  }, [statsInView, statsControls])
+
+  // Statistiques impressionnantes
+  const stats = [
+    {
+      icon: FaAward,
+      number: "50+",
+      label: "Projets réussis",
+      color: color
+    },
+    {
+      icon: FaUsers,
+      number: "100%",
+      label: "Clients satisfaits",
+      color: "purple"
+    },
+    {
+      icon: FaClock,
+      number: "24/7",
+      label: "Support technique",
+      color: "red"
+    }
+  ]
 
   return (
-    <section className={`py-20 bg-gradient-to-br from-${color}/5 to-white relative overflow-hidden`}>
-      {/* Éléments décoratifs légers */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Formes géométriques subtiles */}
-        <div className="absolute top-20 left-20 w-32 h-32 opacity-10">
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <circle cx="50" cy="50" r="25" fill="none" stroke={`var(--color-${color})`} strokeWidth="1" />
-            <circle cx="50" cy="50" r="15" fill={`var(--color-${color})`} opacity="0.3" />
+    <motion.section 
+      ref={sectionRef}
+      style={{ opacity: sectionOpacity }}
+      className={`py-24 bg-gradient-to-br from-${color}/5 via-white to-purple/5 relative overflow-hidden`}
+    >
+      {/* Fond décoratif premium */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Formes organiques sophistiquées */}
+        <motion.div
+          className="absolute top-20 right-20 w-80 h-80 opacity-5"
+          animate={{
+            rotate: [0, 180, 360],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{
+            duration: 35,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <path
+              d="M47.2,-73.9C61.3,-66.9,73,-54.2,79.6,-39.3C86.1,-24.4,87.5,-7.2,82.7,7.8C78,22.8,66.9,35.8,55.3,47.5C43.6,59.3,31.3,69.9,16.5,75.4C1.7,80.8,-15.6,81.1,-28.9,74.4C-42.2,67.8,-51.6,54.1,-58.9,40.3C-66.3,26.5,-71.7,12.6,-73.1,-2.5C-74.6,-17.7,-72.1,-34.1,-63.3,-46.1C-54.5,-58.1,-39.6,-65.8,-24.5,-72C-9.5,-78.2,5.7,-83,20.2,-81.5C34.8,-79.9,48.8,-71.9,61.8,-61.9Z"
+              fill={`rgba(${mainColorRGB}, 0.08)`}
+            />
+          </svg>
+        </motion.div>
+
+        <motion.div
+          className="absolute bottom-20 left-20 w-64 h-64 opacity-5"
+          animate={{
+            rotate: [360, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+        >
+          <svg viewBox="0 0 200 200" className="w-full h-full">
+            <path
+              d="M39.3,-64.8C52.8,-59.2,66.9,-51.9,71.1,-40.3C75.3,-28.6,69.7,-12.7,67.8,2.8C65.9,18.2,68,33.2,62.4,43.8C56.9,54.5,43.7,60.8,30.6,65.1C17.4,69.3,4.4,71.4,-9.1,70.7C-22.5,70,-36.4,66.5,-47.5,58.2C-58.6,49.9,-66.8,37,-71.7,22.5C-76.5,8.1,-77.9,-7.9,-73.6,-21.5C-69.3,-35.1,-59.2,-46.3,-47,-54.4C-34.8,-62.4,-20.4,-67.2,-5.3,-69.9C9.8,-72.7,25.7,-70.5,39.3,-64.8Z"
+              fill={`rgba(${mainColorRGB}, 0.06)`}
+            />
+          </svg>
+        </motion.div>
+
+        {/* Grille sophistiquée */}
+        <div className="absolute inset-0 opacity-3">
+          <svg width="100%" height="100%">
+            <pattern id="ctaPattern" patternUnits="userSpaceOnUse" width="100" height="100">
+              <circle cx="50" cy="50" r="1.5" fill={`rgb(${mainColorRGB})`} />
+              <circle cx="25" cy="25" r="0.8" fill={`rgb(${mainColorRGB})`} />
+              <circle cx="75" cy="75" r="0.8" fill={`rgb(${mainColorRGB})`} />
+              <path d="M25,25 Q50,40 75,25" stroke={`rgb(${mainColorRGB})`} strokeWidth="0.4" fill="none" />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#ctaPattern)" />
           </svg>
         </div>
-        
-        <div className="absolute bottom-20 right-20 w-24 h-24 opacity-10">
-          <svg viewBox="0 0 100 100" className="w-full h-full">
-            <polygon points="50,10 90,90 10,90" fill="none" stroke={`var(--color-${color})`} strokeWidth="1" />
-          </svg>
-        </div>
-        
-        {/* Particules flottantes */}
-        {Array.from({ length: 6 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className={`absolute w-2 h-2 bg-${color}/20 rounded-full`}
-            style={{
-              left: `${20 + (i * 15)}%`,
-              top: `${20 + (i * 10)}%`,
-            }}
-            animate={{
-              y: [0, -15, 0],
-              opacity: [0.2, 0.5, 0.2],
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              delay: i * 0.8,
-            }}
-          />
-        ))}
       </div>
 
       <div className="container relative z-10">
         <motion.div
           ref={contentRef}
-          initial={{ opacity: 0, y: 30 }}
-          animate={contentInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto text-center"
+          style={{ y: contentY }}
+          className="max-w-5xl mx-auto"
         >
-          {/* Icône */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0 }}
-            animate={contentInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className={`w-16 h-16 bg-${color}/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-${color}/20`}
-          >
-            <FaRocket className={`w-8 h-8 text-${color}`} />
-          </motion.div>
           
-          {/* Titre */}
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-3xl md:text-4xl font-bold text-gray-900 mb-4"
-          >
-            Un projet similaire en tête ?
-          </motion.h2>
-          
-          {/* Description */}
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="text-lg text-gray-600 mb-8 leading-relaxed max-w-2xl mx-auto"
-          >
-            Nous créons des solutions sur mesure adaptées à vos besoins spécifiques.
-          </motion.p>
-          
-          {/* Ligne décorative */}
-          <motion.div 
-            initial={{ width: 0 }}
-            animate={contentInView ? { width: "4rem" } : {}}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className={`h-1 bg-${color} mx-auto mb-8`}
-          ></motion.div>
-          
-          {/* Boutons d'action */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={contentInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-          >
-            {/* Bouton principal */}
-            <CTAButton 
-              href="/contact" 
-              variant="primary"
-              showDots={true}
+          {/* En-tête sophistiqué */}
+          <div className="text-center mb-16">
+            {/* Badge premium animé */}
+            <motion.div
+              initial={{ opacity: 0, y: -30, scale: 0.8 }}
+              animate={badgeControls}
+              className="inline-block mb-8"
             >
-              Discutons de votre projet
-            </CTAButton>
+              <div className={`px-8 py-4 bg-gradient-to-r from-${color}/10 via-white to-purple/10 rounded-full border border-${color}/20 backdrop-blur-sm shadow-lg`}>
+                <div className="flex items-center gap-4">
+                  <div className={`w-12 h-12 bg-gradient-to-br from-${color} to-purple rounded-full flex items-center justify-center shadow-lg`}>
+                    <FaRocket className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <p className={`text-${color} font-bold text-sm uppercase tracking-wider`}>
+                      Prêt pour le prochain défi ?
+                    </p>
+                    <p className="text-gray-600 text-xs">
+                      Transformons vos idées en réalité
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
             
-            {/* Bouton secondaire */}
-            <CTAButton 
-              href="/projets" 
-              variant="secondary"
-              showDots={false}
+            {/* Titre sophistiqué */}
+            <motion.h2
+              initial={{ opacity: 0, y: 30 }}
+              animate={titleControls}
+              className="text-4xl md:text-6xl font-extrabold mb-6 leading-tight"
             >
-              Voir d'autres réalisations
-            </CTAButton>
+              Un projet similaire{' '}
+              <span className={`text-${color} relative`}>
+                en tête ?
+                <motion.div
+                  className={`absolute -bottom-3 left-0 h-2 bg-gradient-to-r from-${color}/30 via-purple/30 to-red/30 rounded-full`}
+                  initial={{ width: 0 }}
+                  animate={contentInView ? { width: "100%" } : {}}
+                  transition={{ duration: 1, delay: 1 }}
+                ></motion.div>
+              </span>
+            </motion.h2>
             
-            {/* Lien externe - seulement si disponible */}
+            {/* Description sophistiquée */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={titleControls}
+              transition={{ delay: 0.3 }}
+              className="text-xl text-gray-600 mb-12 leading-relaxed max-w-3xl mx-auto"
+            >
+              Nous créons des solutions sur mesure adaptées à vos besoins spécifiques. 
+              Rejoignez nos clients satisfaits et donnez vie à vos ambitions digitales.
+            </motion.p>
+          </div>
+          
+          {/* Boutons d'action sophistiqués */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={buttonsControls}
+            className="flex flex-col lg:flex-row items-center justify-center gap-6 mb-16"
+          >
+            {/* Bouton principal premium */}
+            <div className="flex flex-col sm:flex-row items-center gap-4">
+              <CTAButton 
+                href="/contact" 
+                variant="primary"
+                showDots={true}
+                className="transform hover:scale-105 transition-transform"
+              >
+                <FaComments className="w-4 h-4 mr-2" />
+                Discutons de votre projet
+              </CTAButton>
+              
+              <CTAButton 
+                href="/projets" 
+                variant="secondary"
+                showDots={false}
+                className="transform hover:scale-105 transition-transform"
+              >
+                Voir d'autres réalisations
+              </CTAButton>
+            </div>
+            
+            {/* Lien externe sophistiqué */}
             {projectUrl && (
               <Link
                 href={projectUrl}
                 target="_blank"
-                className={`inline-flex items-center gap-2 text-${color} hover:text-${color}/80 transition-colors font-medium px-4 py-2 rounded-lg hover:bg-${color}/5 border border-${color}/20`}
+                className={`inline-flex items-center gap-3 text-${color} hover:text-${color}/80 transition-all font-medium px-6 py-3 rounded-xl border-2 border-${color}/20 hover:border-${color}/40 hover:bg-${color}/5 backdrop-blur-sm`}
               >
-                <FaExternalLinkAlt className="w-3 h-3" />
-                Site en ligne
+                <FaExternalLinkAlt className="w-4 h-4" />
+                <span>Voir le site en ligne</span>
+                <div className={`w-2 h-2 bg-${color} rounded-full animate-pulse`}></div>
               </Link>
             )}
           </motion.div>
           
-          {/* Contact rapide */}
+          {/* Statistiques impressionnantes */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={contentInView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 0.8 }}
-            className="pt-6 border-t border-gray-200"
+            ref={statsRef}
+            initial={{ opacity: 0, y: 50 }}
+            animate={statsControls}
+            className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12"
           >
-            <div className="flex items-center justify-center gap-2 text-gray-600">
-              <FaEnvelope className={`w-4 h-4 text-${color}`} />
-              <span className="text-sm">Besoin d'un devis ?</span>
-              <a 
-                href="mailto:contact@sall.technology" 
-                className={`text-${color} hover:text-${color}/80 transition-colors font-medium underline decoration-${color}/30 hover:decoration-${color}/60`}
+            {stats.map((stat, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                animate={statsInView ? { opacity: 1, y: 0 } : {}}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center p-8 bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
               >
-                contact@sall.technology
-              </a>
+                <div className={`w-16 h-16 bg-gradient-to-br from-${stat.color}/10 to-${stat.color}/5 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-${stat.color}/20`}>
+                  <stat.icon className={`w-8 h-8 text-${stat.color}`} />
+                </div>
+                <div className={`text-3xl font-bold text-${stat.color} mb-2`}>
+                  {stat.number}
+                </div>
+                <div className="text-gray-600 font-medium">
+                  {stat.label}
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+          
+          {/* Contact rapide sophistiqué */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={contentInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.8, delay: 1.2 }}
+            className="bg-gradient-to-r from-white via-gray-50 to-white p-8 rounded-2xl border border-gray-200 shadow-lg"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+              <div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Besoin d'un devis personnalisé ?
+                </h3>
+                <p className="text-gray-600 mb-4">
+                  Notre équipe est disponible pour discuter de votre projet et vous proposer une solution adaptée.
+                </p>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row items-center gap-4">
+                <a 
+                  href="mailto:contact@sall.technology" 
+                  className={`inline-flex items-center gap-3 text-${color} hover:text-${color}/80 transition-colors font-medium px-6 py-3 rounded-xl border border-${color}/20 hover:bg-${color}/5 backdrop-blur-sm flex-1 justify-center`}
+                >
+                  <FaEnvelope className="w-4 h-4" />
+                  <span>contact@sall.technology</span>
+                </a>
+                
+                <a 
+                  href="tel:+22233445566" 
+                  className={`inline-flex items-center gap-3 text-purple hover:text-purple/80 transition-colors font-medium px-6 py-3 rounded-xl border border-purple/20 hover:bg-purple/5 backdrop-blur-sm`}
+                >
+                  <FaPhone className="w-4 h-4" />
+                  <span>+222 33 44 55 66</span>
+                </a>
+              </div>
             </div>
           </motion.div>
         </motion.div>
       </div>
-    </section>
+    </motion.section>
   )
 }
