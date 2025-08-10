@@ -1,8 +1,8 @@
-// frontend/src/components/projects/ProjectProcess.jsx - VERSION AVEC ANIMATIONS AVANCÉES
+// frontend/src/components/projects/ProjectProcess.jsx - VERSION SANS ERREURS
 'use client'
 
 import { useRef, useState, useEffect } from 'react'
-import { motion, useScroll, useTransform, useSpring } from 'framer-motion'
+import { motion, useScroll, useTransform } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { 
   FaSearch, FaPencilRuler, FaCode, FaBug, FaRocket, 
@@ -14,8 +14,8 @@ import {
 export default function ProjectProcess({ steps, color = 'blue', projectTitle }) {
   // États pour les animations
   const [activeStep, setActiveStep] = useState(0)
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false) // ✅ Démarrage manuel
-  const [hasStarted, setHasStarted] = useState(false) // ✅ Tracker si on a commencé
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false)
+  const [hasStarted, setHasStarted] = useState(false)
   
   // Animation au défilement
   const sectionRef = useRef(null)
@@ -67,14 +67,14 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     return iconMap[iconName] || FaRocket
   }
 
-  // Auto-play des étapes - ✅ CORRIGÉ
+  // Auto-play des étapes
   useEffect(() => {
     if (!isAutoPlaying || !steps?.length) return
     
     const interval = setInterval(() => {
       setActiveStep(prev => {
         const nextStep = (prev + 1) % steps.length
-        console.log('Auto-play: passage à l\'étape', nextStep + 1) // Debug
+        console.log('Auto-play: passage à l\'étape', nextStep + 1)
         return nextStep
       })
     }, 4000)
@@ -82,29 +82,31 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     return () => clearInterval(interval)
   }, [isAutoPlaying, steps?.length])
 
-  // Animation de la ligne progressive - ✅ CORRIGÉ
+  // Animation de la ligne progressive
   useEffect(() => {
     if (timelineInView && steps?.length) {
-      const targetProgress = ((activeStep + 1) / steps.length) * 100
-      console.log('Progression ligne:', targetProgress + '%') // Debug
+      const targetProgress = steps.length > 1 
+        ? (activeStep / (steps.length - 1)) * 100 
+        : 100
+      
+      console.log(`Étape ${activeStep + 1}/${steps.length} - Progression: ${targetProgress}%`)
       setLineProgress(targetProgress)
     }
   }, [activeStep, timelineInView, steps?.length])
 
-  // ✅ DÉMARRER AUTO-PLAY QUAND LA TIMELINE DEVIENT VISIBLE
+  // Démarrer auto-play quand la timeline devient visible
   useEffect(() => {
     if (timelineInView && !hasStarted) {
       console.log('Timeline visible - démarrage auto-play')
       setHasStarted(true)
-      setIsAutoPlaying(true)
       
-      // Démarrer la progression de la ligne immédiatement
       setTimeout(() => {
-        const initialProgress = ((activeStep + 1) / steps.length) * 100
+        setIsAutoPlaying(true)
+        const initialProgress = steps.length > 1 ? 0 : 100
         setLineProgress(initialProgress)
-      }, 100)
+      }, 500)
     }
-  }, [timelineInView, hasStarted, activeStep, steps.length])
+  }, [timelineInView, hasStarted, steps.length])
 
   // Styles pour le badge animé
   const badgeStyle = {
@@ -113,7 +115,7 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     backdropFilter: 'blur(10px)'
   }
 
-  // Variantes d'animation avancées
+  // Variantes d'animation
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -129,14 +131,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
     hidden: { 
       opacity: 0, 
       y: 60,
-      scale: 0.8,
-      rotateX: -15
+      scale: 0.8
     },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
-      rotateX: 0,
       transition: {
         duration: 0.8,
         ease: [0.25, 0.46, 0.45, 0.94]
@@ -155,7 +155,7 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
       className="py-20 bg-gradient-to-br from-gray-50 via-white to-gray-50 relative overflow-hidden"
       style={{ opacity: sectionOpacity }}
     >
-      {/* Éléments décoratifs d'arrière-plan animés */}
+      {/* Éléments décoratifs d'arrière-plan */}
       <div className="absolute inset-0 pointer-events-none">
         <motion.div 
           className="absolute top-10 right-20 w-40 h-40 rounded-full opacity-5"
@@ -181,34 +181,11 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
           }}
           transition={{ duration: 25, repeat: Infinity }}
         />
-        
-        {/* Particules flottantes */}
-        {[...Array(6)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-2 h-2 rounded-full opacity-20"
-            style={{ 
-              backgroundColor: colors.solid,
-              left: `${20 + (i * 15)}%`,
-              top: `${30 + (i * 8)}%`
-            }}
-            animate={{
-              y: [-20, 20, -20],
-              opacity: [0.2, 0.5, 0.2],
-              scale: [1, 1.5, 1]
-            }}
-            transition={{
-              duration: 4 + i,
-              repeat: Infinity,
-              delay: i * 0.5
-            }}
-          />
-        ))}
       </div>
 
       <div className="container relative z-10">
         
-        {/* En-tête de section avec animations avancées */}
+        {/* En-tête de section */}
         <div className="text-center mb-16">
           <motion.div
             ref={titleRef}
@@ -216,16 +193,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             animate={titleInView ? { 
               opacity: 1, 
               y: 0, 
-              scale: 1,
-              boxShadow: "0 20px 40px rgba(0,0,0,0.1)"
+              scale: 1
             } : {}}
             transition={{ duration: 1, delay: 0.2, ease: "easeOut" }}
             className="inline-flex items-center gap-3 px-8 py-4 rounded-full backdrop-blur-sm shadow-xl mb-8 border"
             style={badgeStyle}
-            whileHover={{ 
-              scale: 1.05,
-              boxShadow: "0 25px 50px rgba(0,0,0,0.15)"
-            }}
+            whileHover={{ scale: 1.05 }}
           >
             <motion.div 
               className="w-10 h-10 rounded-full flex items-center justify-center"
@@ -247,19 +220,9 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             className="text-4xl md:text-6xl font-bold text-gray-900 mb-6"
           >
             Notre approche pour{' '}
-            <motion.span 
-              style={{ color: colors.solid }}
-              animate={{ 
-                textShadow: [
-                  "0 0 0px rgba(52, 152, 219, 0)",
-                  "0 0 20px rgba(52, 152, 219, 0.3)",
-                  "0 0 0px rgba(52, 152, 219, 0)"
-                ]
-              }}
-              transition={{ duration: 3, repeat: Infinity }}
-            >
+            <span style={{ color: colors.solid }}>
               {projectTitle || 'ce projet'}
-            </motion.span>
+            </span>
           </motion.h2>
           
           <motion.p
@@ -272,7 +235,7 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             de la conception initiale au déploiement final.
           </motion.p>
 
-          {/* Contrôles de lecture améliorés - ✅ CORRIGÉS */}
+          {/* Contrôles de lecture */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={titleInView ? { opacity: 1, y: 0 } : {}}
@@ -309,18 +272,16 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 Étape {activeStep + 1} sur {steps.length}
               </div>
               
-              {/* Barre de progression mini */}
               <div className="w-20 h-1 bg-gray-200 rounded-full overflow-hidden">
                 <motion.div
                   className="h-full rounded-full"
                   style={{ backgroundColor: colors.solid }}
-                  animate={{ width: `${lineProgress}%` }}
+                  animate={{ width: `${((activeStep + 1) / steps.length) * 100}%` }}
                   transition={{ duration: 0.5 }}
                 />
               </div>
             </div>
 
-            {/* Boutons navigation manuelle */}
             <div className="flex gap-2">
               <motion.button
                 onClick={() => {
@@ -330,7 +291,6 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                disabled={steps.length <= 1}
                 title="Étape précédente"
               >
                 <span className="text-xs font-bold text-gray-600">‹</span>
@@ -344,13 +304,11 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 className="w-8 h-8 rounded-full bg-white shadow-md border border-gray-200 flex items-center justify-center hover:shadow-lg transition-all"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
-                disabled={steps.length <= 1}
                 title="Étape suivante"
               >
                 <span className="text-xs font-bold text-gray-600">›</span>
               </motion.button>
 
-              {/* Bouton reset */}
               <motion.button
                 onClick={() => {
                   setActiveStep(0)
@@ -368,7 +326,7 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
           </motion.div>
         </div>
 
-        {/* ✅ TIMELINE CONTINUE AVEC ANIMATIONS AVANCÉES */}
+        {/* Timeline des étapes */}
         <motion.div
           ref={timelineRef}
           variants={containerVariants}
@@ -376,15 +334,15 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
           animate={timelineInView ? "visible" : "hidden"}
           className="max-w-6xl mx-auto"
         >
-          {/* Version Desktop - Timeline centrale continue */}
+          {/* Version Desktop */}
           <div className="hidden md:block relative">
             
-            {/* ✅ LIGNE PRINCIPALE CONTINUE ET ANIMÉE */}
-            <div className="absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 w-1 bg-gray-200 rounded-full" />
+            {/* Ligne principale continue */}
+            <div className="absolute left-1/2 top-0 bottom-0 transform -translate-x-1/2 w-1 bg-gray-200 rounded-full z-0" />
             
-            {/* Ligne de progression animée - ✅ CORRIGÉE */}
+            {/* Ligne de progression animée */}
             <motion.div 
-              className="absolute left-1/2 top-0 transform -translate-x-1/2 w-1 rounded-full origin-top z-10"
+              className="absolute left-1/2 top-0 transform -translate-x-1/2 w-1 rounded-full origin-top z-5"
               style={{ 
                 background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
                 height: `${lineProgress}%`
@@ -394,19 +352,20 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
               transition={{ duration: 1, ease: "easeInOut" }}
             />
 
-            {/* Pulse animé sur la ligne active - ✅ CORRIGÉ */}
+            {/* Point pulse qui suit l'étape active */}
             <motion.div
-              className="absolute left-1/2 transform -translate-x-1/2 w-3 h-3 rounded-full z-20"
+              className="absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full z-15"
               style={{ 
                 backgroundColor: colors.solid,
-                top: `${lineProgress}%`,
-                boxShadow: `0 0 20px ${colors.solid}`
+                top: `${(activeStep / Math.max(steps.length - 1, 1)) * 100}%`,
+                boxShadow: `0 0 15px ${colors.solid}`,
+                border: '2px solid white'
               }}
               animate={{
-                scale: [1, 1.5, 1],
-                opacity: [0.7, 1, 0.7]
+                scale: [1, 1.3, 1],
+                opacity: [0.8, 1, 0.8]
               }}
-              transition={{ duration: 2, repeat: Infinity }}
+              transition={{ duration: 1.5, repeat: Infinity }}
             />
 
             {steps.map((step, index) => {
@@ -419,9 +378,7 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                   key={index}
                   variants={stepVariants}
                   className="relative flex items-center mb-24 last:mb-0"
-                  onHoverStart={() => !isAutoPlaying && setActiveStep(index)}
                 >
-                  {/* Grid System Parfait */}
                   <div className="grid grid-cols-12 gap-8 w-full items-center">
                     
                     {/* Contenu gauche */}
@@ -438,14 +395,9 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                             scale: isActive ? 1.02 : 1,
                             y: isActive ? -5 : 0
                           }}
-                          whileHover={{ 
-                            y: -10, 
-                            scale: 1.03,
-                            boxShadow: `0 25px 50px rgba(${colors.rgb}, 0.2)`
-                          }}
+                          whileHover={{ y: -10, scale: 1.03 }}
                           transition={{ duration: 0.3 }}
                         >
-                          {/* Gradient animé de fond */}
                           <motion.div
                             className="absolute inset-0 opacity-5"
                             style={{
@@ -495,16 +447,15 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                       ) : null}
                     </div>
 
-                    {/* ✅ ICÔNE PARFAITEMENT CENTRÉE AVEC ANIMATIONS */}
-                    <div className="col-span-2 flex justify-center">
+                    {/* Icône centrale */}
+                    <div className="col-span-2 flex justify-center relative">
                       <motion.div 
-                        className="relative"
+                        className="relative z-50"
                         animate={{ scale: isActive ? 1.1 : 1 }}
                         transition={{ duration: 0.5 }}
                       >
-                        {/* Halo animé */}
                         <motion.div
-                          className="absolute inset-0 rounded-full"
+                          className="absolute inset-0 rounded-full z-40"
                           style={{ backgroundColor: colors.solid }}
                           animate={{
                             scale: isActive ? [1, 1.5, 1] : 1,
@@ -514,13 +465,16 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                         />
                         
                         <motion.div 
-                          className="w-16 h-16 rounded-full flex items-center justify-center border-4 border-white shadow-xl z-30 relative cursor-pointer"
+                          className="w-16 h-16 rounded-full flex items-center justify-center border-4 border-white shadow-xl cursor-pointer z-50"
                           style={{ backgroundColor: colors.solid }}
                           whileHover={{ 
                             scale: 1.2,
                             boxShadow: `0 0 30px ${colors.solid}`
                           }}
-                          onClick={() => setActiveStep(index)}
+                          onClick={() => {
+                            setActiveStep(index)
+                            setIsAutoPlaying(false)
+                          }}
                           animate={{
                             boxShadow: isActive 
                               ? `0 0 25px ${colors.solid}` 
@@ -551,14 +505,9 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                             scale: isActive ? 1.02 : 1,
                             y: isActive ? -5 : 0
                           }}
-                          whileHover={{ 
-                            y: -10, 
-                            scale: 1.03,
-                            boxShadow: `0 25px 50px rgba(${colors.rgb}, 0.2)`
-                          }}
+                          whileHover={{ y: -10, scale: 1.03 }}
                           transition={{ duration: 0.3 }}
                         >
-                          {/* Gradient animé de fond */}
                           <motion.div
                             className="absolute inset-0 opacity-5"
                             style={{
@@ -613,15 +562,15 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             })}
           </div>
 
-          {/* ✅ VERSION MOBILE AVEC LIGNE CONTINUE */}
+          {/* Version Mobile */}
           <div className="md:hidden">
             <div className="relative">
               {/* Ligne principale mobile */}
-              <div className="absolute left-8 top-0 bottom-0 w-1 bg-gray-200 rounded-full" />
+              <div className="absolute left-8 top-0 bottom-0 w-1 bg-gray-200 rounded-full z-0" />
               
-              {/* Ligne de progression mobile - ✅ CORRIGÉE */}
+              {/* Ligne de progression mobile */}
               <motion.div 
-                className="absolute left-8 top-0 w-1 rounded-full origin-top"
+                className="absolute left-8 top-0 w-1 rounded-full origin-top z-5"
                 style={{ 
                   background: `linear-gradient(to bottom, ${colors.solid}, rgba(${colors.rgb}, 0.6))`,
                   height: `${lineProgress}%`
@@ -629,6 +578,22 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                 initial={{ height: '0%' }}
                 animate={{ height: `${lineProgress}%` }}
                 transition={{ duration: 1.5, ease: "easeInOut" }}
+              />
+
+              {/* Point pulse mobile */}
+              <motion.div
+                className="absolute left-8 transform -translate-x-1/2 w-3 h-3 rounded-full z-15"
+                style={{ 
+                  backgroundColor: colors.solid,
+                  top: `${(activeStep * 96) + 32}px`,
+                  boxShadow: `0 0 12px ${colors.solid}`,
+                  border: '1px solid white'
+                }}
+                animate={{
+                  scale: [1, 1.4, 1],
+                  opacity: [0.8, 1, 0.8]
+                }}
+                transition={{ duration: 1.5, repeat: Infinity }}
               />
 
               <div className="space-y-12">
@@ -641,10 +606,12 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                       key={index}
                       variants={stepVariants}
                       className="relative flex gap-6"
-                      onTouchStart={() => setActiveStep(index)}
+                      onTouchStart={() => {
+                        setActiveStep(index)
+                        setIsAutoPlaying(false)
+                      }}
                     >
-                      {/* Icône mobile avec animations */}
-                      <div className="relative z-20">
+                      <div className="relative z-50">
                         <motion.div 
                           className="w-16 h-16 rounded-full flex items-center justify-center border-4 border-white shadow-xl"
                           style={{ backgroundColor: colors.solid }}
@@ -665,7 +632,6 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                         </motion.div>
                       </div>
 
-                      {/* Contenu mobile */}
                       <div className="flex-1">
                         <motion.div 
                           className="bg-white p-6 rounded-xl border border-gray-100 relative overflow-hidden"
@@ -679,7 +645,6 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                             y: isActive ? -3 : 0
                           }}
                         >
-                          {/* Gradient de fond mobile */}
                           <motion.div
                             className="absolute inset-0 opacity-5"
                             style={{
@@ -726,21 +691,16 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
             </div>
           </div>
 
-          {/* ✅ RÉSUMÉ FINAL AVEC ANIMATIONS SOPHISTIQUÉES */}
+          {/* Résumé final */}
           <motion.div
             variants={stepVariants}
             className="mt-20 text-center"
           >
             <motion.div 
               className="bg-white p-10 rounded-3xl border border-gray-100 max-w-4xl mx-auto relative overflow-hidden"
-              style={{
-                boxShadow: "0 30px 60px rgba(0,0,0,0.1)"
-              }}
-              whileHover={{
-                boxShadow: `0 40px 80px rgba(${colors.rgb}, 0.15)`
-              }}
+              style={{ boxShadow: "0 30px 60px rgba(0,0,0,0.1)" }}
+              whileHover={{ boxShadow: `0 40px 80px rgba(${colors.rgb}, 0.15)` }}
             >
-              {/* Gradient animé de fond */}
               <motion.div
                 className="absolute inset-0 opacity-5"
                 style={{
@@ -785,16 +745,15 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                   avec un niveau de qualité exceptionnel.
                 </p>
                 
-                {/* Badges de réussite animés */}
                 <div className="flex flex-wrap justify-center gap-4 text-sm">
                   {[
-                    { icon: FaUsers, text: "Équipe dédiée", bg: "bg-green-50", text: "text-green-700", border: "border-green-200" },
-                    { icon: FaClock, text: "Respect des délais", bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
-                    { icon: FaRocket, text: "Performance optimisée", bg: colors.light, text: colors.solid, border: `rgba(${colors.rgb}, 0.3)` }
+                    { icon: FaUsers, text: "Équipe dédiée", bg: "bg-green-50", textColor: "text-green-700", border: "border-green-200" },
+                    { icon: FaClock, text: "Respect des délais", bg: "bg-blue-50", textColor: "text-blue-700", border: "border-blue-200" },
+                    { icon: FaRocket, text: "Performance optimisée", bg: colors.light, textColor: colors.solid, border: `rgba(${colors.rgb}, 0.3)` }
                   ].map((badge, index) => (
                     <motion.div
                       key={index}
-                      className={`flex items-center gap-2 px-6 py-3 rounded-full border ${badge.bg} ${badge.text} ${badge.border}`}
+                      className={`flex items-center gap-2 px-6 py-3 rounded-full border ${badge.bg} ${badge.textColor} ${badge.border}`}
                       style={index === 2 ? { 
                         backgroundColor: `rgba(${colors.rgb}, 0.1)`, 
                         color: colors.solid,
@@ -803,10 +762,7 @@ export default function ProjectProcess({ steps, color = 'blue', projectTitle }) 
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.5 + (index * 0.1) }}
-                      whileHover={{ 
-                        scale: 1.05,
-                        y: -2
-                      }}
+                      whileHover={{ scale: 1.05, y: -2 }}
                     >
                       <badge.icon className="w-4 h-4" />
                       <span className="font-medium">{badge.text}</span>
