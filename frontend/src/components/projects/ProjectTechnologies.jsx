@@ -1,3 +1,4 @@
+// frontend/src/components/projects/ProjectTechnologies.jsx - VERSION CORRIGÉE
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
@@ -18,18 +19,22 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
   const [titleRef, titleInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   const [techRef, techInView] = useInView({ triggerOnce: true, threshold: 0.1 })
   
-  // État pour l'animation de défilement
-  const [isHovered, setIsHovered] = useState(false)
-  const [duplicatedTechs, setDuplicatedTechs] = useState([])
-  
-  // Préparer les technologies pour l'animation
-  useEffect(() => {
-    if (technologies && technologies.length > 0) {
-      // Dupliquer les technologies pour un défilement infini
-      const allTechs = [...technologies, ...technologies, ...technologies]
-      setDuplicatedTechs(allTechs)
-    }
-  }, [technologies])
+  // CORRECTION 1: Dédoublonner les technologies
+  const uniqueTechnologies = (() => {
+    if (!technologies || !Array.isArray(technologies)) return []
+    
+    const seen = new Set()
+    return technologies.filter(tech => {
+      if (!tech || !tech.nom) return false
+      
+      // Utiliser le nom comme clé unique
+      const key = tech.nom.toLowerCase().trim()
+      if (seen.has(key)) return false
+      
+      seen.add(key)
+      return true
+    })
+  })()
   
   // Animation variants
   const containerVariants = {
@@ -51,7 +56,8 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
     }
   }
 
-  if (!technologies || technologies.length === 0) return null
+  // CORRECTION 2: Ne pas afficher si pas de technologies
+  if (!uniqueTechnologies || uniqueTechnologies.length === 0) return null
 
   return (
     <motion.section 
@@ -59,19 +65,19 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
       style={{ opacity: sectionOpacity }}
       className="py-20 bg-gray-900 text-white relative overflow-hidden"
     >
-      {/* Effet de particules techniques */}
+      {/* Effet de particules techniques - RÉDUIT */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 30 }).map((_, i) => (
+        {Array.from({ length: 15 }).map((_, i) => (
           <motion.div
             key={i}
-            className="absolute text-gray-700 font-mono text-xs opacity-30"
+            className="absolute text-gray-700 font-mono text-xs opacity-20"
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
             animate={{
-              y: [0, -50, 0],
-              opacity: [0.1, 0.3, 0.1],
+              y: [0, -30, 0],
+              opacity: [0.1, 0.2, 0.1],
             }}
             transition={{
               duration: 8 + Math.random() * 4,
@@ -124,51 +130,7 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
           </motion.p>
         </div>
         
-        {/* Animation de défilement des technologies */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={techInView ? { opacity: 1 } : {}}
-          transition={{ duration: 1 }}
-          className="mb-16"
-        >
-          <div 
-            className="relative overflow-hidden py-8"
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-          >
-            <motion.div
-              className="flex gap-8 items-center"
-              animate={{
-                x: isHovered ? 0 : `-${(technologies.length * 280)}px`
-              }}
-              transition={{
-                duration: isHovered ? 0 : technologies.length * 3,
-                ease: "linear",
-                repeat: isHovered ? 0 : Infinity,
-              }}
-            >
-              {duplicatedTechs.map((tech, index) => (
-                <div
-                  key={index}
-                  className="flex-shrink-0 w-64 p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-gray-600 transition-all duration-300"
-                >
-                  <h4 className={`text-lg font-bold text-${color} mb-2`}>
-                    {tech.nom}
-                  </h4>
-                  <p className="text-gray-300 text-sm">
-                    {tech.description}
-                  </p>
-                </div>
-              ))}
-            </motion.div>
-            
-            {/* Dégradés sur les côtés */}
-            <div className="absolute top-0 left-0 w-20 h-full bg-gradient-to-r from-gray-900 to-transparent pointer-events-none"></div>
-            <div className="absolute top-0 right-0 w-20 h-full bg-gradient-to-l from-gray-900 to-transparent pointer-events-none"></div>
-          </div>
-        </motion.div>
-        
-        {/* Grille statique pour plus de détails */}
+        {/* CORRECTION 3: UNE SEULE section d'affichage - Grille propre */}
         <motion.div
           ref={techRef}
           variants={containerVariants}
@@ -176,9 +138,9 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
           animate={techInView ? "visible" : "hidden"}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
-          {technologies.slice(0, 6).map((tech, index) => (
+          {uniqueTechnologies.map((tech, index) => (
             <motion.div
-              key={index}
+              key={`tech-${tech.nom}-${index}`} // Clé unique
               variants={itemVariants}
               className="group"
             >
@@ -191,7 +153,7 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
                 </div>
                 
                 <p className="text-gray-300 text-sm leading-relaxed">
-                  {tech.description}
+                  {tech.description || 'Technologie utilisée dans ce projet'}
                 </p>
                 
                 {/* Barre de progression décorative */}
@@ -212,7 +174,7 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
           ))}
         </motion.div>
         
-        {/* Badge de performance */}
+        {/* Badge de performance - CORRECTION 4: Afficher le vrai nombre */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={techInView ? { opacity: 1, y: 0 } : {}}
@@ -222,7 +184,7 @@ export default function ProjectTechnologies({ technologies, color = 'blue' }) {
           <div className="inline-flex items-center gap-4 px-8 py-4 bg-gray-800/50 backdrop-blur-sm rounded-full border border-gray-700">
             <div className={`w-3 h-3 bg-${color} rounded-full animate-pulse`}></div>
             <span className="text-gray-300 font-medium">
-              {technologies.length} technologies maîtrisées
+              {uniqueTechnologies.length} {uniqueTechnologies.length === 1 ? 'technologie maîtrisée' : 'technologies maîtrisées'}
             </span>
             <div className={`w-3 h-3 bg-${color} rounded-full animate-pulse`}></div>
           </div>
